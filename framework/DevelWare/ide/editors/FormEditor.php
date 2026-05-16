@@ -2117,29 +2117,8 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
     protected function _onAreaMouseUp(UXMouseEvent $e = null)
     {
-        $selected = $this->elementTypePane->getSelected();
-
         $this->save();
-
-        if ($selected) {
-            $selectionRectangle = $this->designer->getSelectionRectangle();
-
-            $node = $this->createElement($selected, $selectionRectangle->x, $selectionRectangle->y, null, !$e->controlDown);
-
-            if ($e && !$e->controlDown) {
-                Logger::debug("Clear selection from element type pane");
-                $this->elementTypePane->clearSelected();
-            }
-
-            $this->designer->requestFocus();
-
-            UXApplication::runLater(function () use ($node) {
-                $this->designer->unselectAll();
-                $this->designer->selectNode($node);
-            });
-        } else {
-            $this->updateProperties($this);
-        }
+        $this->updateProperties($this);
 
         uiLater(function () {
             $this->layout->requestFocus();
@@ -2194,38 +2173,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
     protected function _onNodeClick(UXMouseEvent $e)
     {
-        $node = $e->target;
-
-        /*if ($node && $node->data('-factory-id')) {
-            return false;
-        }*/
-
-        $selected = $this->elementTypePane->getSelected();
-
         $this->layout->requestFocus();
-
-        if ($selected) {
-            $element = $this->format->getFormElement($e->sender);
-
-            if ($element) {
-                $node = $this->createElement($selected, $e->screenX, $e->screenY, $element->isLayout() ? $e->sender : null, !$e->controlDown);
-
-                if (!$e->controlDown) {
-                    $this->elementTypePane->clearSelected();
-                }
-
-                $this->designer->requestFocus();
-
-                UXApplication::runLater(function () use ($node) {
-                    $this->designer->unselectAll();
-                    $this->designer->selectNode($node);
-                });
-            }
-
-            //$this->designer->unselectAll();
-            $this->elementTypePane->clearSelected();
-            return true;
-        }
     }
 
     public static function fetchElementProperties(AbstractFormElement $element)
