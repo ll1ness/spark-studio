@@ -477,10 +477,14 @@ class FormElementTypePane
                 $editor = FileSystem::getSelectedEditor();
 
                 if ($editor instanceof FormEditor) {
+                    $layout = $editor->layout;
+                    $screenX = $layout ? $layout->screenX + 100 : 0;
+                    $screenY = $layout ? $layout->screenY + 100 : 0;
+
                     if ($element instanceof ObjectListEditorItem) {
-                        $editor->createElement($element->value, -1, -1, null);
+                        $editor->createElement($element->value, $screenX, $screenY, null);
                     } else {
-                        $editor->createElement(reflect::typeOf($element), -1, -1, null);
+                        $editor->createElement($element, $screenX, $screenY, null);
                     }
                 }
             };
