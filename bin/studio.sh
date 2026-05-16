@@ -40,15 +40,22 @@ JAVA_OPTS="$JAVA_OPTS -Djava.net.preferIPv4Stack=true"
 JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8"
 JAVA_OPTS="$JAVA_OPTS -Ddevelnext.launcher=root"
 JAVA_OPTS="$JAVA_OPTS -Ddevelnext.path=$APP_HOME"
+JAVA_OPTS="$JAVA_OPTS -Dglass.disableGrab=true"
+
 JAVA_HOME="$APP_HOME/bin/jre"
 LOG_DIR="$APP_HOME/bin/logs"
 mkdir -p "$LOG_DIR"
 
 rm -rf "$HOME/.DevelNext/cache/bytecode_v1" "$APP_HOME/bin/cache/bytecode_v1"
 
+GDK_BACKEND="${GDK_BACKEND:-x11}"
+export GDK_BACKEND
+
+# Minimal LD_PRELOAD: only block modal hints (prevents XWayland cursor
+# constraint). Transient_for passes through so centering works.
 NGRAB_SO="$APP_HOME/bin/x11-nograb.so"
-if [ ! -f "$NGRAB_SO" ]; then
-    gcc -shared -fPIC -o "$NGRAB_SO" "$APP_HOME/bin/x11-nograb.c" -lX11 -lXtst -ldl 2>/dev/null
+if [ ! -f "$NGRAB_SO" ] && command -v gcc >/dev/null 2>&1; then
+    gcc -shared -fPIC -o "$NGRAB_SO" "$APP_HOME/bin/x11-nograb.c" -ldl 2>/dev/null
 fi
 if [ -f "$NGRAB_SO" ]; then
     export LD_PRELOAD="$NGRAB_SO:$LD_PRELOAD"
