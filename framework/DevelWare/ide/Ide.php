@@ -217,6 +217,12 @@ class Ide extends Application
 
                     Logger::exception($e->getMessage(), $e);
 
+                    Stream::putContents(System::getProperty('user.home') . '/.DevelNext/crash.log',
+                        "[" . Time::now()->toString('YYYY-MM-dd HH:mm:ss') . "] " . get_class($e) . ": " . $e->getMessage()
+                        . "\n\tin " . $e->getFile() . ":" . $e->getLine()
+                        . "\n\n" . $e->getTraceAsString()
+                    );
+
                     if (!$showError) {
                         $showError = true;
                         $notify = Notifications::error(_('error.unknown.title'), _('error.unknown.message'));
