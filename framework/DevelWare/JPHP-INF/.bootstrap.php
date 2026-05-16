@@ -24,8 +24,13 @@ if (!IdeSystem::isDevelopment()) {
 
 $app = new Ide();
 
-UXFont::load(Stream::of('res://.theme/techone/cartoon.ttf'), 14);
-UXFont::load(Stream::of('res://.theme/techone/notes.ttf'), 14);
+$toCartoon = Stream::of(System::getProperty('develnext.path') . '/framework/DevelWare/.theme/techone/cartoon.ttf');
+UXFont::load($toCartoon, 14);
+$toCartoon->close();
+
+$toNotes = Stream::of(System::getProperty('develnext.path') . '/framework/DevelWare/.theme/techone/notes.ttf');
+UXFont::load($toNotes, 14);
+$toNotes->close();
 
 $app->addStyle('/.theme/style.css');
 $app->addStyle('/.theme/custom.css');
