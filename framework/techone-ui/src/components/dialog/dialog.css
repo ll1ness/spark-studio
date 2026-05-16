@@ -1,0 +1,92 @@
+.to-dialog-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  display: none;
+}
+
+.to-dialog-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.to-dialog {
+  background: #0c0c0c;
+  border: 1px solid #333;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  padding: 24px;
+  position: relative;
+  animation: to-dialog-appear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+@keyframes to-dialog-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.to-dialog-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: #a0a0a0;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.to-dialog-close:hover {
+  color: #f0f0f0;
+}
+
+.to-dialog-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.to-dialog-btn {
+  padding: 10px 20px;
+  border: 2px solid #1a1a1a;
+  background: #0c0c0c;
+  color: #f0f0f0;
+  font-family: 'TechOnCartoon', 'Courier New', monospace;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.to-dialog-btn:hover {
+  border-color: #f0f0f0;
+}
+
+.to-dialog-btn-primary {
+  background: #f0f0f0;
+  color: #030303;
+}
+
+.to-dialog-btn-primary:hover {
+  background: #ffffff;
+}

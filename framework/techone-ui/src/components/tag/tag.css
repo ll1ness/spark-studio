@@ -1,0 +1,41 @@
+.to-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  background: #0c0c0c;
+  color: #f0f0f0;
+  border: 1px solid #1a1a1a;
+  font-family: 'TechOnCartoon', 'Courier New', monospace;
+  transition: all 0.3s ease;
+}
+
+.to-tag:hover {
+  border-color: #f0f0f0;
+  background: #0a0a0a;
+  transform: translateY(-2px);
+}
+
+.to-tag[data-variant="primary"] {
+  background: #f0f0f0;
+  color: #030303;
+  border-color: #f0f0f0;
+}
+
+.to-tag[data-variant="success"] {
+  border-color: #00cc00;
+  color: #00cc00;
+}
+
+.to-tag[data-variant="warning"] {
+  border-color: #cccc00;
+  color: #cccc00;
+}
+
+.to-tag[data-variant="danger"] {
+  border-color: #ff3333;
+  color: #ff3333;
+}

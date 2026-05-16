@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Flex</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-flex {
+            display: flex;
+            background: #0c0c0c;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .to-flex[data-direction="column"] { flex-direction: column; }
+        .to-flex[data-gap="s"] { gap: 8px; }
+        .to-flex[data-gap="m"] { gap: 16px; }
+        .to-flex[data-gap="l"] { gap: 24px; }
+        .to-flex > div {
+            background: #0a0a0a;
+            padding: 20px;
+            border-radius: 4px;
+            text-align: center;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Flex Component</h1>
+    <h2>Row Direction</h2>
+    <div class="to-flex">
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+    </div>
+    
+    <h2>Column Direction</h2>
+    <div class="to-flex" data-direction="column">
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+    </div>
+    
+    <h2>Gap Sizes</h2>
+    <div class="to-flex" data-gap="s">
+        <div>Small Gap</div>
+        <div>Small Gap</div>
+    </div>
+    <div class="to-flex" data-gap="m">
+        <div>Medium Gap</div>
+        <div>Medium Gap</div>
+    </div>
+    <div class="to-flex" data-gap="l">
+        <div>Large Gap</div>
+        <div>Large Gap</div>
+    </div>
+</body>
+</html>

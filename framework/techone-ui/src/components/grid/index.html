@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Grid</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-grid {
+            display: grid;
+            gap: 16px;
+            background: #0c0c0c;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .to-grid[data-columns="2"] { grid-template-columns: repeat(2, 1fr); }
+        .to-grid[data-columns="3"] { grid-template-columns: repeat(3, 1fr); }
+        .to-grid[data-columns="4"] { grid-template-columns: repeat(4, 1fr); }
+        .to-grid > div {
+            background: #0a0a0a;
+            padding: 20px;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Grid Component</h1>
+    <h2>2 Columns</h2>
+    <div class="to-grid" data-columns="2">
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+        <div>Item 4</div>
+    </div>
+    
+    <h2>3 Columns</h2>
+    <div class="to-grid" data-columns="3">
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+        <div>Item 4</div>
+        <div>Item 5</div>
+        <div>Item 6</div>
+    </div>
+    
+    <h2>4 Columns</h2>
+    <div class="to-grid" data-columns="4">
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+        <div>Item 4</div>
+        <div>Item 5</div>
+        <div>Item 6</div>
+        <div>Item 7</div>
+        <div>Item 8</div>
+    </div>
+</body>
+</html>

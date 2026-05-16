@@ -1,0 +1,21 @@
+.to-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.to-icon:hover {
+  transform: scale(1.2);
+}
+
+.to-icon::before {
+  content: '📦';
+}
+
+.to-icon[data-size="s"] { font-size: 16px; }
+.to-icon[data-size="m"] { font-size: 20px; }
+.to-icon[data-size="l"] { font-size: 24px; }

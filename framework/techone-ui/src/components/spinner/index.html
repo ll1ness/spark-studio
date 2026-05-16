@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Spinner</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-spinner {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .to-spinner::after {
+            content: '';
+            border: 4px solid #1a1a1a;
+            border-top-color: #f0f0f0;
+            border-radius: 50%;
+            animation: to-spinner-rotate 0.8s linear infinite;
+        }
+        .to-spinner[data-size="s"]::after { width: 24px; height: 24px; border-width: 3px; }
+        .to-spinner[data-size="m"]::after { width: 36px; height: 36px; border-width: 4px; }
+        .to-spinner[data-size="l"]::after { width: 48px; height: 48px; border-width: 5px; }
+        .to-spinner[data-color]:not([data-size])::after { width: 36px; height: 36px; border-width: 4px; }
+        .to-spinner[data-color="success"]::after { border-top-color: #00cc00; }
+        .to-spinner[data-color="warning"]::after { border-top-color: #cccc00; }
+        .to-spinner[data-color="danger"]::after { border-top-color: #ff3333; }
+        @keyframes to-spinner-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Spinner Component</h1>
+    <h2>Sizes</h2>
+    <div class="to-spinner" data-size="s"></div>
+    <div class="to-spinner" data-size="m"></div>
+    <div class="to-spinner" data-size="l"></div>
+    
+    <h2>Colors</h2>
+    <div class="to-spinner" data-color="success"></div>
+    <div class="to-spinner" data-color="warning"></div>
+    <div class="to-spinner" data-color="danger"></div>
+    
+    <h2>Combined</h2>
+    <div class="to-spinner" data-size="s" data-color="success"></div>
+    <div class="to-spinner" data-size="m" data-color="warning"></div>
+    <div class="to-spinner" data-size="l" data-color="danger"></div>
+</body>
+</html>

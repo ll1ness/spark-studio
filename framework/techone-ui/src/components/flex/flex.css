@@ -1,0 +1,20 @@
+.to-flex {
+  display: flex;
+  background: #0c0c0c;
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.to-flex[data-direction="column"] { flex-direction: column; }
+.to-flex[data-gap="s"] { gap: 8px; }
+.to-flex[data-gap="m"] { gap: 16px; }
+.to-flex[data-gap="l"] { gap: 24px; }
+
+.to-flex > div {
+  background: #0a0a0a;
+  padding: 20px;
+  border-radius: 4px;
+  text-align: center;
+  flex: 1;
+}

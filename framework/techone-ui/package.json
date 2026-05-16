@@ -1,0 +1,13 @@
+{
+  "name": "techone-ui",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve dist -l 3000",
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "serve": "^14.0.0"
+  }
+}

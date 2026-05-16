@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Skeleton</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-skeleton {
+            background: linear-gradient(
+                90deg,
+                #0f0f0f 25%,
+                #0c0c0c 50%,
+                #0f0f0f 75%
+            );
+            background-size: 200% 100%;
+            animation: to-skeleton-shimmer 1.5s linear infinite;
+            border-radius: 4px;
+            height: 16px;
+        }
+        @keyframes to-skeleton-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Skeleton Component</h1>
+    <h2>Skeleton Loading</h2>
+    <div class="to-skeleton"></div>
+    <div class="to-skeleton" style="width: 50%; margin-top: 20px;"></div>
+    <div class="to-skeleton" style="width: 75%; margin-top: 20px;"></div>
+</body>
+</html>

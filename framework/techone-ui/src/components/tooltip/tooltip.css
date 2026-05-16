@@ -1,0 +1,55 @@
+.to-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.to-tooltip-content {
+  position: absolute;
+  background: #f0f0f0;
+  color: #030303;
+  font-size: 12px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  font-family: 'TechOnCartoon', 'Courier New', monospace;
+  letter-spacing: 0.5px;
+  z-index: 1000;
+}
+
+.to-tooltip:hover .to-tooltip-content {
+  opacity: 1;
+  visibility: visible;
+}
+
+.to-tooltip-content[data-position="top"] {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  margin-bottom: 8px;
+}
+
+.to-tooltip-content[data-position="bottom"] {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  margin-top: 8px;
+}
+
+.to-tooltip-content[data-position="left"] {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  margin-right: 8px;
+}
+
+.to-tooltip-content[data-position="right"] {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
+  margin-left: 8px;
+}

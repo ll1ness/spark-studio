@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Progress</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-progress {
+            width: 100%;
+            background: #0c0c0c;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .to-progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #a0a0a0;
+        }
+        .to-progress-track {
+            width: 100%;
+            height: 12px;
+            background: #0a0a0a;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #1a1a1a;
+        }
+        .to-progress-fill {
+            height: 100%;
+            background: #f0f0f0;
+            border-radius: 6px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .to-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            animation: progress-scan 2s linear infinite;
+        }
+        @keyframes progress-scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Progress Component</h1>
+    <h2>Progress Bars</h2>
+    <div class="to-progress">
+        <div class="to-progress-label">
+            <span>Progress 25%</span>
+            <span class="to-progress-value">25%</span>
+        </div>
+        <div class="to-progress-track">
+            <div class="to-progress-fill" style="width: 25%;"></div>
+        </div>
+    </div>
+    <div class="to-progress">
+        <div class="to-progress-label">
+            <span>Progress 50%</span>
+            <span class="to-progress-value">50%</span>
+        </div>
+        <div class="to-progress-track">
+            <div class="to-progress-fill" style="width: 50%;"></div>
+        </div>
+    </div>
+    <div class="to-progress">
+        <div class="to-progress-label">
+            <span>Progress 75%</span>
+            <span class="to-progress-value">75%</span>
+        </div>
+        <div class="to-progress-track">
+            <div class="to-progress-fill" style="width: 75%;"></div>
+        </div>
+    </div>
+    <div class="to-progress">
+        <div class="to-progress-label">
+            <span>Progress 100%</span>
+            <span class="to-progress-value">100%</span>
+        </div>
+        <div class="to-progress-track">
+            <div class="to-progress-fill" style="width: 100%;"></div>
+        </div>
+    </div>
+</body>
+</html>

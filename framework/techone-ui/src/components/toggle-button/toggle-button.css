@@ -1,0 +1,43 @@
+.to-toggle-button {
+  padding: 8px 16px;
+  border: 2px solid #1a1a1a;
+  background: transparent;
+  color: #a0a0a0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  font-family: 'TechOnCartoon', 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.to-toggle-button:hover {
+  border-color: #f0f0f0;
+  color: #f0f0f0;
+}
+
+.to-toggle-button[data-selected="true"] {
+  background: #f0f0f0;
+  color: #030303;
+  border-color: #f0f0f0;
+}
+
+.to-toggle-group {
+  display: flex;
+  gap: 0;
+}
+
+.to-toggle-group .to-toggle-button {
+  border-radius: 0;
+}
+
+.to-toggle-group .to-toggle-button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.to-toggle-group .to-toggle-button:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.to-toggle-group .to-toggle-button:not(:last-child) {
+  border-right: none;
+}

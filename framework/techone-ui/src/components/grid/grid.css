@@ -1,0 +1,19 @@
+.to-grid {
+  display: grid;
+  gap: 16px;
+  background: #0c0c0c;
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.to-grid[data-columns="2"] { grid-template-columns: repeat(2, 1fr); }
+.to-grid[data-columns="3"] { grid-template-columns: repeat(3, 1fr); }
+.to-grid[data-columns="4"] { grid-template-columns: repeat(4, 1fr); }
+
+.to-grid > div {
+  background: #0a0a0a;
+  padding: 20px;
+  border-radius: 4px;
+  text-align: center;
+}

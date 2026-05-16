@@ -1,0 +1,25 @@
+.to-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #0f0f0f;
+  color: #f0f0f0;
+  font-weight: 500;
+  overflow: hidden;
+  border: 2px solid #1a1a1a;
+  transition: all 0.3s ease;
+}
+
+.to-avatar:hover {
+  border-color: #f0f0f0;
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.03);
+}
+
+.to-avatar[data-size="xs"] { width: 24px; height: 24px; font-size: 10px; }
+.to-avatar[data-size="s"] { width: 32px; height: 32px; font-size: 12px; }
+.to-avatar[data-size="m"] { width: 40px; height: 40px; font-size: 14px; }
+.to-avatar[data-size="l"] { width: 48px; height: 48px; font-size: 16px; }
+.to-avatar[data-size="xl"] { width: 56px; height: 56px; font-size: 18px; }

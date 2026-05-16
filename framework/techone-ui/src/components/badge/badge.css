@@ -1,0 +1,42 @@
+.to-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  border-radius: 4px;
+  font-family: 'TechOnCartoon', 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  background: transparent;
+  border: 2px solid #1a1a1a;
+  color: #f0f0f0;
+}
+
+.to-badge:hover {
+  transform: translateY(-2px);
+  border-color: #f0f0f0;
+}
+
+.to-badge[data-variant="success"] {
+  border-color: #00cc00;
+  color: #00cc00;
+}
+
+.to-badge[data-variant="warning"] {
+  border-color: #cccc00;
+  color: #cccc00;
+}
+
+.to-badge[data-variant="danger"] {
+  border-color: #ff3333;
+  color: #ff3333;
+}
+
+.to-badge[data-variant="info"] {
+  border-color: #00cccc;
+  color: #00cccc;
+}

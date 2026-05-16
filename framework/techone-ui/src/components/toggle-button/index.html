@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Toggle Button</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-toggle-button {
+            padding: 8px 16px;
+            border: 2px solid #1a1a1a;
+            background: transparent;
+            color: #a0a0a0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .to-toggle-button:hover {
+            border-color: #f0f0f0;
+            color: #f0f0f0;
+        }
+        .to-toggle-button[data-selected="true"] {
+            background: #f0f0f0;
+            color: #030303;
+            border-color: #f0f0f0;
+        }
+        .to-toggle-group {
+            display: flex;
+            gap: 0;
+        }
+        .to-toggle-group .to-toggle-button {
+            border-radius: 0;
+        }
+        .to-toggle-group .to-toggle-button:first-child {
+            border-radius: 4px 0 0 4px;
+        }
+        .to-toggle-group .to-toggle-button:last-child {
+            border-radius: 0 4px 4px 0;
+        }
+        .to-toggle-group .to-toggle-button:not(:last-child) {
+            border-right: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Toggle Button Component</h1>
+    
+    <h2>Single Toggle Buttons</h2>
+    <button class="to-toggle-button" data-selected="false">Off</button>
+    <button class="to-toggle-button" data-selected="true">On</button>
+    
+    <h2>Toggle Group (3 buttons)</h2>
+    <div class="to-toggle-group">
+        <button class="to-toggle-button" data-selected="true">Option A</button>
+        <button class="to-toggle-button" data-selected="false">Option B</button>
+        <button class="to-toggle-button" data-selected="false">Option C</button>
+    </div>
+    
+    <h2>Toggle Group (5 buttons)</h2>
+    <div class="to-toggle-group">
+        <button class="to-toggle-button" data-selected="true">One</button>
+        <button class="to-toggle-button" data-selected="false">Two</button>
+        <button class="to-toggle-button" data-selected="false">Three</button>
+        <button class="to-toggle-button" data-selected="false">Four</button>
+        <button class="to-toggle-button" data-selected="false">Five</button>
+    </div>
+</body>
+<script src="toggle-button.js"></script>
+</html>

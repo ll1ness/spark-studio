@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Pulse</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-pulse {
+            display: inline-flex;
+            position: relative;
+            width: 30px;
+            height: 30px;
+        }
+        .to-pulse::before,
+        .to-pulse::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.6;
+            animation: to-pulse-ring 3s ease-out infinite;
+        }
+        .to-pulse::after {
+            animation-delay: 1.5s;
+        }
+        .to-pulse[data-color="primary"] { color: #f0f0f0; }
+        .to-pulse[data-color="success"] { color: #00cc00; }
+        .to-pulse[data-color="warning"] { color: #cccc00; }
+        .to-pulse[data-color="danger"] { color: #ff3333; }
+        @keyframes to-pulse-ring {
+            0% { transform: scale(1); opacity: 0.4; }
+            70% { transform: scale(2); opacity: 0; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Pulse Component</h1>
+    <h2>Colors</h2>
+    <div class="to-pulse" data-color="primary"></div>
+    <div class="to-pulse" data-color="success"></div>
+    <div class="to-pulse" data-color="warning"></div>
+    <div class="to-pulse" data-color="danger"></div>
+</body>
+</html>

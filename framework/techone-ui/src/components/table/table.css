@@ -1,0 +1,46 @@
+.to-table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  font-family: 'TechOnCartoon', 'Courier New', monospace;
+  background: #0c0c0c;
+  border: 1px solid #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.to-table-container {
+  overflow-x: auto;
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+.to-table th {
+  background: #0a0a0a;
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #1a1a1a;
+  color: #f0f0f0;
+  font-size: 14px;
+}
+
+.to-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #1a1a1a;
+  color: #a0a0a0;
+  font-size: 13px;
+}
+
+.to-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.to-table tbody tr:hover {
+  background: #0f0f0f;
+}
+
+.to-table th[data-sortable="true"] {
+  cursor: pointer;
+  position: relative;
+}

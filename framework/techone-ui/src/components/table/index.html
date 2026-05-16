@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Table</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-table {
+            width: 100%;
+            max-width: 100%;
+            border-collapse: collapse;
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            background: #0c0c0c;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .to-table-container {
+            overflow-x: auto;
+            max-width: 100%;
+            border-radius: 12px;
+        }
+        .to-table th {
+            background: #0a0a0a;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #1a1a1a;
+            color: #f0f0f0;
+            font-size: 14px;
+        }
+        .to-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #1a1a1a;
+            color: #a0a0a0;
+            font-size: 13px;
+        }
+        .to-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+        .to-table tbody tr:hover {
+            background: #0f0f0f;
+        }
+        .to-table th[data-sortable="true"] {
+            cursor: pointer;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Table Component</h1>
+    <div class="to-table-container">
+    <table class="to-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th data-sortable="true">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>John Doe</td>
+                <td>john@example.com</td>
+                <td><span class="to-badge" data-variant="success">Active</span></td>
+                <td>2024-01-15</td>
+            </tr>
+            <tr>
+                <td>Jane Smith</td>
+                <td>jane@example.com</td>
+                <td><span class="to-badge" data-variant="warning">Pending</span></td>
+                <td>2024-01-14</td>
+            </tr>
+            <tr>
+                <td>Bob Johnson</td>
+                <td>bob@example.com</td>
+                <td><span class="to-badge" data-variant="danger">Inactive</span></td>
+                <td>2024-01-13</td>
+            </tr>
+            <tr>
+                <td>Alice Brown</td>
+                <td>alice@example.com</td>
+                <td><span class="to-badge" data-variant="success">Active</span></td>
+                <td>2024-01-12</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+</body>
+</html>

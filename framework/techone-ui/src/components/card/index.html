@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Card</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-card {
+            background: #0c0c0c;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .to-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.02),
+                transparent
+            );
+            transition: left 0.6s ease;
+        }
+        .to-card:hover {
+            transform: translateY(-4px);
+            border-color: #f0f0f0;
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.03);
+        }
+        .to-card:hover::before {
+            left: 100%;
+        }
+        .to-card[data-variant="elevated"] {
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.03);
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Card Component</h1>
+    <h2>Default Card</h2>
+    <div class="to-card">
+        <h2>Card Title</h2>
+        <p>This is the content of the card. You can put any HTML content here.</p>
+    </div>
+    
+    <h2>Elevated Card</h2>
+    <div class="to-card" data-variant="elevated">
+        <h2>Elevated Card Title</h2>
+        <p>This card has an elevated variant with a shadow effect.</p>
+    </div>
+</body>
+</html>

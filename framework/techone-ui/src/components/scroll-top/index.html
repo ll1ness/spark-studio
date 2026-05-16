@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Scroll Top</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+            height: 2000px;
+        }
+        .to-scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #0c0c0c;
+            border: 2px solid #1a1a1a;
+            color: #f0f0f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            font-size: 24px;
+        }
+        .to-scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .to-scroll-top:hover {
+            transform: translateY(-5px);
+            border-color: #f0f0f0;
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.03);
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Scroll Top Component</h1>
+    <p>Scroll down to see the scroll-to-top button appear</p>
+    <div class="to-scroll-top" data-threshold="300">↑</div>
+</body>
+<script src="scroll-top.js"></script>
+</html>

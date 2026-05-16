@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Breadcrumbs</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-breadcrumbs {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #0c0c0c;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+        .to-breadcrumbs-item {
+            color: #a0a0a0;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .to-breadcrumbs-item:hover {
+            color: #f0f0f0;
+            background: #0a0a0a;
+        }
+        .to-breadcrumbs-item[data-active="true"] {
+            color: #f0f0f0;
+            font-weight: 500;
+            background: #0a0a0a;
+        }
+        .to-breadcrumbs-separator {
+            color: #1a1a1a;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Breadcrumbs Component</h1>
+    <div class="to-breadcrumbs">
+        <a href="#" class="to-breadcrumbs-item">Home</a>
+        <span class="to-breadcrumbs-separator">/</span>
+        <a href="#" class="to-breadcrumbs-item">Products</a>
+        <span class="to-breadcrumbs-separator">/</span>
+        <a href="#" class="to-breadcrumbs-item">Laptops</a>
+        <span class="to-breadcrumbs-separator">/</span>
+        <span class="to-breadcrumbs-item" data-active="true">Gaming Laptop</span>
+    </div>
+</body>
+</html>

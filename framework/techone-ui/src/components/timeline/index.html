@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Timeline</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: #0c0c0c;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .to-timeline-item {
+            position: relative;
+            padding-left: 30px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed #1a1a1a;
+        }
+        .to-timeline-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .to-timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.03);
+        }
+        .to-timeline-item:hover::before {
+            transform: scale(1.5);
+            box-shadow: 0 0 20px #f0f0f0;
+        }
+        .to-timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 20px;
+            bottom: -8px;
+            width: 2px;
+            background: #1a1a1a;
+        }
+        .to-timeline-item:last-child::after {
+            display: none;
+        }
+        .to-timeline-item[data-state="completed"]::before {
+            background: #00cc00;
+        }
+        .to-timeline-item[data-state="active"]::before {
+            background: #cccc00;
+            animation: timeline-pulse 2s ease-in-out infinite;
+        }
+        .to-timeline-item[data-state="error"]::before {
+            background: #ff3333;
+        }
+        @keyframes timeline-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Timeline Component</h1>
+    <div class="to-timeline">
+        <div class="to-timeline-item">
+            <h3>Project Started</h3>
+            <p>Initial project setup and planning</p>
+            <small>2024-01-10</small>
+        </div>
+        <div class="to-timeline-item" data-state="completed">
+            <h3>Design Phase</h3>
+            <p>Completed UI/UX design and wireframes</p>
+            <small>2024-01-12</small>
+        </div>
+        <div class="to-timeline-item" data-state="active">
+            <h3>Development</h3>
+            <p>Currently implementing core features</p>
+            <small>2024-01-15</small>
+        </div>
+        <div class="to-timeline-item" data-state="error">
+            <h3>Testing</h3>
+            <p>Found critical bugs that need fixing</p>
+            <small>2024-01-18</small>
+        </div>
+        <div class="to-timeline-item">
+            <h3>Deployment</h3>
+            <p>Final deployment to production</p>
+            <small>2024-01-20</small>
+        </div>
+    </div>
+</body>
+</html>

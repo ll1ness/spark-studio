@@ -1,0 +1,93 @@
+ent<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Banner</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: #0c0c0c;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .to-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.02),
+                transparent
+            );
+            transition: left 0.6s ease;
+        }
+        .to-banner:hover {
+            transform: translateY(-2px);
+            border-color: #f0f0f0;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.03);
+        }
+        .to-banner:hover::before {
+            left: 100%;
+        }
+        .to-banner[data-variant="success"] {
+            border-left: 4px solid #00cc00;
+        }
+        .to-banner[data-variant="warning"] {
+            border-left: 4px solid #cccc00;
+        }
+        .to-banner[data-variant="danger"] {
+            border-left: 4px solid #ff3333;
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Banner Component</h1>
+    <h2>Variants</h2>
+    <div class="to-banner">
+        <div class="to-banner-icon to-banner-icon-default"></div>
+        <div>
+            <h3>Default Banner</h3>
+            <p>This is a default banner with important information.</p>
+        </div>
+    </div>
+    <div class="to-banner" data-variant="success">
+        <div class="to-banner-icon to-banner-icon-success"></div>
+        <div>
+            <h3>Success Banner</h3>
+            <p>This is a success banner indicating a successful operation.</p>
+        </div>
+    </div>
+    <div class="to-banner" data-variant="warning">
+        <div class="to-banner-icon to-banner-icon-warning"></div>
+        <div>
+            <h3>Warning Banner</h3>
+            <p>This is a warning banner indicating a potential issue.</p>
+        </div>
+    </div>
+    <div class="to-banner" data-variant="danger">
+        <div class="to-banner-icon to-banner-icon-danger"></div>
+        <div>
+            <h3>Danger Banner</h3>
+            <p>This is a danger banner indicating a critical issue.</p>
+        </div>
+    </div>
+</body>
+<script src="banner.js"></script>
+</html>

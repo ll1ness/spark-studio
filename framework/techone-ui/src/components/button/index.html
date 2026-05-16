@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Button</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 2px solid #1a1a1a;
+            background: transparent;
+            color: #f0f0f0;
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            font-weight: 500;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        .to-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        .to-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .to-button:hover {
+            border-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.03);
+        }
+        .to-button:active {
+            transform: translateY(0);
+        }
+        .to-button[data-variant="primary"] {
+            background: #f0f0f0;
+            color: #030303;
+            border-color: #f0f0f0;
+        }
+        .to-button[data-variant="primary"]:hover {
+            background: transparent;
+            color: #f0f0f0;
+        }
+        .to-button[data-variant="secondary"] {
+            background: transparent;
+            color: #f0f0f0;
+            border: 2px solid #f0f0f0;
+        }
+        .to-button[data-variant="secondary"]:hover {
+            background: #f0f0f0;
+            color: #030303;
+        }
+        .to-button[data-variant="danger"] {
+            border-color: #ff3333;
+            color: #ff3333;
+        }
+        .to-button[data-variant="danger"]:hover {
+            background: #ff3333;
+            color: #030303;
+        }
+        .to-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+            border-color: #1a1a1a;
+            color: #a0a0a0;
+        }
+        .to-button[data-size="s"] { padding: 6px 12px; font-size: 12px; }
+        .to-button[data-size="m"] { padding: 10px 20px; font-size: 14px; }
+        .to-button[data-size="l"] { padding: 14px 28px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>TechOn Button Component</h1>
+    <h2>Variants</h2>
+    <button class="to-button" data-variant="primary">Primary</button>
+    <button class="to-button" data-variant="secondary">Secondary</button>
+    <button class="to-button" data-variant="danger">Danger</button>
+    <button class="to-button" disabled>Disabled</button>
+    
+    <h2>Sizes</h2>
+    <button class="to-button" data-size="s">Small</button>
+    <button class="to-button" data-size="m">Medium</button>
+    <button class="to-button" data-size="l">Large</button>
+    
+    <h2>Combined</h2>
+    <button class="to-button" data-variant="primary" data-size="s">Small Primary</button>
+    <button class="to-button" data-variant="secondary" data-size="m">Medium Secondary</button>
+    <button class="to-button" data-variant="danger" data-size="l">Large Danger</button>
+</body>
+</html>

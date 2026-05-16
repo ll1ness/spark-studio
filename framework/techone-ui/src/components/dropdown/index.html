@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechOn Dropdown</title>
+    <style>
+        body {
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            padding: 20px;
+            background: #030303;
+            color: #f0f0f0;
+        }
+        .to-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .to-dropdown-trigger {
+            cursor: pointer;
+            padding: 10px 20px;
+            background: #0c0c0c;
+            border: 2px solid #1a1a1a;
+            color: #f0f0f0;
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            font-weight: 500;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .to-dropdown-trigger:hover {
+            border-color: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        .to-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            min-width: 200px;
+            background: #0c0c0c;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.03);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            padding: 4px;
+        }
+        .to-dropdown[data-open="true"] .to-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .to-dropdown-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+            color: #f0f0f0;
+            font-size: 13px;
+            background: transparent;
+            border: none;
+            font-family: 'TechOnCartoon', 'Courier New', monospace;
+            text-align: left;
+        }
+        .to-dropdown-item:hover {
+            background: #0a0a0a;
+        }
+    </style>
+</head>
+<body>
+    <h1>TechOn Dropdown Component</h1>
+    <div class="to-dropdown">
+        <button class="to-dropdown-trigger"><span class="to-dropdown-value">Dropdown Trigger</span> <span class="to-dropdown-arrow">▼</span></button>
+        <div class="to-dropdown-menu">
+            <button class="to-dropdown-item">Option 1</button>
+            <button class="to-dropdown-item">Option 2</button>
+            <button class="to-dropdown-item">Option 3</button>
+        </div>
+    </div>
+</body>
+<script src="dropdown.js"></script>
+</html>
