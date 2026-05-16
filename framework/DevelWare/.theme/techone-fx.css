@@ -168,7 +168,9 @@
 
 /* === TABS === */
 .tab-pane {
-    -fx-tab-min-width: 90px;
+    -fx-tab-min-width: 40px;
+    -fx-tab-min-height: 24px;
+    -fx-tab-max-height: 28px;
 }
 
 .tab-pane .tab-header-area {
@@ -181,7 +183,7 @@
     -fx-background-radius: 4px 4px 0 0;
     -fx-border-radius: 4px 4px 0 0;
     -fx-text-fill: #888888;
-    -fx-padding: 4px 12px;
+    -fx-padding: 2px 8px;
     -fx-border-color: transparent;
     -fx-cursor: hand;
 }
