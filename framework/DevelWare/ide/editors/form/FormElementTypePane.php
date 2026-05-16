@@ -41,6 +41,9 @@ class FormElementTypePane
 {
     use EventHandlerBehaviour;
 
+    /** @var string|null */
+    public static $pendingDropData = null;
+
     /**
      * @var UXScrollPane
      */
@@ -488,8 +491,18 @@ class FormElementTypePane
                 $e->consume();
             };
 
+            $clickPlace = function (UXMouseEvent $e) use ($element) {
+                if ($element instanceof ObjectListEditorItem) {
+                    FormElementTypePane::$pendingDropData = Json::encode(['prototype' => $element->value, 'create' => true]);
+                } else {
+                    FormElementTypePane::$pendingDropData = Json::encode(['type' => reflect::typeOf($element), 'create' => true]);
+                }
+            };
+
             $smallButton->on('dragDetect', $dragDetect);
             $button->on('dragDetect', $dragDetect);
+            $smallButton->on('click', $clickPlace);
+            $button->on('click', $clickPlace);
 
             if ($buttonCreateCallback) {
                 $buttonCreateCallback($button);

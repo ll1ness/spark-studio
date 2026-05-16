@@ -929,6 +929,24 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         }, __CLASS__);
 
         $node->on('click', function (UXMouseEvent $e) use ($node) {
+            if (FormElementTypePane::$pendingDropData) {
+                $data = Json::decode(FormElementTypePane::$pendingDropData);
+                FormElementTypePane::$pendingDropData = null;
+
+                if ($data['create']) {
+                    $element = $data['prototype'] ?: $this->format->getFormElement($data['type']);
+                    $parent = null;
+
+                    $created = $this->createElement($element, $e->screenX, $e->screenY, $parent);
+
+                    if ($created) {
+                        $this->callDragDone($created);
+                        $e->consume();
+                        return;
+                    }
+                }
+            }
+
             if ($e->clickCount >= 2) {
                 //$this->leftTabPane->selectEventList();
                 $this->eventListPane->showEventMenu(true);
