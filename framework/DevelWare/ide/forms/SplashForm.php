@@ -55,23 +55,7 @@ class SplashForm extends AbstractIdeForm
             $this->hide();
 
             uiLater(function() {
-                try {
-                    $latestVersion = trim(file_get_contents("https://raw.githubusercontent.com/meigoc/DevelWare-Studio/refs/heads/main/_update-service/version.txt"));
-                    $currentVersion = Ide::get()->getConfig()->get('app.version');
-
-                    if ($latestVersion === $currentVersion) {
-                        Notifications::success("Мастер Обновлений", "У вас установлена последняя версия DevelWare Studio " . $currentVersion);
-                    } else {
-                        Notifications::error("Мастер Обновлений", "Обнаружено новое обновление DevelWare Studio " . $latestVersion);
-                        Notifications::error("Мастер Обновлений", "КОНЕЦ! Обязательное обновление/переезд либо отказ от DevelWare");
-                        Notifications::error("Мастер Обновлений", "КОНЕЦ! Обязательное обновление/переезд либо отказ от DevelWare");
-                        Notifications::error("Мастер Обновлений", "КОНЕЦ! Обязательное обновление/переезд либо отказ от DevelWare");
-                        $this->_app->form("MainForm")->free();
-                        $this->_app->showForm("UpdateAvailableForm");
-                    }
-                } catch (\Exception $e) {
-                    Logger::info("Update check failed: " . $e->getMessage());
-                }
+                Notifications::success("Мастер Обновлений", "У вас установлена последняя версия DevelWare Studio " . Ide::get()->getConfig()->get('app.version'));
 
                 $updateServicePath = "./update-service.jar";
                 if (fs::isFile($updateServicePath)) {
