@@ -41,9 +41,6 @@ class FormElementTypePane
 {
     use EventHandlerBehaviour;
 
-    /** @var string|null */
-    public static $pendingDropData = null;
-
     /**
      * @var UXScrollPane
      */
@@ -475,10 +472,14 @@ class FormElementTypePane
 
 
             $clickPlace = function (UXMouseEvent $e) use ($element) {
-                if ($element instanceof ObjectListEditorItem) {
-                    FormElementTypePane::$pendingDropData = Json::encode(['prototype' => $element->value, 'create' => true]);
-                } else {
-                    FormElementTypePane::$pendingDropData = Json::encode(['type' => reflect::typeOf($element), 'create' => true]);
+                $editor = ide\systems\FileSystem::getSelectedEditor();
+
+                if ($editor instanceof ide\editors\FormEditor) {
+                    if ($element instanceof ObjectListEditorItem) {
+                        $editor->createElement($element->value, -1, -1, null);
+                    } else {
+                        $editor->createElement(reflect::typeOf($element), -1, -1, null);
+                    }
                 }
             };
 
