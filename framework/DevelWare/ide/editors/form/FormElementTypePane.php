@@ -477,7 +477,7 @@ class FormElementTypePane
                 $editor = FileSystem::getSelectedEditor();
 
                 if ($editor instanceof FormEditor) {
-                    $layout = $editor->layout;
+                    $layout = $editor->getLayout();
                     $screenX = $layout ? $layout->screenX + 100 : 0;
                     $screenY = $layout ? $layout->screenY + 100 : 0;
 
