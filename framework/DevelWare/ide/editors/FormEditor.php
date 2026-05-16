@@ -1981,7 +1981,8 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         foreach ($elements as $element) {
             $btn = new UXButton();
-            $btn->prefSize = [48, 48];
+            $btn->prefWidth = 48;
+            $btn->prefHeight = 48;
             $btn->style = '-fx-cursor: hand; -fx-background-radius: 4px;';
             $btn->tooltipText = $element->getName();
             $icon = Ide::get()->getImage($element->getIcon());
