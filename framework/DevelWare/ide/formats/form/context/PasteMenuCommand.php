@@ -3,6 +3,7 @@ namespace ide\formats\form\context;
 
 use Exception;
 use ide\editors\AbstractEditor;
+use ide\editors\form\FormEditorLeftPaneUi;
 use ide\editors\form\IdeTabPane;
 use ide\editors\FormEditor;
 use ide\editors\menu\AbstractMenuCommand;
@@ -253,7 +254,7 @@ class PasteMenuCommand extends AbstractMenuCommand
 
                 $leftPaneUi = $editor->getLeftPaneUi();
 
-                if ($leftPaneUi instanceof IdeTabPane) {
+                if ($leftPaneUi instanceof IdeTabPane || $leftPaneUi instanceof FormEditorLeftPaneUi) {
                     $leftPaneUi->refreshObjectTreeList();
                 }
 

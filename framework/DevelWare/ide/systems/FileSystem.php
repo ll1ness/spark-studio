@@ -2,6 +2,7 @@
 namespace ide\systems;
 
 use ide\editors\AbstractEditor;
+use ide\editors\form\FormEditorLeftPaneUi;
 use ide\editors\form\IdeTabPane;
 use ide\editors\menu\ContextMenu;
 use ide\forms\MainForm;
@@ -356,7 +357,7 @@ class FileSystem
         if ($leftPaneUi = $editor->makeLeftPaneUi()) {
             $editor->setLeftPaneUi($leftPaneUi);
 
-            if ($leftPaneUi instanceof IdeTabPane) {
+            if ($leftPaneUi instanceof IdeTabPane || $leftPaneUi instanceof FormEditorLeftPaneUi) {
                 $leftPaneUi = $leftPaneUi->makeUi();
             }
 
