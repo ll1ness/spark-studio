@@ -1,0 +1,526 @@
+/* ============================================
+   TechOne UI — JavaFX Theme
+   Based on TechOne UI design system
+   ============================================ */
+
+@font-face {
+    src: url("/.theme/techone/cartoon.ttf");
+}
+
+@font-face {
+    src: url("/.theme/techone/notes.ttf");
+}
+
+.root {
+    -fx-font-family: 'TechOnCartoon', 'Courier New', monospace;
+
+    -fx-base: #0c0c0c;
+    -fx-background: #030303;
+    -fx-background-color: -fx-background;
+
+    -fx-font-color: #f0f0f0;
+    -fx-text-base-color: -fx-font-color;
+    -fx-text-fill: -fx-font-color;
+
+    -fx-hover: #1a1a1a;
+    -fx-pressed-base: #1a1a1a;
+    -fx-hover-base: derive(#0c0c0c, 10%);
+
+    -fx-focus-color: #f0f0f0;
+    -fx-faint-focus-color: rgba(240, 240, 240, 0.15);
+
+    -fx-control-inner-background: #0a0a0a;
+    -fx-control-inner-background-alt: derive(#0a0a0a, 4%);
+
+    -fx-default-button: #f0f0f0;
+
+    -fx-color: -fx-base;
+    -fx-accent: #f0f0f0;
+
+    -fx-green: #3D747A;
+    -fx-blue: #87bed3;
+    -fx-dark-blue: #2C5260;
+    -fx-red: #ff3333;
+    -fx-yellow: #f9a300;
+    -fx-lime: #7F7E43;
+
+    -fx-lighting-yellow: #44413c;
+    -fx-lighting-green: #3f443c;
+    -fx-lighting-blue: #3c3f44;
+    -fx-lighting-err: #443c3c;
+    -fx-lighting-acc: -fx-accent;
+    -fx-lighting-hover: derive(#0c0c0c, 13%);
+
+    -fx-box-border: #1a1a1a;
+    -fx-text-box-border: #2a2a2a;
+    -fx-body-color: #0c0c0c;
+    -fx-outer-border: #1a1a1a;
+    -fx-inner-border: derive(#0c0c0c, 8%);
+
+    -fx-selection-bar: -fx-hover;
+    -fx-selection-bar-non-focused: -fx-hover;
+    -fx-selection-bar-text: -fx-accent;
+}
+
+.menu-bar {
+    -fx-border-width: 0 0 1px 0;
+    -fx-pref-height: 35px;
+    -fx-padding: 0 0.5em;
+    -fx-alignment: center;
+    -fx-background-color: #0a0a0a;
+    -fx-border-color: #1a1a1a;
+    -fx-font-family: 'TechOnCartoon', 'Courier New', monospace;
+}
+
+.menu-bar .menu {
+    -fx-text-fill: #f0f0f0;
+    -fx-alignment: center;
+    -fx-background-radius: 4px;
+    -fx-padding: 0 0.8em;
+}
+
+.menu-bar .menu-button {
+    -fx-text-fill: #f0f0f0;
+    -fx-background-radius: 4px;
+    -fx-font-size: 13px;
+    -fx-padding: 0.4em 0.8em;
+    -fx-alignment: center;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-font-family: 'TechOnCartoon', 'Courier New', monospace;
+    -fx-letter-spacing: 0.5px;
+}
+
+.menu-bar .menu-button:hover {
+    -fx-background-color: #1a1a1a;
+}
+
+.menu-bar .menu-button:pressed {
+    -fx-background-color: #2a2a2a;
+}
+
+.menu-bar .menu-item {
+    -fx-text-fill: #f0f0f0;
+    -fx-background-radius: 4px;
+    -fx-padding: 0.4em 0.8em;
+    -fx-font-size: 13px;
+    -fx-alignment: center;
+    -fx-background-color: transparent;
+}
+
+.menu-bar .menu-item:hover {
+    -fx-background-color: #1a1a1a;
+}
+
+.menu-bar .menu-item:selected {
+    -fx-background-color: #2a2a2a;
+}
+
+.menu-bar .menu .arrow {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-text-fill: #a0a0a0;
+}
+
+.button {
+    -fx-cursor: hand;
+    -fx-font-family: 'TechOnCartoon', 'Courier New', monospace;
+    -fx-text-fill: #f0f0f0;
+    -fx-background-color: transparent;
+    -fx-border-color: #1a1a1a;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 18px;
+    -fx-font-size: 13px;
+    -fx-letter-spacing: 0.5px;
+    -fx-text-transform: uppercase;
+}
+
+.button:hover {
+    -fx-border-color: #f0f0f0;
+    -fx-effect: dropshadow(gaussian, rgba(240, 240, 240, 0.03), 12, 0, 0, 4);
+}
+
+.button:pressed {
+    -fx-translate-y: 1px;
+}
+
+.button:default {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #030303;
+    -fx-border-color: #f0f0f0;
+}
+
+.button:default:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: #f0f0f0;
+}
+
+.button:disabled {
+    -fx-opacity: 0.3;
+}
+
+.tab-pane .tab,
+.dn-file-tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #1a1a1a;
+    -fx-background-radius: 4px 4px 0 0;
+    -fx-padding: 6px 14px;
+}
+
+.tab-pane .tab:selected,
+.dn-file-tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: #0c0c0c;
+    -fx-border-color: #2a2a2a #2a2a2a transparent #2a2a2a;
+}
+
+.tab-pane .tab:selected > .tab-container *,
+.dn-file-tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label {
+    -fx-text-fill: #f0f0f0;
+}
+
+.tab-pane .tab-header-area {
+    -fx-background-color: #030303;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: #030303;
+}
+
+.label {
+    -fx-text-fill: #f0f0f0;
+    -fx-font-family: 'TechOnCartoon', 'Courier New', monospace;
+}
+
+.scroll-pane {
+    -fx-background-color: #030303;
+    -fx-border-color: #1a1a1a;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #030303;
+}
+
+.scroll-bar {
+    -fx-background-color: #0a0a0a;
+    -fx-background-radius: 2px;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #2a2a2a;
+    -fx-background-radius: 2px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #3a3a3a;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+}
+
+.text-field, .text-area {
+    -fx-background-color: #0a0a0a;
+    -fx-border-color: #2a2a2a;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-text-fill: #f0f0f0;
+    -fx-font-family: 'TechOnCartoon', 'Courier New', monospace;
+    -fx-prompt-text-fill: #a0a0a0;
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-border-color: #f0f0f0;
+}
+
+.list-view {
+    -fx-background-color: #030303;
+    -fx-border-color: #1a1a1a;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #f0f0f0;
+    -fx-padding: 6px 12px;
+}
+
+.list-view .list-cell:filled:selected {
+    -fx-background-color: #1a1a1a;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: #0c0c0c;
+}
+
+.table-view {
+    -fx-background-color: #030303;
+    -fx-border-color: #1a1a1a;
+}
+
+.table-view .column-header {
+    -fx-background-color: #0a0a0a;
+    -fx-border-color: #1a1a1a;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #f0f0f0;
+}
+
+.table-row-cell {
+    -fx-background-color: #030303;
+    -fx-text-fill: #f0f0f0;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #1a1a1a;
+}
+
+.split-pane {
+    -fx-background-color: #030303;
+    -fx-border-color: #1a1a1a;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: #1a1a1a;
+    -fx-padding: 0 1px;
+}
+
+.flow-list-view {
+    -fx-background-color: #030303;
+    -fx-border-color: #1a1a1a;
+}
+
+.flow-list-view .list-cell:selected {
+    -fx-background-color: #1a1a1a;
+}
+
+.flow-list-view .list-cell:hover {
+    -fx-border-color: #2a2a2a;
+}
+
+.flow-list-view .list-cell:dragged {
+    -fx-border-color: #f0f0f0;
+}
+
+.menu * {
+    -fx-background-color: #030303;
+}
+
+.menu .label {
+    -fx-background-color: transparent;
+}
+
+.menu:hover * {
+    -fx-background-color: #0c0c0c;
+}
+
+.button.flat-button {
+    -fx-text-fill: #f0f0f0;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.button.flat-button:hover {
+    -fx-background-color: #1a1a1a;
+}
+
+#x-preloader {
+    -fx-background-color: #030303;
+}
+
+.dn-tooltip-error {
+    -fx-background-color: #ff3333;
+    -fx-text-fill: #030303;
+}
+
+#syncPane, #need-auth-pane, #need-auth-pane > * {
+    -fx-background-color: #030303;
+}
+
+#designer-layout {
+    -fx-border-color: #1a1a1a;
+    -fx-background-color: #030303;
+}
+
+.scroll-pane.dn-mosaic-background > .viewport {
+    -fx-background-color: #0c0c0c;
+    -fx-background-image: url("/.data/img/transparent-dark.png");
+    -fx-background-repeat: repeat;
+}
+
+.modules-editor {
+    -fx-control-inner-background: #2C5260;
+}
+
+.property-group, .property-group * {
+    -fx-text-fill: #f0f0f0;
+}
+
+.settings-group {
+    -fx-background-color: #0a0a0a;
+}
+
+.dn-autocomplete {
+    -fx-border-width: 1px;
+    -fx-border-color: #2a2a2a;
+    -fx-background-color: #0c0c0c;
+    -fx-padding: 8px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 6, 0, 0, 3);
+}
+
+.dn-autocomplete-description {
+    -fx-font-family: 'TechOnCartoon', 'Courier New', monospace;
+    -fx-font-size: 13px;
+    -fx-background-color: #0c0c0c;
+    -fx-padding: 16px;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-border-color: #2a2a2a;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0, 0, 3);
+}
+
+.dn-autocomplete-description .title {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #f0f0f0;
+}
+
+.dn-autocomplete-description .description {
+    -fx-font-size: 13px;
+    -fx-text-fill: #a0a0a0;
+}
+
+.dn-console-list {
+    -fx-background-color: #030303;
+    -fx-text-fill: #f0f0f0;
+    -fx-font-family: 'TechOnCartoon', 'Courier New', monospace;
+    -fx-font-size: 13px;
+    -fx-padding: 10px;
+    -fx-border-color: #1a1a1a;
+    -fx-border-width: 1px;
+}
+
+.progress-bar {
+    -fx-background-color: #1a1a1a;
+    -fx-background-radius: 2px;
+}
+
+.progress-bar .bar {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 2px;
+}
+
+.tooltip {
+    -fx-background-color: #0c0c0c;
+    -fx-text-fill: #f0f0f0;
+    -fx-border-color: #2a2a2a;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-family: 'TechOnCartoon', 'Courier New', monospace;
+    -fx-font-size: 12px;
+    -fx-padding: 6px 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0, 0, 2);
+}
+
+.check-box {
+    -fx-text-fill: #f0f0f0;
+}
+
+.check-box .box {
+    -fx-background-color: #0a0a0a;
+    -fx-border-color: #2a2a2a;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #f0f0f0;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #030303;
+}
+
+.radio-button {
+    -fx-text-fill: #f0f0f0;
+}
+
+.radio-button .radio {
+    -fx-background-color: #0a0a0a;
+    -fx-border-color: #2a2a2a;
+}
+
+.radio-button:selected .radio {
+    -fx-background-color: #f0f0f0;
+}
+
+.radio-button:selected .dot {
+    -fx-background-color: #030303;
+}
+
+.combo-box {
+    -fx-background-color: #0a0a0a;
+    -fx-border-color: #2a2a2a;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-text-fill: #f0f0f0;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #f0f0f0;
+}
+
+.slider .track {
+    -fx-background-color: #1a1a1a;
+}
+
+.slider .thumb {
+    -fx-background-color: #f0f0f0;
+}
+
+.hyperlink {
+    -fx-text-fill: #f0f0f0;
+    -fx-border-color: transparent;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #a0a0a0;
+}
+
+.titled-pane {
+    -fx-text-fill: #f0f0f0;
+}
+
+.titled-pane .title {
+    -fx-background-color: #0a0a0a;
+    -fx-border-color: #1a1a1a;
+}
+
+.titled-pane .content {
+    -fx-background-color: #030303;
+    -fx-border-color: #1a1a1a;
+}
+
+.alert {
+    -fx-background-color: #0c0c0c;
+}
+
+.alert .header-panel {
+    -fx-background-color: #030303;
+}
+
+.alert .content {
+    -fx-text-fill: #f0f0f0;
+}
+
+.dialog-pane {
+    -fx-background-color: #0c0c0c;
+    -fx-border-color: #2a2a2a;
+    -fx-border-width: 1px;
+}

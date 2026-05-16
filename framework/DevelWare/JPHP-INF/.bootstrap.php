@@ -7,6 +7,8 @@ use ide\IdeClassLoader;
 use ide\Logger;
 use ide\systems\IdeSystem;
 use php\gui\UXDialog;
+use php\gui\text\UXFont;
+use php\io\Stream;
 use php\lang\System;
 
 $cache = !System::getProperty('develnext.noCodeCache');
@@ -21,8 +23,13 @@ if (!IdeSystem::isDevelopment()) {
 }
 
 $app = new Ide();
+
+UXFont::load(Stream::of('res://.theme/techone/cartoon.ttf'), 14);
+UXFont::load(Stream::of('res://.theme/techone/notes.ttf'), 14);
+
 $app->addStyle('/.theme/style.css');
 $app->addStyle('/.theme/custom.css');
+$app->addStyle('/.theme/techone-fx.css');
 $app->addStyle('/.theme/ASC.css');
 
 $app->launch();
