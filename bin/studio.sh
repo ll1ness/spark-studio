@@ -52,6 +52,7 @@ if [ ! -f "$NGRAB_SO" ]; then
 fi
 if [ -f "$NGRAB_SO" ]; then
     export LD_PRELOAD="$NGRAB_SO:$LD_PRELOAD"
+    export X11_NOGRAB_LOG=1
 fi
 
 exec "$JAVA_HOME/bin/java" $JAVA_OPTS -cp "$CP" org.develnext.jphp.ext.javafx.FXLauncher "$@" >"$LOG_DIR/output.log" 2>"$LOG_DIR/error.log"
