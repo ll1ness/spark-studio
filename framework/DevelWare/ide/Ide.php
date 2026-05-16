@@ -1693,7 +1693,11 @@ class Ide extends Application
      */
     protected function handleArgs($argv)
     {
-        $arg = $argv[1];
+        $arg = $argv[1] ?? null;
+
+        if ($arg === null) {
+            return false;
+        }
 
         if (str::startsWith($arg, 'develnext://')) {
             $arg = str::sub($arg, str::length('develnext://'));

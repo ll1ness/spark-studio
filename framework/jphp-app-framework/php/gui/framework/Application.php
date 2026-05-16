@@ -614,18 +614,27 @@ public function __construct($configPath = null)
             $this->launched = true;
 
             $startMain = function () use ($mainFormClass, $showMainForm, $after) {
-                $this->mainForm = $mainFormClass ? $this->getForm($mainFormClass) : null;
+                try {
+                    $this->mainForm = $mainFormClass ? $this->getForm($mainFormClass) : null;
 
-                if ($showMainForm && $this->mainForm) {
-                    $this->mainForm->show();
-                }
+                    if ($showMainForm && $this->mainForm) {
+                        $this->mainForm->show();
+                    }
 
-                if ($after) {
-                    $after();
-                }
+                    if ($after) {
+                        $after();
+                    }
 
-                if (Stream::exists('res://.debug/bootstrap.php')) {
-                    include 'res://.debug/bootstrap.php';
+                    if (Stream::exists('res://.debug/bootstrap.php')) {
+                        include 'res://.debug/bootstrap.php';
+                    }
+                } catch (\Exception $e) {
+                    Logger::error("CRASH: " . $e->getMessage());
+                    Logger::error("File: " . $e->getFile() . ":" . $e->getLine());
+                    Logger::error("Trace: " . $e->getTraceAsString());
+                    Stream::putContents(getenv('HOME') . '/.DevelNext/crash.log',
+                        "CRASH: " . $e->getMessage() . "\nFile: " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString());
+                    throw $e;
                 }
 
                 Logger::debug("Application start is done.");

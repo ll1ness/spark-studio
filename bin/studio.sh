@@ -47,4 +47,4 @@ mkdir -p "$LOG_DIR"
 
 rm -rf "$HOME/.DevelNext/cache/bytecode_v1"
 
-exec "$JAVA_HOME/bin/java" $JAVA_OPTS -cp "$CP" org.develnext.jphp.ext.javafx.FXLauncher "$@" 2>"$LOG_DIR/error.log"
+exec "$JAVA_HOME/bin/java" $JAVA_OPTS -cp "$CP" org.develnext.jphp.ext.javafx.FXLauncher "$@" >"$LOG_DIR/output.log" 2>"$LOG_DIR/error.log"
