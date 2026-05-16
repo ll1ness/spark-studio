@@ -45,6 +45,6 @@ JAVA_HOME="$APP_HOME/bin/jre"
 LOG_DIR="$APP_HOME/bin/logs"
 mkdir -p "$LOG_DIR"
 
-rm -rf "$HOME/.DevelNext/cache/bytecode_v1"
+rm -rf "$APP_HOME/bin/cache/bytecode_v1"
 
 exec "$JAVA_HOME/bin/java" $JAVA_OPTS -cp "$CP" org.develnext.jphp.ext.javafx.FXLauncher "$@" >"$LOG_DIR/output.log" 2>"$LOG_DIR/error.log"

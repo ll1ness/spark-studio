@@ -632,7 +632,7 @@ public function __construct($configPath = null)
                     Logger::error("CRASH: " . $e->getMessage());
                     Logger::error("File: " . $e->getFile() . ":" . $e->getLine());
                     Logger::error("Trace: " . $e->getTraceAsString());
-                    Stream::putContents(getenv('HOME') . '/.DevelNext/crash.log',
+                    Stream::putContents(System::getProperty('develnext.path') . '/bin/logs/crash.log',
                         "CRASH: " . $e->getMessage() . "\nFile: " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString());
                     throw $e;
                 }
