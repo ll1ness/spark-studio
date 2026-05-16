@@ -414,14 +414,17 @@ class Ide extends Application
      */
     public function sendError($e, $context = 'global')
     {
-        if (Ide::service()->canPrivate() && Ide::accountManager()->isAuthorized()) {
-            try {
-                Ide::service()->ide()->sendErrorAsync($e, function () {
+        try {
+            if (Ide::service()->canPrivate() && Ide::accountManager()->isAuthorized()) {
+                try {
+                    Ide::service()->ide()->sendErrorAsync($e, function () {
 
-                });
-            } catch (\Exception $e) {
-                echo "Unable to send error, exception = {$e->getMessage()}\n";
+                    });
+                } catch (\Exception $e) {
+                    echo "Unable to send error, exception = {$e->getMessage()}\n";
+                }
             }
+        } catch (\Throwable $ignore) {
         }
     }
 
