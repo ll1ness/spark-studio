@@ -2,10 +2,12 @@
 namespace ide\editors\form;
 
 use ide\editors\common\ObjectListEditorItem;
+use ide\editors\FormEditor;
 use ide\editors\menu\ContextMenu;
 use ide\formats\form\AbstractFormElement;
 use ide\Ide;
 use ide\Logger;
+use ide\systems\FileSystem;
 use ide\misc\EventHandlerBehaviour;
 use ide\scripts\AbstractScriptComponent;
 use ide\utils\Json;
@@ -472,9 +474,9 @@ class FormElementTypePane
 
 
             $clickPlace = function (UXMouseEvent $e) use ($element) {
-                $editor = ide\systems\FileSystem::getSelectedEditor();
+                $editor = FileSystem::getSelectedEditor();
 
-                if ($editor instanceof ide\editors\FormEditor) {
+                if ($editor instanceof FormEditor) {
                     if ($element instanceof ObjectListEditorItem) {
                         $editor->createElement($element->value, -1, -1, null);
                     } else {
