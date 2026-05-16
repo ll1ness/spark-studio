@@ -48,7 +48,7 @@ rm -rf "$HOME/.DevelNext/cache/bytecode_v1" "$APP_HOME/bin/cache/bytecode_v1"
 
 NGRAB_SO="$APP_HOME/bin/x11-nograb.so"
 if [ ! -f "$NGRAB_SO" ]; then
-    gcc -shared -fPIC -o "$NGRAB_SO" "$APP_HOME/bin/x11-nograb.c" -lX11 -ldl 2>/dev/null
+    gcc -shared -fPIC -o "$NGRAB_SO" "$APP_HOME/bin/x11-nograb.c" -lX11 -lXtst -ldl 2>/dev/null
 fi
 if [ -f "$NGRAB_SO" ]; then
     export LD_PRELOAD="$NGRAB_SO:$LD_PRELOAD"
