@@ -2,8 +2,6 @@
 namespace ide\editors\form;
 
 use ide\misc\EventHandlerBehaviour;
-use php\gui\layout\UXAnchorPane;
-use php\gui\layout\UXScrollPane;
 use php\gui\layout\UXVBox;
 use php\gui\UXNode;
 
@@ -45,6 +43,7 @@ class FormEditorLeftPaneUi
     public function setEventListPane(IdeEventListPane $pane)
     {
         $this->eventListPane = $pane;
+        $pane->makeUi();
     }
 
     public function setBehaviourPane(IdeBehaviourPane $pane)
