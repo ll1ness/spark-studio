@@ -1,0 +1,41 @@
+{
+  "props": [],
+  "components": {
+    "timerAlt": {
+      "type": "script\\TimerScript",
+      "x": 624,
+      "y": 400,
+      "props": {
+        "interval": "1000",
+        "repeatable": "1",
+        "autoStart": false
+      }
+    },
+    "jdownloader": {
+      "type": "bundle\\jurl\\jURLDownloader",
+      "x": 496,
+      "y": 320,
+      "props": {
+        "threadCount": "4",
+        "savePath": "./",
+        "selectSavePath": "0",
+        "fieldUrl": "edit2",
+        "labelFileName": "dname",
+        "progressBar": "progressBar",
+        "labelProgress": "dprocent",
+        "labelDownloaded": "downloaded",
+        "labelTotal": "dmax"
+      }
+    },
+    "timer": {
+      "type": "script\\TimerScript",
+      "x": 672,
+      "y": 176,
+      "props": {
+        "interval": "1000",
+        "repeatable": "1",
+        "autoStart": false
+      }
+    }
+  }
+}

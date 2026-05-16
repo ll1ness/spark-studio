@@ -1,0 +1,575 @@
+/*
+ * Copyright (c) 2014, Matthias Meidinger
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS AND IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those
+ * of the authors and should not be interpreted as representing official policies,
+ * either expressed or implied, of the FreeBSD Project.
+ */
+
+.win7root {
+    -fx-text-base-color: black;
+    -fx-text-fill: -fx-text-base-color;
+
+    /* This is the default Windows-font */
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-font-size: 10.5;
+
+    /* For debugging purposes */
+    -fx-background-color: rgb(240,240,240);
+
+    -fx-disabled-opacity: 0.6;
+}
+
+.win7text {
+    -fx-font-smoothing-type: lcd;
+}
+
+/* disabled controls */
+.win7button:disabled,
+.winh7toggle-button:disabled,
+.win7radio-button:disabled,
+.win7check-box:disabled,
+.win7hyperlink:disabled,
+.win7menu-button:disabled,
+.win7split-menu-button:disabled,
+.win7slider:disabled,
+.win7scroll-pane:disabled,
+.win7progress-bar:disabled,
+.win7progress-indicator:disabled,
+.win7text-input:disabled,
+.win7choice-box:disabled,
+.win7combo-box-base:disabled,
+.win7list-view:disabled,
+.win7tree-view:disabled,
+.win7table-view:disabled,
+.win7tree-table-view:disabled,
+.win7tab-pane:disabled,
+.win7tab-pane > .tab-header-area > .headers-region > .tab:disabled {
+    -fx-opacity: -fx-disabled-opacity;
+}
+
+/* mnemonics */
+.win7button:show-mnemonics > .mnemonic-underline,
+.win7toggle-button:show-mnemonics > .mnemonic-underline,
+.win7radio-button:show-mnemonics > .mnemonic-underline,
+.win7check-box:show-mnemonics > .mnemonic-underline,
+.win7hyperlink:show-mnemonics > .mnemonic-underline,
+.win7split-menu-button:show-mnemonics > .mnemonic-underline,
+.win7menu-button:show-mnemonics > .mnemonic-underline {
+    -fx-stroke: -fx-text-base-color;
+}
+
+.mnemonic-underline {
+    -fx-stroke: transparent;
+}
+
+/********************************************
+*                                           *
+*       Button & Default-Button             *
+*                                           *
+*********************************************/
+.win7button-focus-border {
+    -fx-stroke: black;
+    -fx-stroke-dash-array: 1;
+    -fx-stroke-width: 1px;
+    -fx-stroke-line-cap: butt;
+    -fx-stroke-type: inside;
+}
+
+.win7button {
+    -fx-skin: "org.aerofx.controls.skin.AeroButtonSkin";
+}
+
+.win7button, .win7toggle-button {
+    -fx-alignment: center;
+    -fx-background-color:
+        rgb(112,112,112),
+        linear-gradient(rgb(252,252,252), rgb(252,252,252)),
+        linear-gradient(rgb(242,242,242) 0%, rgb(235,235,235) 49%, rgb(221,221,221) 50%, rgb(207,207,207) 100%);
+    -fx-background-insets: 0,1,2;
+    -fx-background-radius: 3,2,1;
+    -fx-padding: 4 4 3 3;
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.win7button:hover {
+    -fx-background-color:
+        rgb(60,127,177),
+        linear-gradient(rgb(250,253,254),rgb(250,253,254)),
+        linear-gradient(rgb(234, 246, 253) 0%, rgb(217, 240, 252) 49%, rgb(190, 230, 253) 50%, rgb(167, 217, 245) 100%);
+}
+
+.win7button:default {
+    -fx-background-color:
+        rgb(60,127,177),
+        linear-gradient(rgb(47,212,255), rgb(47,212,255)),
+        linear-gradient(rgb(234,246,252) 0%, rgb(228,243,252) 49%, rgb(202,233,250) 50%, rgb(182,222,245) 100%);
+}
+
+.win7button:armed, .win7toggle-button:armed {
+    -fx-background-color:
+        rgb(44,98,139),
+        linear-gradient(rgb(158,176,186), rgb(158,176,186)),
+        linear-gradient(rgb(229,244,252) 0%, rgb(196,229,246) 49%, rgb(152,209,239) 50%, rgb(104,179,219) 100%);
+}
+
+/********************************************
+*                                           *
+*       TextField                           *
+*                                           *
+*********************************************/
+.win7text-field {
+   /* If four values are used, the sides are top, right, bottom, left. */
+   -fx-border-color: rgb(170,170,178) rgb(218,220,230) rgb(226,231,239) rgb(226,224,234);
+   -fx-background-color: rgb(255,255,255);
+   -fx-padding: 0.0em;
+   -fx-cursor: text;
+   -fx-effect: null;
+   -fx-pref-height: 20px;
+}
+
+.win7text-field:focused {
+    -fx-border-color: rgb(61,123,173) rgb(164,201,227) rgb(183,217,237) rgb(181,207,231);
+    /* Remove the blue glow on focus */
+    -fx-background-insets: 0, 0, 0, 0;
+    -fx-effect: null;
+}
+
+/********************************************
+*                                           *
+*       CheckBox                            *
+*                                           *
+*********************************************/
+.win7check-box-focus-border {
+    -fx-stroke: black;
+    -fx-stroke-dash-array: 1;
+    -fx-stroke-width: 1px;
+    -fx-stroke-line-cap: butt;
+    -fx-stroke-type: inside;
+}
+
+/* TODO: Style the mark by using a fx-shape */
+.win7check-box {
+    -fx-skin: "org.aerofx.controls.skin.AeroCheckBoxSkin";
+    -fx-label-padding: 0.0em 0.0em 0.0em 0.05em;
+}
+
+.win7check-box > .box {
+    -fx-padding: 0.7em;
+    -fx-background-insets: 0, 2, 4;
+    -fx-border-color: rgb(140.0, 141.0, 141.0);
+    -fx-background-color:
+        rgb(244,244,244),
+        linear-gradient(to bottom right, rgb(174,179,185), rgb(233,233,234)),
+        linear-gradient(to bottom right, rgb(203,207,213), rgb(246,246,246));
+    -fx-scale-x: 0.75;
+    -fx-scale-y: 0.75;
+}
+
+.win7check-box:hover > .box {
+    -fx-border-color: rgb(85,134,163);
+    -fx-background-color:
+        rgb(222,249,250),
+        linear-gradient(to bottom right, rgb(121,198,249), rgb(207,236,253)),
+        linear-gradient(to bottom right, rgb(177,223,253), rgb(231,247,254));
+}
+
+.win7check-box:pressed > .box {
+    -fx-border-color: rgb(44,98,139);
+    -fx-background-color:
+        rgb(194,228,246),
+        linear-gradient(to bottom right, rgb(94,182,247), rgb(194,228,246)),
+        linear-gradient(to bottom right, rgb(157,213,252), rgb(224,244,254));
+}
+
+.win7check-box:disabled > .box {
+    -fx-background-color:
+        linear-gradient(rgb(239.0, 239.0, 239.0), rgb(250.0, 250.0, 250.0));
+}
+
+.win7check-box:selected > .box {
+    -fx-background-color:
+        rgb(15, 96, 143),
+        linear-gradient(to bottom right, rgb(102, 182, 240), rgb(182, 211, 242)),
+        linear-gradient(to bottom right, rgb(143, 205, 237), rgb(209, 233, 248));
+    -fx-border-color: rgb(15, 96, 143);
+}
+
+.win7check-box:selected:hover > .box {
+    -fx-border-color: rgb(13, 80, 117);
+    -fx-background-color:
+        rgb(26, 114, 164),
+        linear-gradient(to bottom right, rgb(87, 173, 228), rgb(139, 197, 227)),
+        linear-gradient(to bottom right, rgb(96, 170, 219), rgb(167, 217, 235));
+}
+
+/********************************************
+*                                           *
+*       RadioButton                         *
+*                                           *
+*********************************************/
+.win7radio-button-focus-border {
+    -fx-stroke: black;
+    -fx-stroke-dash-array: 1;
+    -fx-stroke-width: 1px;
+    -fx-stroke-line-cap: butt;
+    -fx-stroke-type: inside;
+}
+
+/* TODO: Style the mark by using a fx-shape */
+.win7radio-button {
+    -fx-skin: "org.aerofx.controls.skin.AeroRadioButtonSkin";
+    -fx-label-padding: 0.0em 0.0em 0.0em 0.05em;
+}
+
+.win7radio-button > .box {
+    -fx-padding: 0.7em;
+    -fx-background-color:
+        rgb(244,244,244),
+        linear-gradient(to bottom right, rgb(174,179,185), rgb(233,233,234)),
+        linear-gradient(to bottom right, rgb(203,207,213), rgb(246,246,246));
+    -fx-border-color: rgb(140, 141, 141);
+    -fx-scale-x: 0.75;
+    -fx-scale-y: 0.75;
+}
+
+.win7radio-button:hover > .box {
+    -fx-border-color: rgb(85,134,163);
+    -fx-background-color:
+        rgb(222,249,250),
+        linear-gradient(to bottom right, rgb(121,198,249), rgb(207,236,253)),
+        linear-gradient(to bottom right, rgb(177,223,253), rgb(231,247,254));
+}
+
+.win7radio-button:pressed > .box {
+    -fx-border-color: rgb(44,98,139);
+    -fx-background-color:
+        rgb(194,228,246),
+        linear-gradient(to bottom right, rgb(94,182,247), rgb(194,228,246)),
+        linear-gradient(to bottom right, rgb(157,213,252), rgb(224,244,254));
+}
+
+.win7radio-button:disabled > .box {
+    -fx-background-color:
+        linear-gradient(rgb(239.0, 239.0, 239.0), rgb(250.0, 250.0, 250.0));
+}
+
+.win7radio-button:selected > .box {
+    -fx-background-color:
+        rgb(15, 96, 143),
+        linear-gradient(to bottom right, rgb(102, 182, 240), rgb(182, 211, 242)),
+        linear-gradient(to bottom right, rgb(143, 205, 237), rgb(209, 233, 248));
+    -fx-border-color: rgb(15, 96, 143);
+}
+
+.win7radio-button:selected:hover > .box {
+    -fx-border-color: rgb(13, 80, 117);
+    -fx-background-color:
+        rgb(26, 114, 164),
+        linear-gradient(to bottom right, rgb(87, 173, 228), rgb(139, 197, 227)),
+        linear-gradient(to bottom right, rgb(96, 170, 219), rgb(167, 217, 235));
+}
+
+/********************************************
+*                                           *
+*       Separator                           *
+*                                           *
+*********************************************/
+.win7separator {
+    -fx-background-color: rgb(218,220,226);
+}
+
+/********************************************
+*                                           *
+*       TextArea                            *
+*                                           *
+*********************************************/
+.win7text-area {
+    -fx-border-color: rgb(170,170,178) rgb(218,220,230) rgb(226,231,239) rgb(226,224,234);
+    -fx-background-color: rgb(255,255,255);
+    -fx-padding: 0.0em;
+    -fx-cursor: text;
+}
+
+.win7text-area:focused {
+    -fx-border-color: rgb(61,123,173) rgb(164,201,227) rgb(183,217,237) rgb(181,207,231);
+}
+
+/********************************************
+*                                           *
+*       Menu                                *
+*                                           *
+*********************************************/
+.win7menu-button {
+    -fx-background-color: rgb(250,250,250);
+    -fx-border-color: rgb(214,214,219);
+}
+
+.win7menu-button:hover {
+    -fx-background-color: rgb(237,237,237);
+}
+
+/********************************************
+*                                           *
+*       TabPane                             *
+*                                           *
+*********************************************/
+.win7tab-pane {
+    -fx-background-color: rgb(255,255,255);
+    -fx-border-color: rgb(214,214,219);
+    -fx-padding: 0;
+}
+
+.win7tab-pane > .tab-header-area > .headers-region > .tab:focused {
+    -fx-background-color: rgb(237,237,237);
+}
+
+@font-face {
+    font-family: 'Noto Color Emoji';
+    src: url('other/fonts/NotoColorEmoji-Regular.ttf');
+}
+
+.strikethrough .text {
+    -fx-strikethrough: true;
+}
+
+.dw-bl-lighten {
+    -fx-blend-mode: lighten;
+}
+
+.dw-bl-screen {
+    -fx-blend-mode: screen;
+}
+
+.dw-bl-overlay {
+    -fx-blend-mode: overlay;
+}
+
+.dw-bl-hardlight {
+    -fx-blend-mode: hard-light;
+}
+
+.dw-bl-softlight {
+    -fx-blend-mode: soft-light;
+}
+
+.dw-bl-difference {
+    -fx-blend-mode: difference;
+}
+
+.dw-bl-exclusion {
+    -fx-blend-mode: exclusion;
+}
+
+.dw-bl-lighten-text .text {
+    -fx-blend-mode: lighten;
+}
+
+.dw-bl-screen-text .text {
+    -fx-blend-mode: screen;
+}
+
+.dw-bl-overlay-text .text {
+    -fx-blend-mode: overlay;
+}
+
+.dw-bl-hardlight-text .text {
+    -fx-blend-mode: hard-light;
+}
+
+.dw-bl-softlight-text .text {
+    -fx-blend-mode: soft-light;
+}
+
+.dw-bl-difference-text .text {
+    -fx-blend-mode: difference;
+}
+
+.dw-bl-exclusion-text .text {
+    -fx-blend-mode: exclusion;
+}
+
+.root {
+    /***************************************************************************
+     *                                                                         *
+     * The main color palette from which the rest of the colors are derived.   *
+     *                                                                         *
+     **************************************************************************/
+
+    /* A light grey that is the base color for objects.  Instead of using
+     * -fx-base directly, the sections in this file will typically use -fx-color.
+     */
+    /*-fx-base: #ececec;*/
+    -fx-accent: #c5c5c5;
+
+    -fx-focus-color: #2788d3;
+    -fx-faint-focus-color: #039ED322;
+
+    -fx-default-button: #1c67b1;
+
+    -fx-body-color: linear-gradient(to bottom,
+                        ladder(
+                                -fx-color,
+                                derive(-fx-color,8%) 85%,
+                                derive(-fx-color,10%) 90%
+                        ),
+                        derive(-fx-color,-3%));
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Hyperlink                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+.hyperlink {
+    -fx-padding: 0; /*0.166667em 0.25em 0.166667em 0.25em;*/ /* 2 3 2 3 */
+    -fx-content-display: LEFT;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+}
+.hyperlink,
+.hyperlink:hover,
+.hyperlink:hover:visited {
+    -fx-text-fill: -fx-default-button;
+}
+.hyperlink:armed,
+.hyperlink:visited,
+.hyperlink:hover:armed {
+    -fx-text-fill: -fx-default-button;
+}
+.hyperlink:hover,
+.hyperlink:hover:visited {
+    -fx-underline: true;
+}
+
+.hyperlink:visited,
+.hyperlink:visited:armed {
+    -fx-underline: false;
+}
+.hyperlink:focused {
+    -fx-border-style: segments(0.166667em, 0.166667em);
+    -fx-border-width: 0px;
+}
+.hyperlink:show-mnemonics > .mnemonic-underline {
+    -fx-stroke: -fx-text-fill;
+}
+
+.flat-button {
+    -fx-cursor: hand;
+}
+
+.tooltip {
+    -fx-font-size: 1em;
+}
+
+.combo-box > .list-cell:hover {
+    -fx-background-insets: 1 -3 1 1, 1 -2 1 1 ;
+    -fx-background-color: gray;
+}
+
+.without-focus, .without-focus:focused {
+    -fx-focus-color: transparent;
+}
+
+.scroll-pane.without-focus {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane.without-focus:focused {
+    -fx-background-insets: 0;
+}
+
+.scroll-pane.without-focus .corner {
+    -fx-background-insets: 0;
+}
+
+.nav {
+   /* -fx-hgap: 5;     */
+}
+
+.nav .nav-item {
+    -fx-padding: 5px 10px;
+}
+
+.nav .nav-item.selected {
+    -fx-font-weight: bold;
+    -fx-background-color: white;
+    -fx-border-color: silver;
+    -fx-border-radius: 3px;
+}
+
+.nav .nav-hint-text {
+    -fx-text-fill: gray;
+    -fx-padding:  0 0 0 10;
+}
+
+.nav .nav-hint-total {
+    -fx-text-fill: gray;
+    -fx-font-weight: bold;
+}
+
+.button, .combo-box-base, .list-view, .text-area, .text-field, .tab-header-area, .tab-pane, .tab-header-background {
+    -fx-background-radius: 2px;
+}
+
+.list-view {
+    -fx-background-radius: 0px;
+}
+
+.scroll-pane {
+    -fx-background-color: -fx-control-inner-background;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane:focused {
+    -fx-background-color: -fx-control-inner-background;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.split-pane:focused,
+.list-view:focused,
+.tree-view:focused,
+.table-view:focused,
+.tree-table-view:focused,
+.html-editor:contains-focus {
+    -fx-background-color: -fx-box-border, -fx-box-border, -fx-control-inner-background;
+    -fx-background-insets: 0, 0, 1;
+    -fx-background-radius: 0, 0, 0;
+}
+
+.text-area > .scroll-pane {
+    -fx-background-color: -fx-box-border, -fx-control-inner-background;
+    -fx-background-insets: 0, 1;
+    -fx-padding: 1;
+}
+
+.text-area:focused > .scroll-pane {
+    -fx-background-insets: -1.4, -0.3, 1;
+    -fx-background-radius: 2, 0, 0;
+    -fx-background-color: -fx-faint-focus-color, -fx-focus-color, -fx-background;
+}

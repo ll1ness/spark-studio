@@ -1,0 +1,6 @@
+bin/logs/
+bin/jre/
+.DevelNext/
+.DS_Store
+Thumbs.db
+*.log

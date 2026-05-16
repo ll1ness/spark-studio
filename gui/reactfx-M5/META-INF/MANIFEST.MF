@@ -1,0 +1,32 @@
+Manifest-Version: 1.0
+Export-Package: org.reactfx;version="2.0.0.M5";uses:="javafx.beans,jav
+ afx.beans.binding,javafx.beans.value,javafx.collections,javafx.concur
+ rent,javafx.event,javafx.scene,javafx.scene.control,javafx.stage,org.
+ reactfx.collection,org.reactfx.util,org.reactfx.value",org.reactfx.co
+ llection;version="2.0.0.M5";uses:="javafx.beans,javafx.beans.value,ja
+ vafx.collections,javafx.scene.control,org.reactfx,org.reactfx.inhibea
+ ns.collection,org.reactfx.util,org.reactfx.value",org.reactfx.inhibea
+ ns;version="2.0.0.M5";uses:="javafx.beans,org.reactfx",org.reactfx.in
+ hibeans.binding;version="2.0.0.M5";uses:="javafx.beans,javafx.beans.b
+ inding,javafx.beans.value,org.reactfx,org.reactfx.inhibeans.value",or
+ g.reactfx.inhibeans.collection;version="2.0.0.M5";uses:="javafx.colle
+ ctions,org.reactfx.inhibeans",org.reactfx.inhibeans.property;version=
+ "2.0.0.M5";uses:="javafx.beans.property,org.reactfx,org.reactfx.inhib
+ eans.value",org.reactfx.inhibeans.value;version="2.0.0.M5";uses:="jav
+ afx.beans.value,org.reactfx,org.reactfx.inhibeans",org.reactfx.util;v
+ ersion="2.0.0.M5";uses:="javafx.animation,javafx.scene.control,org.re
+ actfx.collection",org.reactfx.value;version="2.0.0.M5";uses:="javafx.
+ animation,javafx.beans,javafx.beans.property,javafx.beans.value,javaf
+ x.scene,org.reactfx,org.reactfx.collection,org.reactfx.util"
+Bundle-SymbolicName: org.reactfx
+Bundle-Version: 2.0.0.M5
+Bundle-Name: reactfx
+Bundle-ManifestVersion: 2
+Bnd-LastModified: 1461992362000
+Import-Package: com.sun.javafx.binding,javafx.animation,javafx.applica
+ tion,javafx.beans,javafx.beans.binding,javafx.beans.property,javafx.b
+ eans.value,javafx.collections,javafx.concurrent,javafx.event,javafx.s
+ cene,javafx.scene.control,javafx.stage,javafx.util
+Created-By: 1.8.0_92 (Oracle Corporation)
+Tool: Bnd-2.1.0.20130426-122213
+

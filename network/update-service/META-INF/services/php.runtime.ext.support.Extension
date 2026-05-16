@@ -1,0 +1,14 @@
+org.develnext.jphp.json.JsonExtension
+
+org.develnext.jphp.ext.xml.XmlExtension
+
+org.develnext.jphp.ext.javafx.JavaFXExtension
+
+org.develnext.jphp.ext.gui.desktop.GuiDesktopExtension
+
+org.develnext.jphp.zend.ext.ZendExtension
+
+org.develnext.jphp.ext.javafx.jfoenix.JFoenixExtension
+
+org.develnext.jphp.ext.zip.ZipExtension
+

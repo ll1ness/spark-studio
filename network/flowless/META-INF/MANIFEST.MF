@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Export-Package: org.fxmisc.flowless;version="0.6";uses:="javafx.beans,
+ javafx.beans.property,javafx.collections,javafx.css,javafx.geometry,j
+ avafx.scene,javafx.scene.control,javafx.scene.layout,javafx.scene.tra
+ nsform,org.reactfx.value"
+Bundle-SymbolicName: org.fxmisc.flowless
+Bundle-Version: 0.6
+Bundle-Name: flowless
+Bundle-ManifestVersion: 2
+Bnd-LastModified: 1507872008000
+Import-Package: javafx.application,javafx.beans,javafx.beans.binding,j
+ avafx.beans.property,javafx.beans.value,javafx.collections,javafx.css
+ ,javafx.event,javafx.geometry,javafx.scene,javafx.scene.control,javaf
+ x.scene.input,javafx.scene.layout,javafx.scene.shape,javafx.scene.tra
+ nsform,org.reactfx;version="[2.0,3)",org.reactfx.collection;version="
+ [2.0,3)",org.reactfx.util;version="[2.0,3)",org.reactfx.value;version
+ ="[2.0,3)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Created-By: 1.8.0_144 (Oracle Corporation)
+Tool: Bnd-3.2.0.201605172007
+

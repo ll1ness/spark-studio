@@ -1,0 +1,4 @@
+[classes]
+meigo\forms\MainForm
+meigo\modules\AppModule
+meigo\modules\MainModule

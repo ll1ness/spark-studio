@@ -1,0 +1,22 @@
+<?php
+
+// Generated.
+
+use php\framework\FrameworkPackageLoader;
+use php\gui\framework\Application;
+
+
+
+$packageLoader = new FrameworkPackageLoader();
+$packageLoader->register();
+
+$app = new Application();
+include 'res://.inc/jurl.phb'; 
+
+$app->loadModules(array (
+  0 => 'meigo\modules\AppModule',
+));
+$app->addStyle('/jfoenix-custom.fx.css');
+$app->addStyle('/.theme/style.fx.css');
+$app->launch();
+
