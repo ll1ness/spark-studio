@@ -183,7 +183,9 @@ class MainForm extends AbstractIdeForm
         });
 
         Ide::get()->bind('afterCloseProject', function () use ($tree) {
-            $tree->treeSource->shutdown();
+            if ($tree->treeSource) {
+                $tree->treeSource->shutdown();
+            }
             $tree->treeSource = null;
 
             $this->statusPane->children->clear();
