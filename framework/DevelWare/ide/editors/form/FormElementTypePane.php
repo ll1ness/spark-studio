@@ -474,23 +474,6 @@ class FormElementTypePane
             $fbox->add($smallButton);
 
 
-            $dragDetect = function (UXMouseEvent $e) use ($element) {
-                $dragboard = $e->sender->startDrag(['MOVE']);
-
-                $dragboard->dragView = $e->sender->snapshot();
-
-                //$dragboard->dragViewOffsetX = $dragboard->dragView->width / 2;
-                // $dragboard->dragViewOffsetY = $dragboard->dragView->height / 2;
-
-                if ($element instanceof ObjectListEditorItem) {
-                    $dragboard->string = Json::encode(['prototype' => $element->value, 'create' => true]);
-                } else {
-                    $dragboard->string = Json::encode(['type' => reflect::typeOf($element), 'create' => true]);
-                }
-
-                $e->consume();
-            };
-
             $clickPlace = function (UXMouseEvent $e) use ($element) {
                 if ($element instanceof ObjectListEditorItem) {
                     FormElementTypePane::$pendingDropData = Json::encode(['prototype' => $element->value, 'create' => true]);
@@ -499,8 +482,6 @@ class FormElementTypePane
                 }
             };
 
-            $smallButton->on('dragDetect', $dragDetect);
-            $button->on('dragDetect', $dragDetect);
             $smallButton->on('click', $clickPlace);
             $button->on('click', $clickPlace);
 
