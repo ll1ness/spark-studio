@@ -19,6 +19,7 @@ use ide\editors\form\IdeEventListPane;
 use ide\editors\form\IdeFormFactory;
 use ide\editors\form\IdeObjectTreeList;
 use ide\editors\form\IdePropertiesPane;
+use ide\editors\form\FormEditorLeftPaneUi;
 use ide\editors\form\IdeTabPane;
 use ide\editors\menu\ContextMenu;
 use ide\editors\value\BooleanPropertyEditor;
@@ -30,6 +31,7 @@ use ide\formats\form\AbstractFormElement;
 use ide\formats\form\SourceEventManager;
 use ide\formats\GuiFormFormat;
 use ide\formats\PhpCodeFormat;
+use ide\forms\BehaviourCreateForm;
 use ide\forms\MessageBoxForm;
 use ide\Ide;
 use ide\Logger;
@@ -59,16 +61,19 @@ use php\gui\layout\UXScrollPane;
 use php\gui\layout\UXVBox;
 use php\gui\paint\UXColor;
 use php\gui\UXApplication;
+use php\gui\UXButton;
 use php\gui\UXCustomNode;
 use php\gui\UXData;
 use php\gui\UXForm;
 use php\gui\UXGroup;
 use php\gui\UXLabel;
 use php\gui\UXNode;
+use php\gui\UXPopupWindow;
 use php\gui\UXSplitPane;
 use php\gui\UXTab;
 use php\gui\UXTabPane;
 use php\gui\UXTooltip;
+use php\gui\layout\UXTilePane;
 use php\io\File;
 use php\io\IOException;
 use php\io\Stream;
@@ -85,6 +90,8 @@ use php\util\Flow;
 use php\util\Regex;
 use php\util\SharedStack;
 use timer\AccurateTimer;
+
+use php\desktop\Mouse;
 
 /**
  * Class FormEditor
@@ -1885,7 +1892,6 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $this->elementTypePane->applyConfigure(get_class($this));
 
         $this->prototypeTypePane = $this->makePrototypePane();
-        //$this->behaviourPane = new IdeBehaviourPane($this->behaviourManager);
 
         $designerCodeEditor = new UXAnchorPane();
         $designerCodeEditor->hide();
@@ -1910,60 +1916,47 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         $this->viewerAndEvents->items->remove($designerCodeEditor);
 
-        $scrollPane = new UXScrollPane($this->elementTypePane->getContent());
-        $scrollPane->fitToWidth = true;
-        $scrollPane->maxWidth = 240;
-        $this->elementTypePaneContainer = $scrollPane;
-
-        if ($this->prototypeTypePane) {
-            $typePanes = new UXTabPane();
-            $typePanes->tabClosingPolicy = 'UNAVAILABLE';
-            $typePanes->side = 'LEFT';
-
-            $elementTab = new UXTab();
-            $elementTab->text = 'Объекты';
-            $elementTab->content = $scrollPane;
-
-            $typePanes->tabs->add($elementTab);
-
-            $prototypeTab = new UXTab();
-            $prototypeTab->text = 'Прототипы';
-            $prototypeTab->content = new UXScrollPane($this->prototypeTypePane->getContent());
-            $prototypeTab->content->fitToWidth = true;
-
-            $typePanes->tabs->add($prototypeTab);
-            $scrollPane = $typePanes;
-        }
-
-        UXSplitPane::setResizeWithParent($scrollPane, false);
-
         $actions = $this->makeActionsUi($designPane);
 
         if ($actions) {
-            $wrap = new UXVBox([$actions, $this->viewerAndEvents]);
+            $ui = new UXVBox([$actions, $this->viewerAndEvents]);
             UXVBox::setVgrow($this->viewerAndEvents, 'ALWAYS');
-
-            $split = new UXSplitPane([$wrap, $scrollPane]);
         } else {
-            $split = new UXSplitPane([$this->viewerAndEvents, $scrollPane]);
+            $ui = $this->viewerAndEvents;
         }
-
-        $split->observer('width')->addOnceListener(function ($_, $width) use ($scrollPane, $split) {
-            $split->dividerPositions = [1.0 - (240 / $width)];
-            $scrollPane->maxWidth = -1;
-        });
 
         $this->makeContextMenu();
 
-        return $split;
+        return $ui;
     }
 
     protected function makeContextMenu()
     {
         $this->contextMenu = new ContextMenu($this, $this->format->getContextCommands());
         $this->contextMenu->addSeparator();
+        $this->contextMenu->addCommand(AbstractCommand::makeWithText('Добавить элемент', null, function () {
+            $this->showPalettePopup();
+        }));
+        $this->contextMenu->addSeparator();
         $this->contextMenu->addCommand(AbstractCommand::makeWithText('События объекта', null, function () {
             $this->eventListPane->showEventMenu(true, $this->designer->pickedNode);
+        }));
+        $this->contextMenu->addCommand(AbstractCommand::makeWithText('Добавить поведение', null, function () {
+            if ($this->designer->pickedNode) {
+                $form = new BehaviourCreateForm($this->behaviourManager);
+                $form->alreadyAddedBehaviours = $this->behaviourManager->getBehaviours($this->getNodeId($this->designer->pickedNode));
+                $form->target = $this->designer->pickedNode;
+                if ($form->showDialog()) {
+                    $spec = $form->getResult();
+                    if ($spec) {
+                        $targetId = $this->getNodeId($this->designer->pickedNode);
+                        $spec->make($this->designer->pickedNode, $this->behaviourManager->getBehaviourByTargetId($targetId, $spec->getType()));
+                        $this->behaviourManager->add($targetId, $spec->getType());
+                        $this->reindex();
+                        $this->refreshNode($this->designer->pickedNode);
+                    }
+                }
+            }
         }));
 
         $this->contextMenu->setFilter(function () {
@@ -1971,6 +1964,59 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         });
 
         $this->designer->contextMenu = $this->contextMenu->getRoot();
+    }
+
+    protected function showPalettePopup()
+    {
+        $elements = $this->format->getFormElements();
+        if (!$elements) return;
+
+        $tilePane = new UXTilePane();
+        $tilePane->prefColumns = 5;
+        $tilePane->hgap = 2;
+        $tilePane->vgap = 2;
+        $tilePane->padding = 6;
+        $tilePane->prefTileWidth = 52;
+        $tilePane->prefTileHeight = 52;
+
+        foreach ($elements as $element) {
+            $btn = new UXButton();
+            $btn->prefSize = [48, 48];
+            $btn->style = '-fx-cursor: hand; -fx-background-radius: 4px;';
+            $btn->tooltipText = $element->getName();
+            $icon = Ide::get()->getImage($element->getIcon());
+            if ($icon) {
+                $icon->size = [24, 24];
+                $btn->graphic = $icon;
+            }
+            $btn->on('click', function () use ($element) {
+                $editor = FileSystem::getSelectedEditor();
+                if ($editor instanceof FormEditor) {
+                    $layout = $editor->getLayout();
+                    $screenX = $layout ? $layout->screenX + 100 : 0;
+                    $screenY = $layout ? $layout->screenY + 100 : 0;
+                    if ($element instanceof ObjectListEditorItem) {
+                        $editor->createElement($element->value, $screenX, $screenY, null);
+                    } else {
+                        $editor->createElement($element, $screenX, $screenY, null);
+                    }
+                }
+            });
+            $tilePane->add($btn);
+        }
+
+        $scroll = new UXScrollPane($tilePane);
+        $scroll->fitToWidth = true;
+        $scroll->prefHeight = 350;
+        $scroll->prefWidth = 280;
+        $scroll->maxHeight = 400;
+
+        $popup = new UXPopupWindow();
+        $popup->layout = $scroll;
+        $popup->autoHide = true;
+        $popup->hideOnEscape = true;
+        $popup->style = '-fx-background-color: #0f0f0f; -fx-border-color: #1e1e1e; -fx-border-width: 1px; -fx-background-radius: 6px; -fx-border-radius: 6px;';
+        $popup->show(Ide::get()->getMainForm(), Mouse::x(), Mouse::y());
     }
 
     public function generateNodeId(AbstractFormElement $element, $tryId = null, array $busyIds = [])
@@ -2201,7 +2247,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
     public function makeLeftPaneUi()
     {
-        $ui = $this->leftTabPane = new IdeTabPane();
+        $ui = new FormEditorLeftPaneUi();
 
         $objectTreeList = new IdeObjectTreeList($this->contextMenu);
         $objectTreeList->setTraverseFunc([$this, 'eachNode']);
@@ -2239,7 +2285,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $this->eventListPane->on('edit', $editHandler, __CLASS__);
         $this->eventListPane->on('add', $editHandler, __CLASS__);
 
-        $ui->addEventListPane($this->eventListPane);
+        $ui->setEventListPane($this->eventListPane);
 
         $this->behaviourPane = new IdeBehaviourPane($this->behaviourManager);
         $this->behaviourPane->on('remove', function ($targetId, AbstractBehaviourSpec $spec) {
@@ -2267,14 +2313,13 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             }
         });
 
-        $ui->addBehaviourPane($this->behaviourPane);
+        $ui->setBehaviourPane($this->behaviourPane);
 
         $ui->on('change', function ($targetId) {
             $node = $this->layout->lookup("#$targetId");
 
             if ($node instanceof UXNode) {
                 $node->data('-factory-version', $version = $node->data('-factory-version') + 1);
-                // Logger::debug("Change object factory version '$targetId', set version = $version");
             }
         });
 

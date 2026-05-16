@@ -54,7 +54,7 @@ abstract class AbstractEditor
     protected $format;
 
     /**
-     * @var null|IdeTabPane
+     * @var null|IdeTabPane|FormEditorLeftPaneUi
      */
     protected $leftPaneUi = null;
 
