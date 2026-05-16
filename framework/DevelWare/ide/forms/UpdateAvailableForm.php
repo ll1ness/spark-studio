@@ -49,17 +49,10 @@ class UpdateAvailableForm extends AbstractIdeForm
      */
     public function tryShow($data, $always = false)
     {
-        $p = trim(file_get_contents("https://raw.githubusercontent.com/TrueS1gma/DevelWare-Studio/main/_update-service/version.txt"));
-		$desc = file_get_contents("https://raw.githubusercontent.com/TrueS1gma/DevelWare-Studio/main/_update-service/description.txt");
-		$version = Ide::get()->getConfig()->get('app.version');
+        $version = Ide::get()->getConfig()->get('app.version');
 
-        $this->descriptionField->text = $desc;
-        $this->nameLabel->text = "DevelWare Studio ".$p;
-        //$this->downloadLink = $data['url']; зачем если обновления автомтаические
-        //$this->videoLink = "https://github.com/TrueS1gma/DevelWare-Studio/releases/tag/".$p;
-
-        //Ide::get()->setUserConfigValue('lastUpdateVersion', $data['hash']);
-
+        $this->descriptionField->text = "Локальная сборка, автообновление отключено.";
+        $this->nameLabel->text = "DevelWare Studio " . $version;
 
         return true;
     }
@@ -69,13 +62,10 @@ class UpdateAvailableForm extends AbstractIdeForm
      */
     public function doShow()
     {
-        $this->downloadButton->enabled = true;
-        $this->youtubeButton->enabled = true;
-		$desc = file_get_contents("https://raw.githubusercontent.com/TrueS1gma/DevelWare-Studio/main/_update-service/description.txt");
-		$this->descriptionField->text = $desc;
-		
-		$p = trim(file_get_contents("https://raw.githubusercontent.com/TrueS1gma/DevelWare-Studio/main/_update-service/version.txt"));
-		$this->nameLabel->text = "DevelWare Studio ".$p;
+        $this->downloadButton->enabled = false;
+        $this->youtubeButton->enabled = false;
+		$this->descriptionField->text = "Локальная сборка, автообновление отключено.";
+		$this->nameLabel->text = "DevelWare Studio " . Ide::get()->getConfig()->get('app.version');
     }
 
     /**
@@ -83,11 +73,7 @@ class UpdateAvailableForm extends AbstractIdeForm
      */
     public function doYoutube()
     {
-        $p = trim(file_get_contents("https://raw.githubusercontent.com/TrueS1gma/DevelWare-Studio/main/_update-service/version.txt"));
-		$link = "https://github.com/TrueS1gma/DevelWare-Studio/releases/tag/".$p;
-		
-		$desktop = new UXDesktop();
-        $desktop->browse($link);
+        // Локальная сборка — ссылка на скачивание неактивна
     }
 
     /**
@@ -95,20 +81,7 @@ class UpdateAvailableForm extends AbstractIdeForm
      */
     public function doDownload()
     {
-        fs::copy("./lib/update-service.jar","./update-service.jar");
-		waitAsync(2000, function() {
-			try {
-				execute("java -jar update-service.jar");
-			} catch (IOException $e) {
-				alert('Произошла ошибка - ' . $e->getMessage());
-			}
-			
-			waitAsync(2000, function($e = null) {
-				Ide::get()->getMainForm()->trigger('close', $e);
-				$this->hide();
-			});
-		});
-		
+        // Локальная сборка — обновление отключено
     }
 
     /**
