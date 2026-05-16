@@ -534,7 +534,7 @@ class ScriptModuleEditor extends FormEditor
      * @return mixed|UXNode
      * @throws \php\lang\IllegalArgumentException
      */
-    protected function createElement($element, $screenX, $screenY, $parent = null)
+    public function createElement($element, $screenX, $screenY, $parent = null)
     {
         $selected = $element;
 

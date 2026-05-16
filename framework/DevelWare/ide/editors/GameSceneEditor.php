@@ -98,7 +98,7 @@ class GameSceneEditor extends FormEditor
         parent::open();
     }
 
-    protected function createElement($element, $screenX, $screenY, $parent = null)
+    public function createElement($element, $screenX, $screenY, $parent = null)
     {
         if ($element instanceof ObjectListEditorItem) {
             $gui = GuiFrameworkProjectBehaviour::get();
