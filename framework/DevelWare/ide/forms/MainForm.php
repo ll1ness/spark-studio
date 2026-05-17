@@ -301,26 +301,6 @@ private function getConsoleShell()
             }
         }))->start();
     }
-                $err = Stream::getContents($process->getError());
-
-                UXApplication::runLater(function () use ($output, $out, $err, $exitValue) {
-                    if ($out) {
-                        $output->appendText("$out\n");
-                    }
-                    if ($err) {
-                        $output->appendText("[ERR] $err\n");
-                    }
-                    if ($exitValue != 0) {
-                        $output->appendText("Process exited with code $exitValue\n");
-                    }
-                });
-            } catch (\Exception $e) {
-                UXApplication::runLater(function () use ($output, $e) {
-                    $output->appendText("Error: " . $e->getMessage() . "\n");
-                });
-            }
-        }))->start();
-    }
 
     public function updateFooter()
     {
