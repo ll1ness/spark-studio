@@ -62,11 +62,12 @@ class AbstractIdeForm extends AbstractForm
     {
         parent::show();
 
-        if ($this->layout) {
-            $this->size = $this->layout->size;
-        }
-
-        $this->centerOnScreen();
+        uiLater(function () {
+            if ($this->layout) {
+                $this->size = $this->layout->size;
+            }
+            $this->centerOnScreen();
+        });
     }
 
 }

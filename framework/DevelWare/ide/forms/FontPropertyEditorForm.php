@@ -43,6 +43,15 @@ class FontPropertyEditorForm extends AbstractForm
 
     protected function init()
     {
+        $this->on('show', function () {
+            uiLater(function () {
+                if ($this->layout) {
+                    $this->size = $this->layout->size;
+                }
+                $this->centerOnScreen();
+            });
+        });
+
         $this->watch('focused', function ($self, $prop, $old, $new) {
             if (!$new && !$this->freeze) {
                 $this->hide();

@@ -41,6 +41,15 @@ class AccountProfileEditForm extends AbstractForm
     {
         parent::init();
 
+        $this->on('show', function () {
+            uiLater(function () {
+                if ($this->layout) {
+                    $this->size = $this->layout->size;
+                }
+                $this->centerOnScreen();
+            });
+        });
+
         $dialog = new UXFileChooser();
         $dialog->extensionFilters = [
             ['description' => 'Изображения (jpg, png, gif)', 'extensions' => ['*.jpg', '*.jpeg', '*.png', '*.gif']]
