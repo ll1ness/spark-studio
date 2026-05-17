@@ -1930,6 +1930,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
                     $panStartScreenY = $e->screenY;
                     $panStartPos = $designPane->position ?: [0, 0];
                     $designPane->cursor = 'MOVE';
+                    $this->designer->disabled = true;
                 }
             });
 
@@ -1945,6 +1946,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
                 if ($e->button == 'MIDDLE') {
                     $panning = false;
                     $designPane->cursor = 'DEFAULT';
+                    $this->designer->disabled = false;
                 }
             });
         } else {
