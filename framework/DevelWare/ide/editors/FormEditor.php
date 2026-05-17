@@ -1878,8 +1878,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $viewer->stylesheets->add($stylesheet);
         }
 
-        $viewer->on('mouseUp', function (UXMouseEvent $e) {
-            if ($e->button != 'PRIMARY') return;
+        $viewer->on('mouseUp', function ($e) {
             $this->selectForm();
         });
 
@@ -1917,57 +1916,6 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
             $this->trigger('makeDesignPane', [$designPane]);
             UXAnchorPane::setAnchor($centerPane, 0);
-
-            $panning = false;
-            $panStartScreenX = 0;
-            $panStartScreenY = 0;
-            $panStartPos = [0, 0];
-
-            $designPane->on('mouseDown', function (UXMouseEvent $e) use ($designPane, &$panning, &$panStartScreenX, &$panStartScreenY, &$panStartPos) {
-                if ($e->button == 'MIDDLE') {
-                    $panning = false;
-                    $panStartScreenX = $e->screenX;
-                    $panStartScreenY = $e->screenY;
-                    $panStartPos = $designPane->position ?: [0, 0];
-                }
-            });
-
-            $designPane->on('mouseDrag', function (UXMouseEvent $e) use ($designPane, &$panning, &$panStartScreenX, &$panStartScreenY, &$panStartPos) {
-                if ($e->button != 'MIDDLE') return;
-
-                if (!$panning) {
-                    $dx = abs($e->screenX - $panStartScreenX);
-                    $dy = abs($e->screenY - $panStartScreenY);
-
-                    if ($dx > 5 || $dy > 5) {
-                        $panning = true;
-                        $this->designer->disabled = true;
-                        $designPane->cursor = 'MOVE';
-
-                        $panStartPos = $designPane->position ?: [0, 0];
-                        $panStartScreenX = $e->screenX;
-                        $panStartScreenY = $e->screenY;
-
-                        if ($rect = $this->designer->getSelectionRectangle()) {
-                            $rect->size = [1, 1];
-                        }
-                    }
-                } else {
-                    $dx = $e->screenX - $panStartScreenX;
-                    $dy = $e->screenY - $panStartScreenY;
-                    $designPane->position = [$panStartPos[0] + $dx, $panStartPos[1] + $dy];
-                }
-            });
-
-            $designPane->on('mouseUp', function (UXMouseEvent $e) use ($designPane, &$panning) {
-                if ($e->button == 'MIDDLE') {
-                    if ($panning) {
-                        $panning = false;
-                        $this->designer->disabled = false;
-                    }
-                    $designPane->cursor = 'DEFAULT';
-                }
-            });
         } else {
             $this->markerNode = $this->layout;
 
@@ -2004,9 +1952,11 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         $this->designer = new UXDesigner($this->layout);
 
-        if ($selectionRect = $this->designer->getSelectionRectangle()) {
-            $selectionRect->opacity = 0.7;
-        }
+        uiLater(function () {
+            if ($selectionRect = $this->designer->getSelectionRectangle()) {
+                $selectionRect->opacity = 0.3;
+            }
+        });
 
         $this->designer->onAreaMouseUp(function ($e) {
             $this->_onAreaMouseUp($e);
