@@ -46,7 +46,6 @@ use php\gui\UXDialog;
 use php\gui\UXImage;
 use php\gui\UXImageView;
 use php\gui\UXMenu;
-use php\gui\UXMenuButton;
 use php\gui\UXMenuItem;
 use php\gui\UXSeparator;
 use php\gui\UXTextArea;
@@ -1127,11 +1126,9 @@ class Ide extends Application
                     $category = $command->getCategory();
 
                     if (!isset($mainForm->toolbarCategoryMenus[$category])) {
-                        $catBtn = new UXMenuButton(self::getCategoryText($category));
-                        $catBtn->prefHeight = 26;
-                        $catBtn->style = '-fx-padding: 0 6 0 4; -fx-background-radius: 0; -fx-border-radius: 0;';
-                        $mainForm->getHeadPane()->add($catBtn);
-                        $mainForm->toolbarCategoryMenus[$category] = $catBtn;
+                        $catMenu = new UXMenu(self::getCategoryText($category));
+                        $mainForm->mainMenu->menus->add($catMenu);
+                        $mainForm->toolbarCategoryMenus[$category] = $catMenu;
                     }
 
                     $mainForm->toolbarCategoryMenus[$category]->items->add($toolbarItem);
