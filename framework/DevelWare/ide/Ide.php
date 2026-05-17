@@ -1128,7 +1128,6 @@ class Ide extends Application
 
                     if (!isset($mainForm->toolbarCategoryMenus[$category])) {
                         $catBtn = new UXMenuButton(self::getCategoryText($category));
-                        $catBtn->graphic = self::getCategoryIcon($category);
                         $catBtn->prefHeight = 26;
                         $catBtn->style = '-fx-padding: 0 6 0 4; -fx-background-radius: 0; -fx-border-radius: 0;';
                         $mainForm->getHeadPane()->add($catBtn);

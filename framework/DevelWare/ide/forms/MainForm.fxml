@@ -17,7 +17,7 @@
             <children>
                 <HBox id="topBar" alignment="CENTER_LEFT" prefHeight="26.0" spacing="0.0">
                     <children>
-                        <HBox id="headPane" alignment="CENTER_LEFT" prefHeight="26.0" spacing="0.0">
+                        <HBox id="headPane" prefHeight="26.0" spacing="0.0">
                             <padding>
                                 <Insets bottom="1.0" left="0.0" right="0.0" top="1.0" />
                             </padding>
