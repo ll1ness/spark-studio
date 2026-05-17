@@ -247,7 +247,26 @@ private function getConsoleShell()
         if (Ide::get()->isWindows()) {
             return 'cmd.exe';
         }
+        
+        // Check for available terminals
+        $terminals = ['konsole', 'gnome-terminal', 'xfce4-terminal', 'xterm', 'lxterminal'];
+        foreach ($terminals as $term) {
+            if ($this->commandExists($term)) {
+                return $term;
+            }
+        }
+        
         return 'bash';
+    }
+    
+    private function commandExists($cmd)
+    {
+        try {
+            $process = new Process(['which', $cmd], './');
+            return $process->getExitValue() === 0;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     private function getConsoleWorkDir()
@@ -269,15 +288,20 @@ private function getConsoleShell()
                 $shell = $this->getConsoleShell();
                 $workDir = $this->getConsoleWorkDir();
                 
-                if (Ide::get()->isLinux()) {
-                    $cmd = ['script', '-q', '-c', $text, '/dev/null'];
+                if (Ide::get()->isWindows()) {
+                    $process = new Process(['cmd.exe', '/c', $text], $workDir, (array)$_ENV);
                 } else {
-                    $cmd = ['cmd.exe', '/c', $text];
+                    // Use terminal -e to run command interactively
+                    $cmd = [$shell, '-e', $text];
+                    if ($shell === 'konsole' || $shell === 'gnome-terminal' || $shell === 'xfce4-terminal') {
+                        $cmd = [$shell, '-e', $text];
+                    } else if ($shell === 'xterm' || $shell === 'lxterminal') {
+                        $cmd = [$shell, '-e', $text];
+                    }
+                    $process = new Process($cmd, $workDir, (array)$_ENV);
                 }
                 
-                $process = new Process($cmd, $workDir, (array)$_ENV);
                 $process->inheritIO();
-                
                 $exitValue = $process->getExitValue();
 
                 $out = Stream::getContents($process->getInput());
