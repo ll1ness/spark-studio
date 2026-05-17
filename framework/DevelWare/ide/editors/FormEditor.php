@@ -1916,6 +1916,36 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
             $this->trigger('makeDesignPane', [$designPane]);
             UXAnchorPane::setAnchor($centerPane, 0);
+
+            $panning = false;
+            $panStartScreenX = 0;
+            $panStartScreenY = 0;
+            $panStartPos = [0, 0];
+
+            $designPane->on('mouseDown', function (UXMouseEvent $e) use ($designPane, &$panning, &$panStartScreenX, &$panStartScreenY, &$panStartPos) {
+                if ($e->button == 'MIDDLE') {
+                    $panning = true;
+                    $panStartScreenX = $e->screenX;
+                    $panStartScreenY = $e->screenY;
+                    $panStartPos = $designPane->position ?: [0, 0];
+                    $designPane->cursor = 'MOVE';
+                }
+            });
+
+            $designPane->on('mouseDrag', function (UXMouseEvent $e) use ($designPane, &$panning, &$panStartScreenX, &$panStartScreenY, &$panStartPos) {
+                if ($panning) {
+                    $dx = $e->screenX - $panStartScreenX;
+                    $dy = $e->screenY - $panStartScreenY;
+                    $designPane->position = [$panStartPos[0] + $dx, $panStartPos[1] + $dy];
+                }
+            });
+
+            $designPane->on('mouseUp', function (UXMouseEvent $e) use ($designPane, &$panning) {
+                if ($e->button == 'MIDDLE') {
+                    $panning = false;
+                    $designPane->cursor = 'DEFAULT';
+                }
+            });
         } else {
             $this->markerNode = $this->layout;
 
