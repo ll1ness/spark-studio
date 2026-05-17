@@ -1265,6 +1265,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         $this->codeEditorUi = $codeEditor = $this->makeCodeEditor();
 
+        if (!$this->propertiesPane) {
+            $this->propertiesPane = new IdePropertiesPane();
+        }
+
         $designer = $this->makeDesigner();
 
         $tabs = new UXTabPane();
@@ -1925,6 +1929,33 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $ui = $this->viewerAndEvents;
         }
 
+        if ($this->propertiesPane) {
+            $propertiesUi = $this->propertiesPane->makeUi();
+            $propertiesScroll = new UXScrollPane($propertiesUi);
+            $propertiesScroll->fitToWidth = true;
+            $propertiesScroll->fitToHeight = true;
+
+            UXAnchorPane::setAnchor($propertiesScroll, 0);
+            UXSplitPane::setResizeWithParent($propertiesScroll, false);
+
+            $right = new UXAnchorPane();
+            $right->width = 250;
+            $right->add($propertiesScroll);
+
+            $split = new UXSplitPane([$ui, $right]);
+            $split->orientation = 'HORIZONTAL';
+
+            uiLater(function () use ($split, $right) {
+                $pw = $right->width;
+                $tw = $split->width;
+                if ($tw > 0 && $pw > 0) {
+                    $split->dividerPositions = [($tw - $pw) / $tw];
+                }
+            });
+
+            $ui = $split;
+        }
+
         $this->makeContextMenu();
 
         return $ui;
@@ -2267,9 +2298,6 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $this->objectTreeList = $objectTreeList;
         $ui->addObjectTreeList($objectTreeList);
 
-        $this->propertiesPane = new IdePropertiesPane();
-        $ui->addPropertiesPane($this->propertiesPane);
-
         $this->eventListPane = new IdeEventListPane($this->eventManager);
         $this->eventListPane->setCodeEditor($this->codeEditor);
         $this->eventListPane->setActionEditor($this->actionEditor);
@@ -2409,8 +2437,13 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         //$this->trigger('updateNode:after', [$node, $properties]);
 
         if ($onlyProperties) {
-            $this->leftPaneUi->updateProperties($element ? $element->getTarget($node) : $node, $onlyProperties);
+            if ($this->propertiesPane) {
+                $this->propertiesPane->update($element ? $element->getTarget($node) : $node, $onlyProperties);
+            }
         } else {
+            if ($this->propertiesPane) {
+                $this->propertiesPane->update($element ? $element->getTarget($node) : $node);
+            }
             $this->leftPaneUi->update($this->getNodeId($node), $element ? $element->getTarget($node) : $node);
         }
 
@@ -2422,7 +2455,9 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $invalidLabel->textColor = 'gray';
             $invalidLabel->graphic = ico('invalid16');
 
-            $this->leftPaneUi->setPropertiesNode($invalidLabel);
+            if ($this->propertiesPane) {
+                $this->propertiesPane->setOnlyNode($invalidLabel);
+            }
         }
     }
 

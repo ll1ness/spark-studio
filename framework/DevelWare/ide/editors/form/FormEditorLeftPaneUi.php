@@ -11,7 +11,6 @@ class FormEditorLeftPaneUi
 
     protected $ui;
     protected $objectTreeList;
-    protected $propertiesPane;
     protected $eventListPane;
     protected $behaviourPane;
     protected $objectTreeUi;
@@ -30,14 +29,6 @@ class FormEditorLeftPaneUi
         $node = $list->makeUi();
         $this->objectTreeUi = $node;
         $this->ui->children->insert(0, $node);
-    }
-
-    public function addPropertiesPane(IdePropertiesPane $pane)
-    {
-        $this->propertiesPane = $pane;
-        $propertiesUi = $pane->makeUi();
-        UXVBox::setVgrow($propertiesUi, 'ALWAYS');
-        $this->ui->add($propertiesUi);
     }
 
     public function setEventListPane(IdeEventListPane $pane)
@@ -109,25 +100,10 @@ class FormEditorLeftPaneUi
     {
     }
 
-    public function updateProperties($target, array $properties = null)
-    {
-        if ($this->propertiesPane) {
-            $this->propertiesPane->update($target, $properties);
-        }
-    }
-
     public function update($targetId, $target = null)
     {
         $this->updateBehaviours($targetId);
         $this->updateEventList($targetId);
-        $this->updateProperties($target);
         $this->refreshObjectTreeList($targetId);
-    }
-
-    public function setPropertiesNode(UXNode $node)
-    {
-        if ($this->propertiesPane) {
-            $this->propertiesPane->setOnlyNode($node);
-        }
     }
 }
