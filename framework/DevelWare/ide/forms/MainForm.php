@@ -242,34 +242,7 @@ class MainForm extends AbstractIdeForm
         }))->start();
     }
 
-private function getConsoleShell()
-    {
-        if (Ide::get()->isWindows()) {
-            return 'cmd.exe';
-        }
-        
-        // Check for available terminals
-        $terminals = ['konsole', 'gnome-terminal', 'xfce4-terminal', 'xterm', 'lxterminal'];
-        foreach ($terminals as $term) {
-            if ($this->commandExists($term)) {
-                return $term;
-            }
-        }
-        
-        return 'bash';
-    }
-    
-    private function commandExists($cmd)
-    {
-        try {
-            $process = new Process(['which', $cmd], './');
-            return $process->getExitValue() === 0;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    private function getConsoleWorkDir()
+private function getConsoleWorkDir()
     {
         $project = Ide::project();
         return $project ? $project->getRootDir() : './';
@@ -285,39 +258,59 @@ private function getConsoleShell()
 
         (new Thread(function () use ($text, $output) {
             try {
-                $shell = $this->getConsoleShell();
                 $workDir = $this->getConsoleWorkDir();
                 
                 if (Ide::get()->isWindows()) {
-                    $process = new Process(['cmd.exe', '/c', $text], $workDir, (array)$_ENV);
+                    // Open cmd in new window with working directory
+                    $cmd = "start cmd /K \"cd /d $workDir\"";
+                    $process = new Process(['cmd.exe', '/c', $cmd], $workDir);
+                    $process->start();
+                    
+                    UXApplication::runLater(function () use ($output) {
+                        $output->appendText("Terminal opened in new window\n");
+                    });
                 } else {
-                    // Use terminal -e to run command interactively
-                    $cmd = [$shell, '-e', $text];
-                    if ($shell === 'konsole' || $shell === 'gnome-terminal' || $shell === 'xfce4-terminal') {
-                        $cmd = [$shell, '-e', $text];
-                    } else if ($shell === 'xterm' || $shell === 'lxterminal') {
-                        $cmd = [$shell, '-e', $text];
+                    // Open terminal in new window - check for available terminals
+                    $terminals = [
+                        'konsole' => "--workdir",
+                        'gnome-terminal' => "--working-directory", 
+                        'xfce4-terminal' => "--working-directory",
+                        'xterm' => "",
+                        'lxterminal' => ""
+                    ];
+                    
+                    $found = false;
+                    foreach ($terminals as $term => $dirFlag) {
+                        if ($dirFlag === "") {
+                            // Terminals that don't support working directory
+                            $cmd = [$term];
+                        } else {
+                            $cmd = [$term, $dirFlag, $workDir];
+                        }
+                        
+                        try {
+                            $check = new Process(['which', $term]);
+                            if ($check->getExitValue() === 0) {
+                                $process = new Process($cmd, $workDir);
+                                $process->start();
+                                $found = true;
+                                break;
+                            }
+                        } catch (\Exception $e) {
+                            continue;
+                        }
                     }
-                    $process = new Process($cmd, $workDir, (array)$_ENV);
+                    
+                    if (!$found) {
+                        // Fallback to xterm
+                        $process = new Process(['xterm'], $workDir);
+                        $process->start();
+                    }
+                    
+                    UXApplication::runLater(function () use ($output) {
+                        $output->appendText("Terminal opened in new window\n");
+                    });
                 }
-                
-                $process->inheritIO();
-                $exitValue = $process->getExitValue();
-
-                $out = Stream::getContents($process->getInput());
-                $err = Stream::getContents($process->getError());
-
-                UXApplication::runLater(function () use ($output, $out, $err, $exitValue) {
-                    if ($out) {
-                        $output->appendText("$out\n");
-                    }
-                    if ($err) {
-                        $output->appendText("[ERR] $err\n");
-                    }
-                    if ($exitValue != 0) {
-                        $output->appendText("Process exited with code $exitValue\n");
-                    }
-                });
             } catch (\Exception $e) {
                 UXApplication::runLater(function () use ($output, $e) {
                     $output->appendText("Error: " . $e->getMessage() . "\n");
