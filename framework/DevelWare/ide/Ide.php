@@ -1004,17 +1004,6 @@ class Ide extends Application
             }
         }
 
-        if ($data['menuItem']) {
-            /** @var UXMenu $menu */
-            $menu = $mainForm->findSubMenu('menu' . Str::upperFirst($command->getCategory()));
-
-            if ($menu instanceof UXMenu) {
-                foreach ($data['menuItem'] as $el) {
-                    $menu->items->remove($el);
-                }
-            }
-        }
-
         unset($this->commands[$commandClass]);
     }
 
@@ -1161,50 +1150,6 @@ class Ide extends Application
 
                     $mainForm->getHeadRightPane()->add($ui);
                 }
-            });
-        }
-
-        $category = $category ?: $command->getCategory();
-        $menuItem = $command->makeMenuItem();
-
-        if ($menuItem) {
-            $data['menuItem'] = $menuItem;
-
-            $this->afterShow(function () use ($menuItem, $command, &$data, $category) {
-                /** @var MainForm $mainForm */
-                $mainForm = $this->getMainForm();
-
-                /** @var UXMenu $menu */
-                $menu = $mainForm->findSubMenu('menu' . Str::upperFirst($category));
-
-                if ($menu instanceof UXMenu) {
-                    $items = [];
-
-                    if ($command->withBeforeSeparator()) {
-                        /** @var UXMenuItem $last */
-                        $last = $menu->items->last();
-
-                        if ($last && $last->isSeparator()) {
-                            // do nothing...
-                        } else {
-                            $items[] = UXMenuItem::createSeparator();
-                        }
-                    }
-
-                    $items[] = $menuItem;
-
-                    if ($command->withAfterSeparator()) {
-                        $items[] = UXMenuItem::createSeparator();
-                    }
-
-                    foreach ($items as $el) {
-                        $menu->items->add($el);
-                    }
-
-                    $data['menuItem'] = $items;
-                }
-
-
             });
         }
 
