@@ -1,13 +1,21 @@
 ide\commands\NewProjectCommand
 ide\commands\OpenProjectCommand
+ide\commands\ImportProjectCommand
 ide\commands\SaveProjectCommand
-ide\commands\ExportProjectCommand
 ide\commands\SaveProjectForLibraryCommand
+ide\commands\ExportProjectCommand
+ide\commands\ShareProjectCommand
 ide\commands\CloseProjectCommand
 ide\commands\ExitCommand
+ide\commands\IdeBundleLibraryCommand
+
+ide\commands\IdeSettingsCommand
 
 ide\commands\IdeLogShowCommand
 ide\commands\IdeSandboxShowCommand
 ide\commands\OfficialSiteCommand
+ide\commands\VkGroupCommand
+ide\commands\YoutubeChannelCommand
+ide\commands\AboutCommand
 ide\commands\CheckUpdatesCommand
 ide\commands\ClearRamCommand

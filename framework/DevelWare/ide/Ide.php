@@ -1072,7 +1072,7 @@ class Ide extends Application
         $titles = [
             'project' => 'Проект',
             'run' => 'Запуск',
-            'help' => 'IDE',
+            'help' => 'Справка',
             'create' => 'Создать',
             'settings' => 'Настройки',
             'backup' => 'Архив',
