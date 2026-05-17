@@ -227,6 +227,16 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
     protected $behaviourPane;
 
     /**
+     * @var UXVBox
+     */
+    protected $behaviourBox;
+
+    /**
+     * @var IdePropertiesPane
+     */
+    protected $propertiesPane;
+
+    /**
      * @var IdeObjectTreeList
      */
     protected $objectTreeList;
@@ -864,8 +874,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $this->codeEditor->open();
 
         $this->refresh();
-        $this->leftPaneUi->refresh();
-        $this->leftPaneUi->refreshObjectTreeList();
+        if ($this->leftPaneUi) {
+            $this->leftPaneUi->refresh();
+            $this->leftPaneUi->refreshObjectTreeList();
+        }
 
         $this->updateMultipleEditor();
 
@@ -1086,9 +1098,15 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         $this->reindex();
 
-        $this->leftPaneUi->updateEventList($newId);
-        $this->leftPaneUi->updateBehaviours($newId);
-        $this->leftPaneUi->refreshObjectTreeList($newId);
+        if ($this->leftPaneUi) {
+            $this->leftPaneUi->updateEventList($newId);
+            $this->leftPaneUi->updateBehaviours($newId);
+            $this->leftPaneUi->refreshObjectTreeList($newId);
+        }
+
+        if ($this->eventListPane) {
+            $this->eventListPane->update($newId);
+        }
         return '';
     }
 
@@ -1171,7 +1189,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $this->behaviourManager->save();
         }
 
-        $this->leftPaneUi->refreshObjectTreeList();
+        if ($this->leftPaneUi) {
+            $this->leftPaneUi->refreshObjectTreeList();
+        }
+
         $this->reindex();
     }
 
@@ -1267,6 +1288,52 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         if (!$this->propertiesPane) {
             $this->propertiesPane = new IdePropertiesPane();
+        }
+
+        if (!$this->eventListPane) {
+            $this->eventListPane = new IdeEventListPane($this->eventManager);
+            $this->eventListPane->setCodeEditor($this->codeEditor);
+            $this->eventListPane->setActionEditor($this->actionEditor);
+            $this->eventListPane->setContextEditor($this);
+
+            $editHandler = function ($eventCode, $editor) {
+                if ($editor == 'php') {
+                    if (!$this->isFullSourceShown()) {
+                        $this->switchToSmallSource();
+                    }
+                }
+            };
+
+            $this->eventListPane->on('edit', $editHandler, __CLASS__);
+            $this->eventListPane->on('add', $editHandler, __CLASS__);
+        }
+
+        if (!$this->behaviourPane) {
+            $this->behaviourPane = new IdeBehaviourPane($this->behaviourManager);
+            $this->behaviourPane->on('remove', function ($targetId, AbstractBehaviourSpec $spec) {
+                $node = $this->layout->lookup("#$targetId");
+
+                if ($node instanceof UXNode) {
+                    $behaviour = $this->behaviourManager->getBehaviourByTargetId($targetId, $spec->getType());
+
+                    if ($behaviour) {
+                        $spec->deleteSelf($node, $behaviour);
+                        $this->reindex();
+                    } else {
+                        Logger::warn("Unable to call deleteSelf() of behaviour spec class, behaviour not found");
+                    }
+                } else {
+                    Logger::warn("Unable to call deleteSelf() of behaviour spec class, node not found, targetId = $targetId");
+                }
+            });
+
+            $this->behaviourPane->on('add', function () {
+                $this->reindex();
+
+                if ($this->designer->pickedNode) {
+                    $this->refreshNode($this->designer->pickedNode);
+                }
+            });
         }
 
         $designer = $this->makeDesigner();
@@ -1930,17 +1997,35 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         }
 
         if ($this->propertiesPane) {
-            $propertiesUi = $this->propertiesPane->makeUi();
-            $propertiesScroll = new UXScrollPane($propertiesUi);
-            $propertiesScroll->fitToWidth = true;
-            $propertiesScroll->fitToHeight = true;
+            $eventListUi = $this->eventListPane ? $this->eventListPane->getUi() : null;
+            if (!$eventListUi) {
+                $this->eventListPane->makeUi();
+                $eventListUi = $this->eventListPane->getUi();
+            }
 
-            UXAnchorPane::setAnchor($propertiesScroll, 0);
-            UXSplitPane::setResizeWithParent($propertiesScroll, false);
+            $this->behaviourBox = new UXVBox();
+            $this->behaviourBox->fillWidth = true;
+
+            $propertiesUi = $this->propertiesPane->makeUi();
+
+            $rightBox = new UXVBox();
+            $rightBox->fillWidth = true;
+            $rightBox->spacing = 2;
+            $rightBox->add($eventListUi);
+            $rightBox->add($this->behaviourBox);
+            $rightBox->add($propertiesUi);
+            UXVBox::setVgrow($propertiesUi, 'ALWAYS');
+
+            $rightScroll = new UXScrollPane($rightBox);
+            $rightScroll->fitToWidth = true;
+            $rightScroll->fitToHeight = true;
+
+            UXAnchorPane::setAnchor($rightScroll, 0);
+            UXSplitPane::setResizeWithParent($rightScroll, false);
 
             $right = new UXAnchorPane();
             $right->width = 250;
-            $right->add($propertiesScroll);
+            $right->add($rightScroll);
 
             $split = new UXSplitPane([$ui, $right]);
             $split->orientation = 'HORIZONTAL';
@@ -2178,7 +2263,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         if (!$isClone) {
             $this->reindex();
-            $this->leftPaneUi->refreshObjectTreeList($this->getNodeId($node));
+
+            if ($this->leftPaneUi) {
+                $this->leftPaneUi->refreshObjectTreeList($this->getNodeId($node));
+            }
         }
 
         waitAsync(1, function () use ($node) {
@@ -2279,80 +2367,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
     public function makeLeftPaneUi()
     {
-        $ui = new FormEditorLeftPaneUi();
-
-        $objectTreeList = new IdeObjectTreeList($this->contextMenu);
-        $objectTreeList->setTraverseFunc([$this, 'eachNode']);
-        $objectTreeList->setLevelOffset(1);
-        $objectTreeList->setEmptyItem(new ObjectListEditorItem(
-            $this->getTitle(), Ide::get()->getImage($this->getIcon()), '', 0
-        ));
-        $objectTreeList->on('change', function ($targetId) {
-            if ($targetId) {
-                $this->selectObject($targetId);
-            } else {
-                $this->selectForm();
-            }
-        });
-
-        $this->objectTreeList = $objectTreeList;
-        $ui->addObjectTreeList($objectTreeList);
-
-        $this->eventListPane = new IdeEventListPane($this->eventManager);
-        $this->eventListPane->setCodeEditor($this->codeEditor);
-        $this->eventListPane->setActionEditor($this->actionEditor);
-        $this->eventListPane->setContextEditor($this);
-
-        $editHandler = function ($eventCode, $editor) {
-            if ($editor == 'php') {
-                if (!$this->isFullSourceShown()) {
-                    $this->switchToSmallSource();
-                }
-            }
-        };
-
-        $this->eventListPane->on('edit', $editHandler, __CLASS__);
-        $this->eventListPane->on('add', $editHandler, __CLASS__);
-
-        $ui->setEventListPane($this->eventListPane);
-
-        $this->behaviourPane = new IdeBehaviourPane($this->behaviourManager);
-        $this->behaviourPane->on('remove', function ($targetId, AbstractBehaviourSpec $spec) {
-            $node = $this->layout->lookup("#$targetId");
-
-            if ($node instanceof UXNode) {
-                $behaviour = $this->behaviourManager->getBehaviourByTargetId($targetId, $spec->getType());
-
-                if ($behaviour) {
-                    $spec->deleteSelf($node, $behaviour);
-                    $this->reindex();
-                } else {
-                    Logger::warn("Unable to call deleteSelf() of behaviour spec class, behaviour not found");
-                }
-            } else {
-                Logger::warn("Unable to call deleteSelf() of behaviour spec class, node not found, targetId = $targetId");
-            }
-        });
-
-        $this->behaviourPane->on('add', function () {
-            $this->reindex();
-
-            if ($this->designer->pickedNode) {
-                $this->refreshNode($this->designer->pickedNode);
-            }
-        });
-
-        $ui->setBehaviourPane($this->behaviourPane);
-
-        $ui->on('change', function ($targetId) {
-            $node = $this->layout->lookup("#$targetId");
-
-            if ($node instanceof UXNode) {
-                $node->data('-factory-version', $version = $node->data('-factory-version') + 1);
-            }
-        });
-
-        return $ui;
+        return null;
     }
 
     protected function updateEventTypes($node, $selected = null)
@@ -2372,9 +2387,6 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         }
 
         if ($factoryId) {
-            $this->leftPaneUi->hideBehaviourPane();
-            $this->leftPaneUi->hideEventListPane();
-
             $properties = new UXDesignProperties();
             $properties->addGroup('prototype', 'Клон');
             $properties->addGroup('general', 'Главное');
@@ -2406,8 +2418,6 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             }
         } else {
             if (!$onlyProperties) {
-                $this->leftPaneUi->showEventListPane();
-                $this->leftPaneUi->showBehaviourPane();
                 if ($this->eventManager) {
                     $this->eventManager->load();
                 }
@@ -2431,10 +2441,14 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
                 if ($this->eventListPane) {
                     $this->eventListPane->setEventTypes($element ? $element->getEventTypes() : []);
                 }
+
+                if ($this->behaviourBox && $this->behaviourPane) {
+                    $targetId = $this->getNodeId($node);
+                    $this->behaviourBox->children->clear();
+                    $this->behaviourPane->makeUi($targetId, $this->behaviourBox);
+                }
             }
         }
-
-        //$this->trigger('updateNode:after', [$node, $properties]);
 
         if ($onlyProperties) {
             if ($this->propertiesPane) {
@@ -2444,13 +2458,17 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             if ($this->propertiesPane) {
                 $this->propertiesPane->update($element ? $element->getTarget($node) : $node);
             }
-            $this->leftPaneUi->update($this->getNodeId($node), $element ? $element->getTarget($node) : $node);
+
+            if ($this->eventListPane) {
+                $this->eventListPane->update($this->getNodeId($node));
+            }
+
+            if ($this->leftPaneUi) {
+                $this->leftPaneUi->update($this->getNodeId($node), $element ? $element->getTarget($node) : $node);
+            }
         }
 
         if (!$element && !$factoryId) {
-            $this->leftPaneUi->hideBehaviourPane();
-            $this->leftPaneUi->hideEventListPane();
-
             $invalidLabel = new UXLabel('Нерабочий компонент');
             $invalidLabel->textColor = 'gray';
             $invalidLabel->graphic = ico('invalid16');

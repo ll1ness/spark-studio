@@ -46,7 +46,12 @@ use php\gui\UXSplitPane;
 use php\gui\UXTab;
 use php\gui\UXTabPane;
 use php\gui\UXTextArea;
+use php\gui\UXTextField;
 use php\gui\UXTreeView;
+use php\io\Stream;
+use php\lang\Process;
+use php\lang\Thread;
+use php\util\Scanner;
 use php\io\File;
 use php\lang\System;
 use php\lib\fs;
@@ -58,7 +63,6 @@ use system\DFFIGUI;
  * @property UXTabPane $fileTabPane
  * @property UXTabPane $projectTabs
  * @property UXVBox $properties
- * @property UXSplitPane $contentSplit
  * @property UXAnchorPane $directoryTree
  * @property UXTreeView $projectTree
  * @property UXHBox $headPane
@@ -67,9 +71,11 @@ use system\DFFIGUI;
  * @property UXAnchorPane $bottomSpoiler
  * @property UXTabPane $bottomSpoilerTabPane
  * @property UXSplitPane $splitTree
- *
- * @property UXDockPane $dockPane
- * @property UXHBox $statusPane
+ * @property UXAnchorPane $systemConsolePane
+ * @property UXTextArea $systemConsoleOutput
+ * @property UXTextField $systemConsoleInput
+ * @property UXHBox $footerPane
+ * @property UXHBox $footerLeftPane
  */
 class MainForm extends AbstractIdeForm
 {
@@ -132,7 +138,7 @@ class MainForm extends AbstractIdeForm
             $this->opacity = 1;
         });
 
-        $mainMenu = $this->mainMenu; // FIX!!!!! see FixSkinMenu
+        $mainMenu = $this->mainMenu;
 
         $this->headRightPane->spacing = 5;
 
@@ -174,12 +180,14 @@ class MainForm extends AbstractIdeForm
             $tree->root->expanded = true;
             $project->getConfig()->loadTreeState($project->getTree());
 
-            $label = new UXLabel(fs::normalize($project->getMainProjectFile()));
-            $label->paddingLeft = 10;
+            $this->updateFooter();
+        });
 
-            $this->statusPane->children->setAll([
-                $label
-            ]);
+        $this->systemConsoleInput->on('keyDown', function (UXKeyEvent $e) {
+            if ($e->codeName == 'Enter') {
+                $this->executeConsoleCommand($this->systemConsoleInput->text);
+                $this->systemConsoleInput->text = '';
+            }
         });
 
         Ide::get()->bind('afterCloseProject', function () use ($tree) {
@@ -188,8 +196,73 @@ class MainForm extends AbstractIdeForm
             }
             $tree->treeSource = null;
 
-            $this->statusPane->children->clear();
+            $this->footerLeftPane->children->clear();
         });
+    }
+
+    private function executeConsoleCommand($text)
+    {
+        $text = str::trim($text);
+        if (!$text) return;
+
+        $output = $this->systemConsoleOutput;
+        $output->appendText("$ $text\n");
+
+        (new Thread(function () use ($text, $output) {
+            try {
+                $shell = System::getEnv('SHELL', '/bin/bash');
+                $process = new Process([$shell, '-c', $text]);
+
+                $input = $process->getInput();
+                $scanner = new Scanner($input);
+                $scannerErr = new Scanner($process->getError());
+
+                (new Thread(function () use ($scannerErr, $output) {
+                    while ($scannerErr->hasNextLine()) {
+                        $line = $scannerErr->nextLine();
+                        UXApplication::runLater(function () use ($output, $line) {
+                            $output->appendText("[ERR] $line\n");
+                        });
+                    }
+                }))->start();
+
+                while ($scanner->hasNextLine()) {
+                    $line = $scanner->nextLine();
+                    UXApplication::runLater(function () use ($output, $line) {
+                        $output->appendText("$line\n");
+                    });
+                }
+
+                $exitValue = $process->getExitValue();
+                UXApplication::runLater(function () use ($output, $exitValue) {
+                    if ($exitValue != 0) {
+                        $output->appendText("Process exited with code $exitValue\n");
+                    }
+                });
+            } catch (\Exception $e) {
+                UXApplication::runLater(function () use ($output, $e) {
+                    $output->appendText("Error: " . $e->getMessage() . "\n");
+                });
+            }
+        }))->start();
+    }
+
+    public function updateFooter()
+    {
+        $this->footerLeftPane->children->clear();
+
+        $project = Ide::project();
+        if ($project) {
+            $rootDir = $project->getRootDir();
+            $logoFile = $rootDir . '/logo.png';
+            if (fs::isFile($logoFile)) {
+                $image = new UXImage(File::of($logoFile));
+                $icon = new UXImageView($image);
+                $icon->size = [16, 16];
+                $this->footerLeftPane->add($icon);
+            }
+            $this->footerLeftPane->add(new UXLabel($project->getName()));
+        }
     }
 
     /**
@@ -275,8 +348,6 @@ class MainForm extends AbstractIdeForm
 
         $screen = UXScreen::getPrimary();
 
-        $this->showBottom(null);
-
         $this->width  = Ide::get()->getUserConfigValue(get_class($this) . '.width', $screen->bounds['width'] * 0.75);
         $this->height = Ide::get()->getUserConfigValue(get_class($this) . '.height', $screen->bounds['height'] * 0.75);
 
@@ -320,6 +391,8 @@ class MainForm extends AbstractIdeForm
             if ($this->ideConfig()->has('splitTree.dividerPositions')) {
                 $this->splitTree->dividerPositions = $this->ideConfig()->getArray('splitTree.dividerPositions', [0.3]);
             }
+
+            $this->updateFooter();
         });
     }
 
@@ -408,6 +481,22 @@ class MainForm extends AbstractIdeForm
         return $this->projectTree;
     }
 
+    /**
+     * @return UXHBox
+     */
+    public function getFooterPane()
+    {
+        return $this->footerPane;
+    }
+
+    /**
+     * @return UXHBox
+     */
+    public function getFooterLeftPane()
+    {
+        return $this->footerLeftPane;
+    }
+
     public function hideBottom()
     {
         $this->showBottom(null);
@@ -416,10 +505,6 @@ class MainForm extends AbstractIdeForm
     public function showBottom(UXNode $content = null)
     {
         if ($content) {
-            if (!$this->contentSplit->items->has($this->bottom)) {
-                $this->contentSplit->items->add($this->bottom);
-            }
-
             $this->bottom->children->clear();
 
             $height = $this->layout->height;
@@ -435,12 +520,8 @@ class MainForm extends AbstractIdeForm
             UXAnchorPane::setAnchor($content, 0);
 
             $this->bottom->add($content);
-
-            $percent = (($content->height + 3) * 100 / $height) / 100;
-
-            $this->contentSplit->dividerPositions = [1 - $percent, $percent];
         } else {
-            $this->contentSplit->items->remove($this->bottom);
+            $this->bottom->children->clear();
         }
     }
 }

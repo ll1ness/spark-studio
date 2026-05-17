@@ -5,6 +5,8 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -13,58 +15,63 @@
     <children>
         <VBox id="rootPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <SplitPane id="contentSplit" dividerPositions="1.0" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
-                    <items>
-                        <VBox id="contentVBox" layoutX="-86.0" layoutY="-52.0" prefHeight="151.0" prefWidth="1055.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <VBox id="contentVBox" VBox.vgrow="ALWAYS">
+                    <children>
+                        <MenuBar focusTraversable="false" prefHeight="25.0" prefWidth="900.0">
+                            <menus>
+                                <Menu id="menuProject" mnemonicParsing="false" text="{menu.project}" />
+                                <Menu id="menuAccount" text="{menu.account}" visible="false" />
+                                <Menu id="menuRun" text="{menu.run}" />
+                                <Menu id="menuHelp" text="IDE" />
+                                <Menu id="menuL10n" text="{menu.L10n}" />
+                                <Menu id="menuCreate" disable="true" mnemonicParsing="false" style="-fx-text-fill: transparent; -fx-pref-width: 0; -fx-font-size: 0;" text="..." />
+                            </menus>
+                            <opaqueInsets>
+                                <Insets />
+                            </opaqueInsets>
+                        </MenuBar>
+                        <HBox id="headPane" alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="988.0" spacing="2.0">
+                            <padding>
+                                <Insets bottom="1.0" left="2.0" right="2.0" top="1.0" />
+                            </padding>
                             <children>
-                                <MenuBar focusTraversable="false" prefHeight="25.0" prefWidth="900.0">
-                                    <menus>
-                                        <Menu id="menuProject" mnemonicParsing="false" text="{menu.project}" />
-                                        <Menu id="menuAccount" text="{menu.account}" visible="false" />
-                                        <Menu id="menuRun" text="{menu.run}" />
-                                        <Menu id="menuHelp" text="IDE" />
-                                        <Menu id="menuL10n" text="{menu.L10n}" />
-                                        <Menu id="menuCreate" disable="true" mnemonicParsing="false" style="-fx-text-fill: transparent; -fx-pref-width: 0; -fx-font-size: 0;" text="..." />
-                                    </menus>
-                                    <opaqueInsets>
-                                        <Insets />
-                                    </opaqueInsets>
-                                </MenuBar>
-                                <HBox id="headPane" alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="988.0" spacing="2.0">
-                                    <padding>
-                                        <Insets bottom="1.0" left="2.0" right="2.0" top="1.0" />
-                                    </padding>
-                                    <children>
-                                        <HBox id="headRightPane" alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
-                                <!--<DockPane id="dockPane">
-
-                                </DockPane>  -->
-                                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                    <children>
-                                        <SplitPane id="splitTree" dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                            <items>
-                                                <AnchorPane id="directoryTree" minHeight="0.0" minWidth="0.0" prefWidth="150.0" SplitPane.resizableWithParent="false" />
-                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                                                    <children>
-                                                        <TabPane id="fileTabPane" prefHeight="555.0" prefWidth="660.0" tabClosingPolicy="ALL_TABS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                    </children>
-                                                </AnchorPane>
-                                            </items>
-                                        </SplitPane>
-                                    </children>
-                                </AnchorPane>
+                                <HBox id="headRightPane" alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                             </children>
-                        </VBox>
-                        <AnchorPane id="bottomSpoiler" prefHeight="200.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
+                        </HBox>
+                        <AnchorPane VBox.vgrow="ALWAYS">
                             <children>
-                                <TabPane id="bottomSpoilerTabPane" layoutX="75.0" layoutY="50.0" prefHeight="200.0" prefWidth="200.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                <SplitPane id="splitTree" dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <items>
+                                        <AnchorPane id="directoryTree" minHeight="0.0" minWidth="0.0" prefWidth="150.0" SplitPane.resizableWithParent="false" />
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                            <children>
+                                                <TabPane id="fileTabPane" prefHeight="555.0" prefWidth="660.0" tabClosingPolicy="ALL_TABS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                            </children>
+                                        </AnchorPane>
+                                    </items>
+                                </SplitPane>
                             </children>
                         </AnchorPane>
-                    </items>
-                </SplitPane>
-                <HBox id="statusPane" alignment="CENTER_LEFT" managed="false" maxHeight="24" prefHeight="24" visible="false">
+                    </children>
+                </VBox>
+                <AnchorPane id="bottomSpoiler" prefHeight="150.0" prefWidth="200.0">
+                    <children>
+                        <TabPane id="bottomSpoilerTabPane" layoutX="75.0" layoutY="50.0" prefHeight="150.0" prefWidth="200.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                    </children>
+                </AnchorPane>
+                <AnchorPane id="systemConsolePane" prefHeight="120.0" prefWidth="200.0" style="-fx-border-color: #1e1e1e; -fx-border-width: 1px 0 0 0;">
+                    <children>
+                        <TextArea id="systemConsoleOutput" editable="false" focusTraversable="false" style="-fx-font-family: monospace; -fx-font-size: 12; -fx-background-color: #080808; -fx-text-fill: #d4d4d4;" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <TextField id="systemConsoleInput" style="-fx-font-family: monospace; -fx-font-size: 12; -fx-background-color: #0c0c0c; -fx-text-fill: #d4d4d4; -fx-border-color: #1e1e1e; -fx-border-width: 1px 0 0 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                    </children>
+                </AnchorPane>
+                <HBox id="footerPane" alignment="CENTER_LEFT" prefHeight="22.0" prefWidth="988.0" spacing="4.0" style="-fx-background-color: #0c0c0c; -fx-border-color: #1e1e1e; -fx-border-width: 1px 0 0 0;">
+                    <padding>
+                        <Insets bottom="2.0" left="6.0" right="6.0" top="2.0" />
+                    </padding>
+                    <children>
+                        <HBox id="footerLeftPane" alignment="CENTER_LEFT" spacing="6.0" HBox.hgrow="ALWAYS" />
+                    </children>
                 </HBox>
             </children>
         </VBox>
