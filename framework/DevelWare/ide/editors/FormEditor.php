@@ -1878,7 +1878,8 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $viewer->stylesheets->add($stylesheet);
         }
 
-        $viewer->on('mouseUp', function ($e) {
+        $viewer->on('mouseUp', function (UXMouseEvent $e) {
+            if ($e->button != 'PRIMARY') return;
             $this->selectForm();
         });
 
@@ -1981,6 +1982,11 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         }
 
         $this->designer = new UXDesigner($this->layout);
+
+        if ($selectionRect = $this->designer->getSelectionRectangle()) {
+            $selectionRect->opacity = 0.7;
+        }
+
         $this->designer->onAreaMouseUp(function ($e) {
             $this->_onAreaMouseUp($e);
         });
