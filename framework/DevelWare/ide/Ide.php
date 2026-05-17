@@ -46,6 +46,7 @@ use php\gui\UXDialog;
 use php\gui\UXImage;
 use php\gui\UXImageView;
 use php\gui\UXMenu;
+use php\gui\UXMenuButton;
 use php\gui\UXMenuItem;
 use php\gui\UXSeparator;
 use php\gui\UXTextArea;
@@ -986,13 +987,10 @@ class Ide extends Application
             return;
         }
 
-        if ($data['headUi']) {
-            if (is_array($data['headUi'])) {
-                foreach ($data['headUi'] as $ui) {
-                    $mainForm->getHeadPane()->remove($ui);
-                }
-            } else {
-                $mainForm->getHeadPane()->remove($data['headUi']);
+        if ($data['toolbarMenuItem'] && $data['toolbarMenuCategory']) {
+            $category = $data['toolbarMenuCategory'];
+            if (isset($mainForm->toolbarCategoryMenus[$category])) {
+                $mainForm->toolbarCategoryMenus[$category]->items->remove($data['toolbarMenuItem']);
             }
         }
 
@@ -1080,6 +1078,34 @@ class Ide extends Application
      * @param AbstractCommand $command
      * @param null $category
      */
+    public static function getCategoryText($category)
+    {
+        $titles = [
+            'project' => 'Проект',
+            'run' => 'Запуск',
+            'help' => 'IDE',
+            'create' => 'Создать',
+            'settings' => 'Настройки',
+            'backup' => 'Архив',
+        ];
+
+        return $titles[$category] ?? $category;
+    }
+
+    public static function getCategoryIcon($category)
+    {
+        $icons = [
+            'project' => Ide::get()->getImage('icons/folder16.png'),
+            'run' => Ide::get()->getImage('icons/run16.png'),
+            'help' => Ide::get()->getImage('icons/help16.png'),
+            'create' => Ide::get()->getImage('icons/new16.png'),
+            'settings' => Ide::get()->getImage('icons/settings16.png'),
+            'backup' => Ide::get()->getImage('icons/backup16.png'),
+        ];
+
+        return $icons[$category] ?? null;
+    }
+
     public function registerCommand(AbstractCommand $command, $category = null)
     {
         $this->unregisterCommand($command->getUniqueId());
@@ -1088,30 +1114,30 @@ class Ide extends Application
             'command' => $command,
         ];
 
-        $headUi = $command->makeUiForHead();
+        if ($command->getName()) {
+            $toolbarItem = $command->makeMenuItem();
 
-        if ($headUi) {
-            $data['headUi'] = $headUi;
+            if ($toolbarItem) {
+                $data['toolbarMenuItem'] = $toolbarItem;
+                $data['toolbarMenuCategory'] = $command->getCategory();
 
-            $this->afterShow(function () use ($headUi) {
-                /** @var MainForm $mainForm */
-                $mainForm = $this->getMainForm();
+                $this->afterShow(function () use ($toolbarItem, $command) {
+                    /** @var MainForm $mainForm */
+                    $mainForm = $this->getMainForm();
+                    $category = $command->getCategory();
 
-                if (!is_array($headUi)) {
-                    $headUi = [$headUi];
-                }
-
-                foreach ($headUi as $ui) {
-                    if ($ui instanceof UXButton) {
-                        $ui->maxHeight = 9999;
-                    } else if ($ui instanceof UXSeparator) {
-                        $ui->paddingLeft = 3;
-                        $ui->paddingRight = 1;
+                    if (!isset($mainForm->toolbarCategoryMenus[$category])) {
+                        $catBtn = new UXMenuButton(self::getCategoryText($category));
+                        $catBtn->graphic = self::getCategoryIcon($category);
+                        $catBtn->prefHeight = 26;
+                        $catBtn->style = '-fx-padding: 0 6 0 4; -fx-background-radius: 0; -fx-border-radius: 0;';
+                        $mainForm->getHeadPane()->add($catBtn);
+                        $mainForm->toolbarCategoryMenus[$category] = $catBtn;
                     }
 
-                    $mainForm->getHeadPane()->children->insert($mainForm->getHeadPane()->children->count - 1, $ui);
-                }
-            });
+                    $mainForm->toolbarCategoryMenus[$category]->items->add($toolbarItem);
+                });
+            }
         }
 
         $headRightUi = $command->makeUiForRightHead();
@@ -1634,7 +1660,9 @@ class Ide extends Application
 
         $project = $this->getOpenedProject();
 
-        $this->mainForm->hide();
+        if ($this->mainForm) {
+            $this->mainForm->hide();
+        }
 
         foreach ($this->configurations as $name => $config) {
             if ($config->isAutoSave()) {

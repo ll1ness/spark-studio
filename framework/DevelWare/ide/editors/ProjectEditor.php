@@ -108,7 +108,7 @@ class ProjectEditor extends AbstractEditor
 
             $index = $this->menu->selectedIndex;
 
-            $this->menu->items->setAll($this->controlPanes);
+            $this->menu->setGroupedItems($this->controlPanes, ['Настройки', 'Оформление', 'Ресурсы']);
 
             $this->menu->focusedIndex = $this->menu->selectedIndex = $index;
         }
@@ -128,7 +128,7 @@ class ProjectEditor extends AbstractEditor
         }
 
         $opened = $this->getOpenedPane();
-        $this->menu->items->setAll($this->controlPanes);
+        $this->menu->setGroupedItems($this->controlPanes, ['Настройки', 'Оформление', 'Ресурсы']);
 
         $this->navigate(reflect::typeOf($opened));
 
@@ -148,7 +148,8 @@ class ProjectEditor extends AbstractEditor
     {
         parent::leave();
 
-        if ($pane = $this->menu->selectedItem) {
+        $pane = $this->getOpenedPane();
+        if ($pane) {
             $pane->leave();
         }
     }
@@ -193,7 +194,8 @@ class ProjectEditor extends AbstractEditor
      */
     public function getOpenedPane()
     {
-        return $this->menu->selectedItem;
+        $item = $this->menu->selectedItem;
+        return $item instanceof \ide\ui\ListMenuCategory ? null : $item;
     }
 
     public function navigate($paneClass, $setMenu = true)
@@ -241,12 +243,17 @@ class ProjectEditor extends AbstractEditor
     public function makeLeftPaneUi()
     {
         $ui = new ListMenu();
-        $ui->items->setAll($this->controlPanes);
+        $ui->setCategoryGetter(function ($item) {
+            return method_exists($item, 'getCategory') ? $item->getCategory() : null;
+        });
+        $ui->setGroupedItems($this->controlPanes, ['Настройки', 'Оформление', 'Ресурсы']);
         UXAnchorPane::setAnchor($ui, 0);
 
         $ui->on('action', function () {
             uiLater(function () {
-                $this->navigate(reflect::typeOf($this->menu->selectedItem), false);
+                $item = $this->menu->selectedItem;
+                if ($item instanceof \ide\ui\ListMenuCategory) return;
+                $this->navigate(reflect::typeOf($item), false);
             });
         });
 

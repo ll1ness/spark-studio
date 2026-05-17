@@ -60,6 +60,11 @@ class BackupProjectControlPane extends AbstractProjectControlPane
         return "Резервные копии";
     }
 
+    public function getCategory()
+    {
+        return 'Настройки';
+    }
+
     public function getIcon()
     {
         return 'icons/backup16.png';

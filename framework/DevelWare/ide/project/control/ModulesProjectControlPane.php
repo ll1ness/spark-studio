@@ -14,7 +14,12 @@ class ModulesProjectControlPane extends AbstractEditorsProjectControlPane
 {
     public function getName()
     {
-        return "Модули";
+        return 'Модули';
+    }
+
+    public function getCategory()
+    {
+        return 'Оформление';
     }
 
     public function getDescription()

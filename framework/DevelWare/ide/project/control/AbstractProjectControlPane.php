@@ -16,11 +16,12 @@ abstract class AbstractProjectControlPane implements MenuViewable
 
     abstract public function getName();
     abstract public function getDescription();
-
-    /**
-     * @return UXNode
-     */
     abstract protected function makeUi();
+
+    public function getCategory()
+    {
+        return null;
+    }
 
     public function save()
     {

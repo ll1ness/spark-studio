@@ -18,7 +18,12 @@ class SpritesProjectControlPane extends AbstractEditorsProjectControlPane
 {
     public function getName()
     {
-        return "Спрайты";
+        return 'Спрайты';
+    }
+
+    public function getCategory()
+    {
+        return 'Ресурсы';
     }
 
     public function getDescription()

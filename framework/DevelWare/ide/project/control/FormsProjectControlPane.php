@@ -48,6 +48,11 @@ class FormsProjectControlPane extends AbstractEditorsProjectControlPane
         return "Формы и окна";
     }
 
+    public function getCategory()
+    {
+        return 'Оформление';
+    }
+
     public function getIcon()
     {
         return 'icons/windows16.png';

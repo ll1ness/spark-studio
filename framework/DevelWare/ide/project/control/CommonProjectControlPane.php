@@ -58,6 +58,11 @@ class CommonProjectControlPane extends AbstractProjectControlPane
         return "Главные настройки";
     }
 
+    public function getCategory()
+    {
+        return 'Настройки';
+    }
+
     public function getIcon()
     {
         return 'icons/myProject16.png';

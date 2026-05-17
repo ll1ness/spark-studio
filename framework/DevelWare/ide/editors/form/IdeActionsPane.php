@@ -85,6 +85,7 @@ class IdeActionsPane extends UXHBox
             $this->eventHandler->trigger('change');
         });
 
+        $ui->add(new UXLabel('Привязка:'));
         $ui->add($dotsButton);
         $ui->add($gridButton);
         $ui->add($emptyButton);
@@ -181,6 +182,8 @@ class IdeActionsPane extends UXHBox
     protected function makeAlignPane()
     {
         $this->add(new UXSeparator('VERTICAL'));
+        $this->add($label = new UXLabel('Выравнивание:'));
+        $label->maxHeight = 999;
 
         foreach (['left', 'right', 'top', 'bottom', 'center', 'middle'] as $align) {
             $btn = new UXButton();

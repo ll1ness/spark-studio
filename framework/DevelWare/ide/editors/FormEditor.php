@@ -252,6 +252,11 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
     protected $actionsPane;
 
     /**
+     * @var UXSplitPane
+     */
+    protected $rightSplit;
+
+    /**
      * @var IdeFormFactory
      */
     protected $factory;
@@ -581,6 +586,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         if ($this->getIdeConfig()) {
             $this->getIdeConfig()->set('blockedNodes', $blockedNodes);
+
+            if ($this->rightSplit) {
+                $this->getIdeConfig()->set('rightSplit.dividerPositions', $this->rightSplit->dividerPositions);
+            }
 
             $this->saveIdeConfig();
         }
@@ -2008,15 +2017,18 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
             $propertiesUi = $this->propertiesPane->makeUi();
 
-            $rightBox = new UXVBox();
-            $rightBox->fillWidth = true;
-            $rightBox->spacing = 2;
-            $rightBox->add($eventListUi);
-            $rightBox->add($this->behaviourBox);
-            $rightBox->add($propertiesUi);
-            UXVBox::setVgrow($propertiesUi, 'ALWAYS');
+            $this->rightSplit = new UXSplitPane([$eventListUi, $this->behaviourBox, $propertiesUi]);
+            $this->rightSplit->orientation = 'VERTICAL';
 
-            $rightScroll = new UXScrollPane($rightBox);
+            UXSplitPane::setResizeWithParent($propertiesUi, true);
+
+            uiLater(function () {
+                if ($this->getIdeConfig() && $this->getIdeConfig()->has('rightSplit.dividerPositions')) {
+                    $this->rightSplit->dividerPositions = $this->getIdeConfig()->getArray('rightSplit.dividerPositions', [0.33, 0.66]);
+                }
+            });
+
+            $rightScroll = new UXScrollPane($this->rightSplit);
             $rightScroll->fitToWidth = true;
             $rightScroll->fitToHeight = true;
 

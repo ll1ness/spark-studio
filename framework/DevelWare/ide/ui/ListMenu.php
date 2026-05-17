@@ -9,12 +9,24 @@ use php\gui\UXLabel;
 use php\gui\UXListCell;
 use php\gui\UXListView;
 use php\lib\arr;
+use php\lib\str;
+
+class ListMenuCategory
+{
+    public $name;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+}
 
 class ListMenu extends UXListView
 {
     protected $descriptionGetter = null;
     protected $nameGetter = null;
     protected $iconGetter = null;
+    protected $categoryGetter = null;
 
     protected $nameThin = false;
 
@@ -27,9 +39,64 @@ class ListMenu extends UXListView
         $this->classes->add('dn-list-menu');
         $this->fixedCellSize = 50;
 
-        $this->setCellFactory(function (UXListCell $view, MenuViewable $page) {
+        $this->setCellFactory(function (UXListCell $view, $page) {
             $this->cellRender($view, $page);
         });
+    }
+
+    public function setCategoryGetter(callable $callback)
+    {
+        $this->categoryGetter = $callback;
+    }
+
+    public function setGroupedItems(array $items, array $categoryOrder = [])
+    {
+        $groups = [];
+
+        foreach ($items as $item) {
+            $cat = $this->categoryGetter ? call_user_func($this->categoryGetter, $item) : null;
+
+            if ($item instanceof ListMenuCategory) {
+                $cat = $item->name;
+            } elseif ($cat === null) {
+                $groups[''][] = $item;
+                continue;
+            }
+
+            if (!isset($groups[$cat])) {
+                $groups[$cat] = [];
+            }
+
+            $groups[$cat][] = $item;
+        }
+
+        $flat = [];
+
+        if ($categoryOrder) {
+            foreach ($categoryOrder as $catName) {
+                if (isset($groups[$catName])) {
+                    $flat[] = new ListMenuCategory($catName);
+                    $flat = array_merge($flat, $groups[$catName]);
+                    unset($groups[$catName]);
+                }
+            }
+        }
+
+        foreach ($groups as $catName => $catItems) {
+            if ($catName !== '') {
+                $flat[] = new ListMenuCategory($catName);
+            }
+            $flat = array_merge($flat, $catItems);
+        }
+
+        $this->items->setAll($flat);
+
+        foreach ($flat as $i => $item) {
+            if (!($item instanceof ListMenuCategory)) {
+                $this->selectedIndex = $i;
+                break;
+            }
+        }
     }
 
     /**
@@ -110,9 +177,17 @@ class ListMenu extends UXListView
         $this->iconGetter = $iconGetter;
     }
 
-    protected function cellRender(UXListCell $view, MenuViewable $page)
+    protected function cellRender(UXListCell $view, $page)
     {
         $view->text = null;
+
+        if ($page instanceof ListMenuCategory) {
+            $label = new UXLabel(str::upper($page->name));
+            $label->style = '-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #888888; -fx-padding: 6 5 2 5;';
+            $view->text = null;
+            $view->graphic = $label;
+            return;
+        }
 
         $titleName = new UXLabel($this->getNameOfItem($page));
         $titleName->classes->add('dn-list-menu-title');
