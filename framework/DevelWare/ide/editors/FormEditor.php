@@ -74,7 +74,6 @@ use php\gui\UXTab;
 use php\gui\UXTabPane;
 use php\gui\UXTooltip;
 use php\gui\layout\UXTilePane;
-use php\gui\layout\UXStackPane;
 use php\io\File;
 use php\io\IOException;
 use php\io\Stream;
@@ -1898,24 +1897,45 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $designPane->zoom = 1;
             $designPane->size = $this->layout->size;
             $designPane->position = [0, 0];
-            $designPane->onResize(function () {
+            $this->markerNode = $designPane;
+
+            $designPane->add($this->layout);
+            $this->trigger('makeDesignPane', [$designPane]);
+
+            $designPane->onResize(function () use ($designPane) {
                 $this->designer->update();
 
                 // update form properties.
                 if (!$this->designer->getSelectedNodes()) {
                     $this->updateProperties($this, ['size']);
                 }
+
+                $pw = $designPane->width;
+                $ph = $designPane->height;
+                $lw = $this->layout->width;
+                $lh = $this->layout->height;
+
+                if ($pw > $lw || $ph > $lh) {
+                    $designPane->position = [
+                        max(0, ($pw - $lw) / 2),
+                        max(0, ($ph - $lh) / 2)
+                    ];
+                } else {
+                    $designPane->position = [0, 0];
+                }
             });
 
-            $this->markerNode = $designPane;
+            $pw = $designPane->width;
+            $ph = $designPane->height;
+            $lw = $this->layout->width;
+            $lh = $this->layout->height;
 
-            $centerPane = new UXStackPane();
-            $centerPane->alignment = 'CENTER';
-            $centerPane->add($this->layout);
-            $designPane->add($centerPane);
-
-            $this->trigger('makeDesignPane', [$designPane]);
-            UXAnchorPane::setAnchor($centerPane, 0);
+            if ($pw > $lw || $ph > $lh) {
+                $designPane->position = [
+                    max(0, ($pw - $lw) / 2),
+                    max(0, ($ph - $lh) / 2)
+                ];
+            }
         } else {
             $this->markerNode = $this->layout;
 
@@ -1954,7 +1974,9 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         uiLater(function () {
             if ($selectionRect = $this->designer->getSelectionRectangle()) {
-                $selectionRect->opacity = 0.3;
+                if ($selectionRect->layout) {
+                    $selectionRect->layout->backgroundColor = UXColor::of('rgba(51, 153, 255, 0.3)');
+                }
             }
         });
 
