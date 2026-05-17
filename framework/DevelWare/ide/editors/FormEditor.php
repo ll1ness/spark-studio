@@ -1925,17 +1925,34 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
             $designPane->on('mouseDown', function (UXMouseEvent $e) use ($designPane, &$panning, &$panStartScreenX, &$panStartScreenY, &$panStartPos) {
                 if ($e->button == 'MIDDLE') {
-                    $panning = true;
+                    $panning = false;
                     $panStartScreenX = $e->screenX;
                     $panStartScreenY = $e->screenY;
                     $panStartPos = $designPane->position ?: [0, 0];
-                    $designPane->cursor = 'MOVE';
-                    $this->designer->disabled = true;
                 }
             });
 
             $designPane->on('mouseDrag', function (UXMouseEvent $e) use ($designPane, &$panning, &$panStartScreenX, &$panStartScreenY, &$panStartPos) {
-                if ($panning) {
+                if ($e->button != 'MIDDLE') return;
+
+                if (!$panning) {
+                    $dx = abs($e->screenX - $panStartScreenX);
+                    $dy = abs($e->screenY - $panStartScreenY);
+
+                    if ($dx > 5 || $dy > 5) {
+                        $panning = true;
+                        $this->designer->disabled = true;
+                        $designPane->cursor = 'MOVE';
+
+                        $panStartPos = $designPane->position ?: [0, 0];
+                        $panStartScreenX = $e->screenX;
+                        $panStartScreenY = $e->screenY;
+
+                        if ($rect = $this->designer->getSelectionRectangle()) {
+                            $rect->size = [1, 1];
+                        }
+                    }
+                } else {
                     $dx = $e->screenX - $panStartScreenX;
                     $dy = $e->screenY - $panStartScreenY;
                     $designPane->position = [$panStartPos[0] + $dx, $panStartPos[1] + $dy];
@@ -1944,9 +1961,11 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
             $designPane->on('mouseUp', function (UXMouseEvent $e) use ($designPane, &$panning) {
                 if ($e->button == 'MIDDLE') {
-                    $panning = false;
+                    if ($panning) {
+                        $panning = false;
+                        $this->designer->disabled = false;
+                    }
                     $designPane->cursor = 'DEFAULT';
-                    $this->designer->disabled = false;
                 }
             });
         } else {
