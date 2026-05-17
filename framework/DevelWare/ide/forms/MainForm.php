@@ -242,10 +242,84 @@ class MainForm extends AbstractIdeForm
         }))->start();
     }
 
+private function getConsoleShell()
+    {
+        if (Ide::get()->isWindows()) {
+            return 'cmd.exe';
+        }
+        return 'bash';
+    }
+
     private function getConsoleWorkDir()
     {
         $project = Ide::project();
         return $project ? $project->getRootDir() : './';
+    }
+
+    private function executeConsoleCommand($text)
+    {
+        $text = str::trim($text);
+        if (!$text) return;
+
+        $output = $this->systemConsoleOutput;
+        $output->appendText("$ $text\n");
+
+        (new Thread(function () use ($text, $output) {
+            try {
+                $shell = $this->getConsoleShell();
+                $workDir = $this->getConsoleWorkDir();
+                
+                if (Ide::get()->isLinux()) {
+                    $cmd = ['script', '-q', '-c', $text, '/dev/null'];
+                } else {
+                    $cmd = ['cmd.exe', '/c', $text];
+                }
+                
+                $process = new Process($cmd, $workDir, (array)$_ENV);
+                $process->inheritIO();
+                
+                $exitValue = $process->getExitValue();
+
+                $out = Stream::getContents($process->getInput());
+                $err = Stream::getContents($process->getError());
+
+                UXApplication::runLater(function () use ($output, $out, $err, $exitValue) {
+                    if ($out) {
+                        $output->appendText("$out\n");
+                    }
+                    if ($err) {
+                        $output->appendText("[ERR] $err\n");
+                    }
+                    if ($exitValue != 0) {
+                        $output->appendText("Process exited with code $exitValue\n");
+                    }
+                });
+            } catch (\Exception $e) {
+                UXApplication::runLater(function () use ($output, $e) {
+                    $output->appendText("Error: " . $e->getMessage() . "\n");
+                });
+            }
+        }))->start();
+    }
+                $err = Stream::getContents($process->getError());
+
+                UXApplication::runLater(function () use ($output, $out, $err, $exitValue) {
+                    if ($out) {
+                        $output->appendText("$out\n");
+                    }
+                    if ($err) {
+                        $output->appendText("[ERR] $err\n");
+                    }
+                    if ($exitValue != 0) {
+                        $output->appendText("Process exited with code $exitValue\n");
+                    }
+                });
+            } catch (\Exception $e) {
+                UXApplication::runLater(function () use ($output, $e) {
+                    $output->appendText("Error: " . $e->getMessage() . "\n");
+                });
+            }
+        }))->start();
     }
 
     public function updateFooter()
