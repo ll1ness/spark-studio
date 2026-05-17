@@ -354,59 +354,59 @@
     -fx-strikethrough: true;
 }
 
-.dw-bl-lighten {
+.sprk-bl-lighten {
     -fx-blend-mode: lighten;
 }
 
-.dw-bl-screen {
+.sprk-bl-screen {
     -fx-blend-mode: screen;
 }
 
-.dw-bl-overlay {
+.sprk-bl-overlay {
     -fx-blend-mode: overlay;
 }
 
-.dw-bl-hardlight {
+.sprk-bl-hardlight {
     -fx-blend-mode: hard-light;
 }
 
-.dw-bl-softlight {
+.sprk-bl-softlight {
     -fx-blend-mode: soft-light;
 }
 
-.dw-bl-difference {
+.sprk-bl-difference {
     -fx-blend-mode: difference;
 }
 
-.dw-bl-exclusion {
+.sprk-bl-exclusion {
     -fx-blend-mode: exclusion;
 }
 
-.dw-bl-lighten-text .text {
+.sprk-bl-lighten-text .text {
     -fx-blend-mode: lighten;
 }
 
-.dw-bl-screen-text .text {
+.sprk-bl-screen-text .text {
     -fx-blend-mode: screen;
 }
 
-.dw-bl-overlay-text .text {
+.sprk-bl-overlay-text .text {
     -fx-blend-mode: overlay;
 }
 
-.dw-bl-hardlight-text .text {
+.sprk-bl-hardlight-text .text {
     -fx-blend-mode: hard-light;
 }
 
-.dw-bl-softlight-text .text {
+.sprk-bl-softlight-text .text {
     -fx-blend-mode: soft-light;
 }
 
-.dw-bl-difference-text .text {
+.sprk-bl-difference-text .text {
     -fx-blend-mode: difference;
 }
 
-.dw-bl-exclusion-text .text {
+.sprk-bl-exclusion-text .text {
     -fx-blend-mode: exclusion;
 }
 
@@ -502,7 +502,7 @@
     -fx-padding: 0;
 }
 
-.dn-console-list {
+.sprk-console-list {
     -fx-background-color: #1E1E1E; /* Тёмный фон */
     -fx-text-fill: #FFFFFF; /* Светлый текст */
     -fx-font-family: 'DejaVu Sans Mono', monospace;
@@ -631,18 +631,18 @@
 
 /* Панель табов - неактивный таб */
 .tab-pane .tab,
-.dn-file-tab-pane > .tab-header-area > .headers-region > .tab {
+.sprk-file-tab-pane > .tab-header-area > .headers-region > .tab {
     -fx-background-color: -fx-pressed-base;
 }
 
 /* Активный таб (в т.ч. у MainForm) */
 .tab-pane .tab:selected,
-.dn-file-tab-pane > .tab-header-area > .headers-region > .tab:selected {
+.sprk-file-tab-pane > .tab-header-area > .headers-region > .tab:selected {
     -fx-background-color: -fx-base;
 }
 
 .tab-pane .tab:selected > .tab-container *,
-.dn-file-tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label {
+.sprk-file-tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label {
     -fx-text-fill: white;
 }
 
@@ -656,13 +656,13 @@
 /**
  * Подсказка с ошибкой
  */
-.dn-tooltip-error {
+.sprk-tooltip-error {
     -fx-background-color: -fx-red;
     -fx-text-fill: -fx-base;
 }
 
 /**
- * Вкладка проект - фрейм "синхронизация с develnext"
+ * Вкладка проект - фрейм "синхронизация с spark"
  */
 #syncPane, #need-auth-pane, #need-auth-pane > * {
     -fx-background-color: -fx-background;
@@ -679,7 +679,7 @@
 /**
  * Фон у визуального редактора форм
  */
-.scroll-pane.dn-mosaic-background > .viewport {
+.scroll-pane.sprk-mosaic-background > .viewport {
     -fx-background-color: -fx-base;
     -fx-background-image: url("/.data/img/transparent-dark.png");
     -fx-background-repeat: repeat;
@@ -710,7 +710,7 @@
     -fx-background-color: #303030;
 }
 
-.dn-autocomplete {
+.sprk-autocomplete {
     -fx-border-width: 1px;
     -fx-border-color: #424242; /* Темный серый для границы */
     -fx-background-color: #2c2c2c; /* Темный фон */
@@ -720,7 +720,7 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 6, 0, 0, 3); /* Более темная и глубокая тень */
 }
 
-.dn-autocomplete-description {
+.sprk-autocomplete-description {
     -fx-font: 14px "Roboto", sans-serif;
     -fx-background-color: #2c2c2c; /* Темный фон */
     -fx-padding: 16px;
@@ -730,23 +730,23 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0, 0, 3); /* Тень с большим размытием */
 }
 
-.dn-autocomplete-description .title {
+.sprk-autocomplete-description .title {
     -fx-font-weight: bold;
     -fx-font-size: 18px; /* Чуть больше для заголовков */
     -fx-text-fill: #ffffff; /* Белый текст */
 }
 
-.dn-autocomplete-description .description {
+.sprk-autocomplete-description .description {
     -fx-font-size: 14px;
     -fx-text-fill: #b0b0b0; /* Светло-серый для текста */
     -fx-margin-top: 8px;
 }
 
-.dn-autocomplete-description .content {
+.sprk-autocomplete-description .content {
     -fx-padding-top: 8px;
 }
 
-.dn-autocomplete-description .content .label {
+.sprk-autocomplete-description .content .label {
     -fx-font-family: "Roboto", sans-serif;
     -fx-font-style: italic;
     -fx-text-fill: #a0a0a0; /* Легкий оттенок серого для выделения текста */

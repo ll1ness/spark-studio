@@ -1,0 +1,391 @@
+* {
+    -fx-prompt-text-fill: #a0a0a0;
+}
+
+.menu-bar {
+    -fx-border-width: 0px;
+    -fx-pref-height: 35px;
+    -fx-padding: 0 0.5em;
+    -fx-alignment: center;
+    -fx-background-color: rgba(40, 40, 40, 0.8); /* Темный полупрозрачный фон */
+    -fx-border-color: rgba(60, 60, 60, 0.5); /* Темно-серая полупрозрачная граница */
+    -fx-border-radius: 6px; /* Более округлые границы для современного вида */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 6, 0.2, 0, 3); /* Глубокая тень */
+}
+
+.menu-bar .menu {
+    -fx-text-fill: rgba(220, 220, 220, 0.9); /* Светлый текст */
+    -fx-alignment: center;
+    -fx-background-radius: 4px; /* Немного увеличен радиус */
+    -fx-padding: 0 0.8em;
+}
+
+.menu-bar .menu-button {
+    -fx-text-fill: rgba(220, 220, 220, 0.9); /* Светло-серый текст для кнопок */
+    -fx-background-radius: 4px;
+    -fx-font-size: 14px;
+    -fx-padding: 0.4em 0.8em;
+    -fx-alignment: center;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.menu-bar .menu-button:hover {
+    -fx-background-color: rgba(60, 60, 60, 0.8); /* Темно-серая подложка при наведении */
+}
+
+.menu-bar .menu-button:pressed {
+    -fx-background-color: rgba(80, 80, 80, 0.8); /* Более темный фон при нажатии */
+}
+
+.menu-bar .menu-item {
+    -fx-text-fill: rgba(220, 220, 220, 0.9); /* Светло-серый текст */
+    -fx-background-radius: 4px;
+    -fx-padding: 0.4em 0.8em;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+    -fx-background-color: transparent;
+}
+
+.menu-bar .menu-item:hover {
+    -fx-background-color: rgba(60, 60, 60, 0.8); /* Темно-серая подложка при наведении */
+}
+
+.menu-bar .menu-item:selected {
+    -fx-background-color: rgba(80, 80, 80, 0.8); /* Более темный фон при выборе */
+}
+
+.menu-bar .menu .arrow {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-text-fill: rgba(160, 160, 160, 0.9); /* Более светлая стрелка */
+    -fx-font-size: 12px;
+}
+
+
+.icon-flat-edit { -fx-graphic: url("/.data/img/icons/flatEdit16.png"); }
+.icon-flat-delete { -fx-graphic: url("/.data/img/icons/flatDelete16.png"); }
+.icon-flat-gallery { -fx-graphic: url("/.data/img/icons/flatGallery16.png"); }
+.icon-flat-refresh { -fx-graphic: url("/.data/img/icons/flatRefresh16.png"); }
+.icon-flat-account { -fx-graphic: url("/.data/img/icons/account16.png"); }
+.icon-flat-search { -fx-graphic: url("/.data/img/icons/flatSearch16.png"); }
+
+.icon-exit { -fx-graphic: url("/.data/img/icons/exit16.png"); }
+.icon-exit32 { -fx-graphic: url("/.data/img/icons/exit32.png"); }
+
+.icon-ok { -fx-graphic: url("/.data/img/icons/ok16.png"); }
+.icon-save { -fx-graphic: url("/.data/img/icons/save16.png"); }
+.icon-ok32 { -fx-graphic: url("/.data/img/icons/ok32.png"); }
+
+.icon-run { -fx-graphic: url("/.data/img/icons/run16.png"); }
+
+.icon-plus { -fx-graphic: url("/.data/img/icons/plus16.png"); }
+.icon-add { -fx-graphic: url("/.data/img/icons/add16.png"); }
+.icon-delete { -fx-graphic: url("/.data/img/icons/delete16.png"); }
+.icon-clear { -fx-graphic: url("/.data/img/icons/clear16.png"); }
+
+.icon-copy { -fx-graphic: url("/.data/img/icons/copy16.png"); }
+.icon-edit { -fx-graphic: url("/.data/img/icons/edit16.png"); }
+.icon-settings { -fx-graphic: url("/.data/img/icons/settings16.png"); }
+.icon-blocks { -fx-graphic: url("/.data/img/icons/blocks16.png"); }
+.icon-vk { -fx-graphic: url("/.data/img/icons/vk16.png"); }
+.icon-login { -fx-graphic: url("/.data/img/icons/login16.png"); }
+.icon-green-document { -fx-graphic: url("/.data/img/icons/greenDocument16.png"); }
+.icon-red-document { -fx-graphic: url("/.data/img/icons/redDocument16.png"); }
+.icon-rabbit-food { -fx-graphic: url("/.data/img/icons/rabbitFood16.png"); }
+.icon-download-ext { -fx-graphic: url("/.data/img/icons/downloadExt16.png"); }
+.icon-youtube { -fx-graphic: url("/.data/img/icons/youtube16.png"); }
+.icon-convert { -fx-graphic: url("/.data/img/icons/convert16.png"); }
+.icon-trash { -fx-graphic: url("/.data/img/icons/trash16.png"); }
+.icon-trash2 { -fx-graphic: url("/.data/img/icons/trash16.gif"); }
+.icon-php { -fx-graphic: url("/.data/img/icons/phpFile16.png"); }
+.icon-share { -fx-graphic: url("/.data/img/icons/share16.png"); }
+.icon-share-ex { -fx-graphic: url("/.data/img/icons/shareEx16.png"); }
+.icon-upload { -fx-graphic: url("/.data/img/icons/upload16.png"); }
+.icon-library { -fx-graphic: url("/.data/img/icons/library16.png"); }
+.icon-square { -fx-graphic: url("/.data/img/icons/square16.png"); }
+.icon-control-panel { -fx-graphic: url("/.data/img/icons/controlPanel16.png"); }
+
+.icon-refresh { -fx-graphic: url("/.data/img/icons/refresh16.png"); }
+.icon-refresh32 { -fx-graphic: url("/.data/img/icons/refresh32.png"); }
+
+.icon-open { -fx-graphic: url("/.data/img/icons/open16.png"); }
+.icon-open32 { -fx-graphic: url("/.data/img/icons/open32.png"); }
+
+.icon-new { -fx-graphic: url("/.data/img/icons/new16.png"); }
+.icon-new32 { -fx-graphic: url("/.data/img/icons/new32.png"); }
+
+.button { -fx-cursor: hand; }
+
+.menu-bar .menu-item {
+    -fx-text-fill: #333;
+    -fx-background-radius: 5px;
+    -fx-padding: 0.2em 0.5em;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+}
+
+.menu-bar .menu-item:hover {
+    -fx-background-color: #cccccc;
+    -fx-background-radius: 5px;
+}
+
+.menu-bar .menu-item:selected {
+    -fx-background-color: #b3b3b3;
+    -fx-background-radius: 5px;
+}
+
+.menu-bar .menu .arrow {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.sprk-console-list {
+    -fx-background-color: #1E1E1E; /* Тёмный фон */
+    -fx-text-fill: #FFFFFF; /* Светлый текст */
+    -fx-font-family: 'DejaVu Sans Mono', monospace;
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+    -fx-border-color: #555555; /* Тёмная граница */
+    -fx-border-width: 1px;
+}
+
+.root {
+    /* Основной цвет элементов */
+    -fx-base: #1E1F22;
+
+    /* Цвет фона */
+    -fx-background: #1E1F22;
+    -fx-background-color: -fx-background;
+
+    /* Цвет текста */
+    -fx-font-color: #DFE1E5;
+    -fx-text-base-color: -fx-font-color;
+
+    /* Фокусированная вкладка (окантовка) */
+    -fx-focus-color: -fx-base;
+
+    /* Цвет обводки при фокусе на элемент */
+    -fx-faint-focus-color: rgba(86, 86, 86, 0.42);
+
+    /* Фон у внутренних элементов: нечёт, чёт */
+    -fx-control-inner-background: -fx-base;
+    -fx-control-inner-background-alt: derive(-fx-base, 4%);
+
+    /* Цвет кнопок с действие по-умолчанию: применить, сохранить и т.д.*/
+    -fx-default-button: #555;
+
+    -fx-color: -fx-base;
+    -fx-accent: #bfd7e2;
+    -fx-green: #3D747A;
+    -fx-blue: #87bed3;
+    /*-fx-blue: #7EB6CC;*/
+    -fx-dark-blue: #2C5260;
+    -fx-red: #e2574c;
+    -fx-yellow: #f9a300;
+    -fx-lime: #7F7E43;
+
+    -fx-lighting-yellow: #44413c;
+    -fx-lighting-green: #3f443c;
+    -fx-lighting-blue: #3c3f44;
+    -fx-lighting-err: #443c3c;
+
+    -fx-lighting-acc: -fx-accent;
+    -fx-lighting-hover: derive(-fx-base, 13%);
+
+    /* Цвет border у табличных элементов*/
+    -fx-box-border: derive(-fx-color, 1%);
+
+    /* Цвет border у текстовых элементов*/
+    -fx-text-box-border: derive(-fx-color, -8%);
+
+    /* Базовый градиент всех элементов управления*/
+    -fx-body-color: derive(-fx-color, 5%);
+
+    /* Цвет border у компонентов управления*/
+    -fx-outer-border: derive(-fx-color, 3%);
+
+    /* Цвет внутреннего border у компонентов */
+    -fx-inner-border: derive(-fx-base, 15%);
+
+    /* Цвет внутреннего border у компонентов */
+    -fx-selection-bar: -fx-hover;
+    -fx-selection-bar-non-focused: -fx-hover;
+    -fx-selection-bar-text: -fx-accent;
+}
+
+/**
+ * Цвет у панелей со списком форм, модулей, проектов
+ */
+.flow-list-view {
+    -fx-background-color: -fx-background;
+    -fx-border-color: -fx-outer-border;
+}
+
+.flow-list-view .list-cell.selected {
+    -fx-background-color: -fx-pressed-base;
+}
+.flow-list-view .list-cell.hovered {
+    -fx-border-color: -fx-hover-base;
+}
+.flow-list-view .list-cell.dragged {
+    -fx-border-color: -fx-accent;
+}
+
+/* Меню */
+/* Цвет фона у подменю*/
+.menu * {
+    -fx-background-color: -fx-background;
+}
+
+/* У текста в меню фон прозрачный */
+.menu .label {
+    -fx-background-color: transparent;
+}
+
+/* Наведение на пункт меню */
+.menu:hover * {
+    -fx-background-color: -fx-base;
+}
+
+.menu-bar {
+    -fx-background-color: #313131;
+}
+
+/* Цвет текстовых элементов */
+.label {
+    -fx-text-fill: white;
+}
+
+/* Цвет у кнопки "вход в аккаунт" */
+.button.flat-button {
+    -fx-text-fill: -fx-font-color;
+    -fx-background-color: -fx-background;
+}
+
+.button.flat-button:hover {
+    -fx-background-color: -fx-hover;
+}
+
+/* Панель табов - неактивный таб */
+.tab-pane .tab,
+.sprk-file-tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: -fx-pressed-base;
+}
+
+/* Активный таб (в т.ч. у MainForm) */
+.tab-pane .tab:selected,
+.sprk-file-tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: -fx-base;
+}
+
+.tab-pane .tab:selected > .tab-container *,
+.sprk-file-tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label {
+    -fx-text-fill: white;
+}
+
+/**
+ * Preloader
+ */
+#x-preloader {
+    -fx-background-color: -fx-background;
+}
+
+/**
+ * Подсказка с ошибкой
+ */
+.sprk-tooltip-error {
+    -fx-background-color: -fx-red;
+    -fx-text-fill: -fx-base;
+}
+
+/**
+ * Вкладка проект - фрейм "синхронизация с spark"
+ */
+#syncPane, #need-auth-pane, #need-auth-pane > * {
+    -fx-background-color: -fx-background;
+}
+
+/**
+ * Визуальный конструктор элементов
+ */
+#designer-layout {
+    -fx-border-color: -fx-outer-border;
+    -fx-background-color: -fx-background;
+}
+
+/**
+ * Фон у визуального редактора форм
+ */
+.scroll-pane.sprk-mosaic-background > .viewport {
+    -fx-background-color: -fx-base;
+    -fx-background-image: url("/.data/img/transparent-dark.png");
+    -fx-background-repeat: repeat;
+}
+
+/**
+ * Поле редактировать список модулей у формы
+ */
+.modules-editor {
+    -fx-control-inner-background: -fx-dark-blue;
+}
+
+/**
+ * Кнопка сохранить
+ */
+.button:default {
+    -fx-background-color: -fx-default-button;
+}
+
+/**
+ * Цвет текста в полях у редактора форм
+ */
+.property-group, .property-group * {
+    -fx-text-fill: -fx-font-color;
+}
+
+.settings-group {
+    -fx-background-color: #303030;
+}
+
+.sprk-autocomplete {
+    -fx-border-width: 1px;
+    -fx-border-color: #424242; /* Темный серый для границы */
+    -fx-background-color: #2c2c2c; /* Темный фон */
+    -fx-padding: 8px;
+    -fx-border-radius: 2px; /* Больше радиус для более мягких углов */
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 6, 0, 0, 3); /* Более темная и глубокая тень */
+}
+
+.sprk-autocomplete-description {
+    -fx-font: 14px "Roboto", sans-serif;
+    -fx-background-color: #2c2c2c; /* Темный фон */
+    -fx-padding: 16px;
+    -fx-border-radius: 1px; /* Закругленные углы */
+    -fx-border-width: 1px;
+    -fx-border-color: #424242; /* Темно-серая граница */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0, 0, 3); /* Тень с большим размытием */
+}
+
+.sprk-autocomplete-description .title {
+    -fx-font-weight: bold;
+    -fx-font-size: 18px; /* Чуть больше для заголовков */
+    -fx-text-fill: #ffffff; /* Белый текст */
+}
+
+.sprk-autocomplete-description .description {
+    -fx-font-size: 14px;
+    -fx-text-fill: #b0b0b0; /* Светло-серый для текста */
+    -fx-margin-top: 8px;
+}
+
+.sprk-autocomplete-description .content {
+    -fx-padding-top: 8px;
+}
+
+.sprk-autocomplete-description .content .label {
+    -fx-font-family: "Roboto", sans-serif;
+    -fx-font-style: italic;
+    -fx-text-fill: #a0a0a0; /* Легкий оттенок серого для выделения текста */
+}

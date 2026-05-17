@@ -21,7 +21,7 @@
       </titleFont>
     </Panel>
     <Data cursor="DEFAULT" enabled="1" id="data-panel" visible="1"/>
-    <LabelEx alignment="CENTER_LEFT" autoSize="false" contentDisplay="LEFT" ellipsisString="..." focusTraversable="false" graphicTextGap="4" id="labelAlt" layoutX="64" layoutY="48" prefHeight="18" prefWidth="232" styleClass="label " text="Система обновлений DevelWare" textAlignment="LEFT" underline="false" wrapText="false">
+    <LabelEx alignment="CENTER_LEFT" autoSize="false" contentDisplay="LEFT" ellipsisString="..." focusTraversable="false" graphicTextGap="4" id="labelAlt" layoutX="64" layoutY="48" prefHeight="18" prefWidth="232" styleClass="label " text="Система обновлений SparkStudio" textAlignment="LEFT" underline="false" wrapText="false">
       <font>
         <Font name="Consolas" size="15"/>
       </font>

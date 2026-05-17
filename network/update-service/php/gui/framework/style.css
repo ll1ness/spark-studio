@@ -354,59 +354,59 @@
     -fx-strikethrough: true;
 }
 
-.dw-bl-lighten {
+.sprk-bl-lighten {
     -fx-blend-mode: lighten;
 }
 
-.dw-bl-screen {
+.sprk-bl-screen {
     -fx-blend-mode: screen;
 }
 
-.dw-bl-overlay {
+.sprk-bl-overlay {
     -fx-blend-mode: overlay;
 }
 
-.dw-bl-hardlight {
+.sprk-bl-hardlight {
     -fx-blend-mode: hard-light;
 }
 
-.dw-bl-softlight {
+.sprk-bl-softlight {
     -fx-blend-mode: soft-light;
 }
 
-.dw-bl-difference {
+.sprk-bl-difference {
     -fx-blend-mode: difference;
 }
 
-.dw-bl-exclusion {
+.sprk-bl-exclusion {
     -fx-blend-mode: exclusion;
 }
 
-.dw-bl-lighten-text .text {
+.sprk-bl-lighten-text .text {
     -fx-blend-mode: lighten;
 }
 
-.dw-bl-screen-text .text {
+.sprk-bl-screen-text .text {
     -fx-blend-mode: screen;
 }
 
-.dw-bl-overlay-text .text {
+.sprk-bl-overlay-text .text {
     -fx-blend-mode: overlay;
 }
 
-.dw-bl-hardlight-text .text {
+.sprk-bl-hardlight-text .text {
     -fx-blend-mode: hard-light;
 }
 
-.dw-bl-softlight-text .text {
+.sprk-bl-softlight-text .text {
     -fx-blend-mode: soft-light;
 }
 
-.dw-bl-difference-text .text {
+.sprk-bl-difference-text .text {
     -fx-blend-mode: difference;
 }
 
-.dw-bl-exclusion-text .text {
+.sprk-bl-exclusion-text .text {
     -fx-blend-mode: exclusion;
 }
 

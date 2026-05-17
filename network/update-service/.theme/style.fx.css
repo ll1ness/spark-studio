@@ -176,18 +176,18 @@
 
 /* Панель табов - неактивный таб */
 .tab-pane .tab,
-.dn-file-tab-pane > .tab-header-area > .headers-region > .tab {
+.sprk-file-tab-pane > .tab-header-area > .headers-region > .tab {
     -fx-background-color: -fx-pressed-base;
 }
 
 /* Активный таб (в т.ч. у MainForm) */
 .tab-pane .tab:selected,
-.dn-file-tab-pane > .tab-header-area > .headers-region > .tab:selected {
+.sprk-file-tab-pane > .tab-header-area > .headers-region > .tab:selected {
     -fx-background-color: -fx-base;
 }
 
 .tab-pane .tab:selected > .tab-container *,
-.dn-file-tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label {
+.sprk-file-tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label {
     -fx-text-fill: white;
 }
 
@@ -201,13 +201,13 @@
 /**
  * Подсказка с ошибкой
  */
-.dn-tooltip-error {
+.sprk-tooltip-error {
     -fx-background-color: -fx-red;
     -fx-text-fill: -fx-base;
 }
 
 /**
- * Вкладка проект - фрейм "синхронизация с develnext"
+ * Вкладка проект - фрейм "синхронизация с spark"
  */
 #syncPane, #need-auth-pane, #need-auth-pane > * {
     -fx-background-color: -fx-background;
@@ -224,7 +224,7 @@
 /**
  * Фон у визуального редактора форм
  */
-.scroll-pane.dn-mosaic-background > .viewport {
+.scroll-pane.sprk-mosaic-background > .viewport {
     -fx-background-color: -fx-base;
     -fx-background-image: url("/.data/img/transparent-dark.png");
     -fx-background-repeat: repeat;

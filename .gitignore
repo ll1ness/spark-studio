@@ -1,6 +1,6 @@
 bin/logs/
 bin/jre/
-.DevelNext/
+.Spark/
 .DS_Store
 Thumbs.db
 *.log
