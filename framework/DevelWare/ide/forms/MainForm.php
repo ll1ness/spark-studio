@@ -40,6 +40,7 @@ use php\gui\UXImageView;
 use php\gui\UXLabel;
 use php\gui\UXMenu;
 use php\gui\UXMenuBar;
+use php\gui\UXMenuButton;
 use php\gui\UXMenuItem;
 use php\gui\UXNode;
 use php\gui\UXScreen;
@@ -95,7 +96,7 @@ class MainForm extends AbstractIdeForm
     private $bottom;
 
     /**
-     * @var UXMenu[]
+     * @var UXMenuButton[]
      */
     public $toolbarCategoryMenus = [];
 
