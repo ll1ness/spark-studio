@@ -2041,8 +2041,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             UXSplitPane::setResizeWithParent($rightScroll, false);
 
             $right = new UXAnchorPane();
-            $right->width = 250;
+            $right->prefWidth = 250;
+            $right->maxWidth = 250;
             $right->add($rightScroll);
+            UXSplitPane::setResizeWithParent($right, false);
 
             $split = new UXSplitPane([$ui, $right]);
             $split->orientation = 'HORIZONTAL';
