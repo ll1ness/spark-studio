@@ -75,9 +75,6 @@ use system\DFFIGUI;
  * @property UXTabPane $bottomSpoilerTabPane
  * @property UXSplitPane $splitTree
  * @property UXSplitPane $centerSplit
- * @property UXAnchorPane $systemConsolePane
- * @property UXTextArea $systemConsoleOutput
- * @property UXTextField $systemConsoleInput
  * @property UXHBox $footerPane
  * @property UXHBox $footerLeftPane
  */
@@ -169,13 +166,6 @@ class MainForm extends AbstractIdeForm
 
         UXAnchorPane::setAnchor($tree, 0);
 
-        $this->systemConsoleInput->on('keyDown', function (UXKeyEvent $e) {
-            if ($e->codeName == 'Enter') {
-                $this->executeConsoleCommand($this->systemConsoleInput->text);
-                $this->systemConsoleInput->text = '';
-            }
-        });
-
         Ide::get()->bind('shutdown', function () {
             $this->ideConfig()->set("splitTree.dividerPositions", $this->splitTree->dividerPositions);
             $this->ideConfig()->set("centerSplit.dividerPositions", $this->centerSplit->dividerPositions);
@@ -201,122 +191,6 @@ class MainForm extends AbstractIdeForm
 
             $this->footerLeftPane->children->clear();
         });
-    }
-
-    private function executeConsoleCommand($text)
-    {
-        $text = str::trim($text);
-        if (!$text) return;
-
-        $output = $this->systemConsoleOutput;
-        $output->appendText("$ $text\n");
-
-        (new Thread(function () use ($text, $output) {
-            try {
-                $shell = System::getEnv('SHELL', '/bin/bash');
-                $workDir = $this->getConsoleWorkDir();
-                $process = new Process([$shell, '-c', $text], $workDir, (array)$_ENV);
-                $process->start();
-
-                $exitValue = $process->getExitValue();
-
-                $out = str::trim(Stream::getContents($process->getInput()));
-                $err = str::trim(Stream::getContents($process->getError()));
-
-                UXApplication::runLater(function () use ($output, $out, $err, $exitValue) {
-                    if ($out) {
-                        $output->appendText("$out\n");
-                    }
-                    if ($err) {
-                        $output->appendText("[ERR] $err\n");
-                    }
-                    if ($exitValue != 0) {
-                        $output->appendText("Process exited with code $exitValue\n");
-                    }
-                });
-            } catch (\Exception $e) {
-                UXApplication::runLater(function () use ($output, $e) {
-                    $output->appendText("Error: " . $e->getMessage() . "\n");
-                });
-            }
-        }))->start();
-    }
-
-private function getConsoleWorkDir()
-    {
-        $project = Ide::project();
-        return $project ? $project->getRootDir() : './';
-    }
-
-    private function executeConsoleCommand($text)
-    {
-        $text = str::trim($text);
-        if (!$text) return;
-
-        $output = $this->systemConsoleOutput;
-        $output->appendText("$ $text\n");
-
-        (new Thread(function () use ($text, $output) {
-            try {
-                $workDir = $this->getConsoleWorkDir();
-                
-                if (Ide::get()->isWindows()) {
-                    // Open cmd in new window with working directory
-                    $cmd = "start cmd /K \"cd /d $workDir\"";
-                    $process = new Process(['cmd.exe', '/c', $cmd], $workDir);
-                    $process->start();
-                    
-                    UXApplication::runLater(function () use ($output) {
-                        $output->appendText("Terminal opened in new window\n");
-                    });
-                } else {
-                    // Open terminal in new window - check for available terminals
-                    $terminals = [
-                        'konsole' => "--workdir",
-                        'gnome-terminal' => "--working-directory", 
-                        'xfce4-terminal' => "--working-directory",
-                        'xterm' => "",
-                        'lxterminal' => ""
-                    ];
-                    
-                    $found = false;
-                    foreach ($terminals as $term => $dirFlag) {
-                        if ($dirFlag === "") {
-                            // Terminals that don't support working directory
-                            $cmd = [$term];
-                        } else {
-                            $cmd = [$term, $dirFlag, $workDir];
-                        }
-                        
-                        try {
-                            $check = new Process(['which', $term]);
-                            if ($check->getExitValue() === 0) {
-                                $process = new Process($cmd, $workDir);
-                                $process->start();
-                                $found = true;
-                                break;
-                            }
-                        } catch (\Exception $e) {
-                            continue;
-                        }
-                    }
-                    
-                    if (!$found) {
-                        // Fallback to xterm
-                        $process = new Process(['xterm'], $workDir);
-                        $process->start();
-                    }
-                    
-                    UXApplication::runLater(function () use ($output) {
-                        $output->appendText("Terminal opened in new window\n");
-                    });
-                }
-            } catch (\Exception $e) {
-                UXApplication::runLater(function () use ($output, $e) {
-                    $output->appendText("Error: " . $e->getMessage() . "\n");
-                });
-            }
-        }))->start();
     }
 
     public function updateFooter()
@@ -474,10 +348,6 @@ private function getConsoleWorkDir()
 
             if ($this->ideConfig()->has('centerSplit.dividerPositions')) {
                 $this->centerSplit->dividerPositions = $this->ideConfig()->getArray('centerSplit.dividerPositions', [0.7, 0.85]);
-            }
-
-            if ($this->ideConfig()->has('systemConsolePane.height')) {
-                $this->systemConsolePane->prefHeight = $this->ideConfig()->get('systemConsolePane.height', 120);
             }
         });
     }

@@ -63,12 +63,6 @@
                                 <TabPane id="bottomSpoilerTabPane" layoutX="75.0" layoutY="50.0" prefHeight="150.0" prefWidth="200.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                             </children>
                         </AnchorPane>
-                        <AnchorPane id="systemConsolePane" minHeight="100.0" maxHeight="250.0" style="-fx-background-color: #080808;">
-                            <children>
-                                <TextArea id="systemConsoleOutput" editable="false" focusTraversable="false" style="-fx-font-family: monospace; -fx-font-size: 12; -fx-background-color: #080808; -fx-text-fill: #d4d4d4;" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                <TextField id="systemConsoleInput" style="-fx-font-family: monospace; -fx-font-size: 12; -fx-background-color: #0c0c0c; -fx-text-fill: #d4d4d4; -fx-border-color: #1e1e1e; -fx-border-width: 1px 0 0 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                            </children>
-                        </AnchorPane>
                     </items>
                 </SplitPane>
                 <HBox id="footerPane" alignment="CENTER_LEFT" prefHeight="20.0" prefWidth="988.0" spacing="4.0" style="-fx-background-color: #0c0c0c; -fx-border-color: #1e1e1e; -fx-border-width: 1px 0 0 0;">
