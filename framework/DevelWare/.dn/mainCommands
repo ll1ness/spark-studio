@@ -4,7 +4,6 @@ ide\commands\ImportProjectCommand
 ide\commands\SaveProjectCommand
 ide\commands\SaveProjectForLibraryCommand
 ide\commands\ExportProjectCommand
-ide\commands\ShareProjectCommand
 ide\commands\CloseProjectCommand
 ide\commands\ExitCommand
 ide\commands\IdeBundleLibraryCommand
