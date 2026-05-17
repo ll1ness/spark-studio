@@ -74,6 +74,7 @@ use php\gui\UXTab;
 use php\gui\UXTabPane;
 use php\gui\UXTooltip;
 use php\gui\layout\UXTilePane;
+use php\gui\layout\UXStackPane;
 use php\io\File;
 use php\io\IOException;
 use php\io\Stream;
@@ -1907,10 +1908,14 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             });
 
             $this->markerNode = $designPane;
-            $designPane->add($this->layout);
+
+            $centerPane = new UXStackPane();
+            $centerPane->alignment = 'CENTER';
+            $centerPane->add($this->layout);
+            $designPane->add($centerPane);
 
             $this->trigger('makeDesignPane', [$designPane]);
-            UXAnchorPane::setAnchor($this->layout, 0);
+            UXAnchorPane::setAnchor($centerPane, 0);
         } else {
             $this->markerNode = $this->layout;
 

@@ -58,4 +58,15 @@ class AbstractIdeForm extends AbstractForm
         $l10n->translateNode($this->layout);
     }
 
+    public function show()
+    {
+        parent::show();
+
+        if ($this->layout) {
+            $this->size = $this->layout->size;
+        }
+
+        $this->centerOnScreen();
+    }
+
 }
