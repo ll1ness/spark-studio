@@ -247,6 +247,26 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
     protected $markerNode;
 
     /**
+     * @var UXPane
+     */
+    protected $selectionOverlay;
+
+    /**
+     * @var float
+     */
+    protected $selectionStartX = 0;
+
+    /**
+     * @var float
+     */
+    protected $selectionStartY = 0;
+
+    /**
+     * @var bool
+     */
+    protected $selectionIsOnNode = false;
+
+    /**
      * @var IdeActionsPane
      */
     protected $actionsPane;
@@ -1972,27 +1992,106 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         $this->designer = new UXDesigner($this->layout);
 
-        uiLater(function () {
-            if ($selectionRect = $this->designer->getSelectionRectangle()) {
-                if ($selectionRect->layout) {
-                    $selectionRect->layout->backgroundColor = UXColor::of('rgba(51, 153, 255, 0.3)');
+        $overlayParent = $this->layout->parent;
+
+        if ($overlayParent) {
+            $overlay = new UXPane();
+            $overlay->mouseTransparent = true;
+            $overlay->visible = false;
+            $overlay->style = '-fx-background-color: rgba(51, 153, 255, 0.3); -fx-border-color: rgb(51, 153, 255); -fx-border-width: 1px;';
+            $overlayParent->add($overlay);
+            $this->selectionOverlay = $overlay;
+        }
+
+        $area->on('mouseDown', function ($e) {
+            if ($this->selectionOverlay) {
+                $this->selectionOverlay->visible = false;
+            }
+
+            $node = $e->target;
+            $isOnNode = false;
+
+            while ($node) {
+                if ($this->designer->isRegisteredNode($node)) {
+                    $isOnNode = true;
+                    break;
                 }
+                $node = $node->parent;
+            }
+
+            if (!$isOnNode) {
+                $this->selectionStartX = $e->screenX;
+                $this->selectionStartY = $e->screenY;
+            }
+
+            $this->selectionIsOnNode = $isOnNode;
+        });
+
+        $area->on('mouseDrag', function ($e) {
+            if ($this->selectionIsOnNode) return;
+
+            $overlay = $this->selectionOverlay;
+            if (!$overlay) return;
+
+            $parent = $overlay->parent;
+            if (!$parent) return;
+
+            list($x1, $y1) = $parent->screenToLocal($this->selectionStartX, $this->selectionStartY);
+            list($x2, $y2) = $parent->screenToLocal($e->screenX, $e->screenY);
+
+            $dx = abs($x2 - $x1);
+            $dy = abs($y2 - $y1);
+
+            if ($dx < 5 && $dy < 5) return;
+
+            $overlay->position = [min($x1, $x2), min($y1, $y2)];
+            $overlay->size = [$dx, $dy];
+            $overlay->visible = true;
+        });
+
+        $area->on('mouseUp', function ($e) {
+            if ($this->selectionOverlay) {
+                $this->selectionOverlay->visible = false;
+            }
+
+            if (!$this->selectionIsOnNode) {
+                $dx = abs($e->screenX - $this->selectionStartX);
+                $dy = abs($e->screenY - $this->selectionStartY);
+
+                if ($dx >= 5 && $dy >= 5) {
+                    $sx = min($e->screenX, $this->selectionStartX);
+                    $sy = min($e->screenY, $this->selectionStartY);
+                    $ex = max($e->screenX, $this->selectionStartX);
+                    $ey = max($e->screenY, $this->selectionStartY);
+
+                    list($lx, $ly) = $this->layout->screenToLocal($sx, $sy);
+                    list($rx, $ry) = $this->layout->screenToLocal($ex, $ey);
+
+                    $nodes = $this->designer->getNodesInArea($lx, $ly, $rx - $lx, $ry - $ly);
+
+                    $this->designer->unselectAll();
+
+                    foreach ($nodes as $node) {
+                        $this->designer->selectNode($node);
+                    }
+                }
+
+                $this->_onAreaMouseUp($e);
             }
         });
 
-        $this->designer->onAreaMouseUp(function ($e) {
-            $this->_onAreaMouseUp($e);
-        });
         $this->designer->onNodeClick(function ($e) {
             $this->_onNodeClick($e);
+
+            if ($this->selectionOverlay) {
+                $this->selectionOverlay->visible = false;
+            }
         });
         $this->designer->onNodePick(function () {
             $this->_onNodePick();
         });
 
         $this->designer->onChanged([$this, '_onChanged']);
-
-        $this->designer->addSelectionControl($area);
 
         foreach ($this->findNodesToRegister($this->layout->children) as $node) {
             $this->designer->registerNode($node);
@@ -2388,6 +2487,29 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
     protected function _onNodeClick(UXMouseEvent $e)
     {
         $this->layout->requestFocus();
+    }
+
+    protected function updateSelectionOverlay($rect)
+    {
+        $overlay = $this->selectionOverlay;
+        if (!$overlay) return;
+
+        $w = $rect->width;
+        $h = $rect->height;
+
+        if ($w <= 0 || $h <= 0 || ($w == 1 && $h == 1)) {
+            $overlay->visible = false;
+            return;
+        }
+
+        $parent = $overlay->parent;
+        if (!$parent) return;
+
+        list($x, $y) = $parent->screenToLocal($rect->x, $rect->y);
+
+        $overlay->position = [$x, $y];
+        $overlay->size = [$w, $h];
+        $overlay->visible = true;
     }
 
     public static function fetchElementProperties(AbstractFormElement $element)
