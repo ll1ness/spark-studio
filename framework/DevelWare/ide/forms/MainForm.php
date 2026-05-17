@@ -216,28 +216,20 @@ class MainForm extends AbstractIdeForm
                 $shell = System::getEnv('SHELL', '/bin/bash');
                 $workDir = $this->getConsoleWorkDir();
                 $process = new Process([$shell, '-c', $text], $workDir, (array)$_ENV);
-
-                $scanner = new Scanner($process->getInput());
-                $scannerErr = new Scanner($process->getError());
-
-                (new Thread(function () use ($scannerErr, $output) {
-                    while ($scannerErr->hasNextLine()) {
-                        $line = $scannerErr->nextLine();
-                        UXApplication::runLater(function () use ($output, $line) {
-                            $output->appendText("[ERR] $line\n");
-                        });
-                    }
-                }))->start();
-
-                while ($scanner->hasNextLine()) {
-                    $line = $scanner->nextLine();
-                    UXApplication::runLater(function () use ($output, $line) {
-                        $output->appendText("$line\n");
-                    });
-                }
+                $process->start();
 
                 $exitValue = $process->getExitValue();
-                UXApplication::runLater(function () use ($output, $exitValue) {
+
+                $out = str::trim(Stream::getContents($process->getInput()));
+                $err = str::trim(Stream::getContents($process->getError()));
+
+                UXApplication::runLater(function () use ($output, $out, $err, $exitValue) {
+                    if ($out) {
+                        $output->appendText("$out\n");
+                    }
+                    if ($err) {
+                        $output->appendText("[ERR] $err\n");
+                    }
                     if ($exitValue != 0) {
                         $output->appendText("Process exited with code $exitValue\n");
                     }
