@@ -47,15 +47,11 @@ use php\gui\UXScreen;
 use php\gui\UXSplitPane;
 use php\gui\UXTab;
 use php\gui\UXTabPane;
-use php\gui\UXTextArea;
 use php\gui\UXTextField;
 use php\gui\UXTreeView;
 use php\io\Stream;
-use php\lang\Process;
-use php\lang\Thread;
 use php\util\Scanner;
 use php\io\File;
-use php\lang\System;
 use php\lib\fs;
 use php\lib\str;
 use script\TimerScript;
@@ -71,8 +67,6 @@ use system\DFFIGUI;
  * @property UXHBox $headPane
  * @property UXHBox $headRightPane
  * @property UXVBox $contentVBox
- * @property UXAnchorPane $bottomSpoiler
- * @property UXTabPane $bottomSpoilerTabPane
  * @property UXSplitPane $splitTree
  * @property UXSplitPane $centerSplit
  * @property UXHBox $footerPane
@@ -90,7 +84,7 @@ class MainForm extends AbstractIdeForm
     /**
      * @var UXAnchorPane
      */
-    private $bottom;
+    private $consolePane;
 
     /**
      * @var UXMenuButton[]
@@ -101,7 +95,7 @@ class MainForm extends AbstractIdeForm
     {
         parent::__construct();
 
-        $this->bottom = $this->bottomSpoiler;
+        $this->consolePane = new UXAnchorPane();
 
         foreach ($this->topBar->children as $one) {
             if ($one instanceof UXMenuBar) {
@@ -343,11 +337,7 @@ class MainForm extends AbstractIdeForm
             $this->updateFooter();
 
             if ($this->ideConfig()->has('splitTree.dividerPositions')) {
-                $this->splitTree->dividerPositions = $this->ideConfig()->getArray('splitTree.dividerPositions', [0.3]);
-            }
-
-            if ($this->ideConfig()->has('centerSplit.dividerPositions')) {
-                $this->centerSplit->dividerPositions = $this->ideConfig()->getArray('centerSplit.dividerPositions', [0.7, 0.85]);
+                $this->splitTree->dividerPositions = $this->ideConfig()->getArray('splitTree.dividerPositions', [0.2]);
             }
         });
     }
@@ -436,7 +426,7 @@ class MainForm extends AbstractIdeForm
     public function showBottom(UXNode $content = null)
     {
         if ($content) {
-            $this->bottom->children->clear();
+            $this->consolePane->children->clear();
 
             $content->height = (int) Ide::get()->getUserConfigValue('mainForm.consoleHeight', 350);
 
@@ -448,21 +438,21 @@ class MainForm extends AbstractIdeForm
 
             UXAnchorPane::setAnchor($content, 0);
 
-            $this->bottom->add($content);
+            $this->consolePane->add($content);
 
             $items = $this->centerSplit->items;
-            if (!$items->has($this->bottom)) {
-                $items->insert($items->count - 1, $this->bottom);
+            if (!$items->has($this->consolePane)) {
+                $items->insert(max(0, $items->count - 1), $this->consolePane);
                 uiLater(function () {
-                    $this->centerSplit->dividerPositions = [0.5, 0.75];
+                    $this->centerSplit->dividerPositions = [0.6, 0.75];
                 });
             }
         } else {
             $items = $this->centerSplit->items;
-            if ($items->has($this->bottom)) {
-                $items->remove($this->bottom);
+            if ($items->has($this->consolePane)) {
+                $items->remove($this->consolePane);
             }
-            $this->bottom->children->clear();
+            $this->consolePane->children->clear();
         }
     }
 }

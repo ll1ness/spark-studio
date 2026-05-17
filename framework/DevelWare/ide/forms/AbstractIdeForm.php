@@ -62,6 +62,10 @@ class AbstractIdeForm extends AbstractForm
     {
         parent::show();
 
+        if ($this instanceof MainForm) {
+            return;
+        }
+
         uiLater(function () {
             if ($this->layout) {
                 $this->size = $this->layout->size;
