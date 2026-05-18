@@ -98,4 +98,4 @@ Requires Java 8+ (bundled JRE in `bin/jre/`).
 
 ## License
 
-MIT © 2026 ll1ness (TechOne UI). Other components under their respective licenses.
+MIT © 2026 ll1ness. Other components under their respective licenses.
