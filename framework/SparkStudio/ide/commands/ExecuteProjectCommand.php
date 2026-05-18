@@ -101,7 +101,7 @@ class ExecuteProjectCommand extends AbstractCommand
 
     public function isRunning()
     {
-        return $this->actionButton->text === 'Остановить';
+        return $this->actionButton && $this->actionButton->text === 'Остановить';
     }
 
     public function onActionExecute(UXEvent $e = null)
@@ -118,7 +118,9 @@ class ExecuteProjectCommand extends AbstractCommand
         $ide = Ide::get();
         $project = $ide->getOpenedProject();
 
-        $this->actionButton->text = 'Запустить';
+        if ($this->actionButton) {
+            $this->actionButton->text = 'Запустить';
+        }
 
         $appPidFile = $project->getFile("application.pid");
 
@@ -212,7 +214,9 @@ class ExecuteProjectCommand extends AbstractCommand
             $dialog->show();
             $dialog->hide();
 
-            $this->actionButton->text = 'Остановить';
+            if ($this->actionButton) {
+                $this->actionButton->text = 'Остановить';
+            }
 
             $dialog->closeButton->on('action', function () {
                 Ide::get()->getMainForm()->hideBottom();
@@ -222,7 +226,9 @@ class ExecuteProjectCommand extends AbstractCommand
             ProjectSystem::compileAll(Project::ENV_DEV, $dialog, 'java -cp ... org.develnext.jphp.ext.javafx.FXLauncher', function ($success) use ($dialog, $project, $ide) {
                 if (!$success) {
                     $dialog->stopWithError();
-                    $this->actionButton->text = 'Запустить';
+                    if ($this->actionButton) {
+                        $this->actionButton->text = 'Запустить';
+                    }
                     return;
                 }
 
@@ -231,7 +237,7 @@ class ExecuteProjectCommand extends AbstractCommand
 
                     $args = array_merge(
                         ['java', '-cp', str::join($classPaths, File::PATH_SEPARATOR)],
-                        explode(' ', $this->parametersField->text)
+                        explode(' ', $this->parametersField ? $this->parametersField->text : '')
                     );
 
                     Logger::debug("Run -> " . str::join($args, ' '));
@@ -252,7 +258,9 @@ class ExecuteProjectCommand extends AbstractCommand
                     });
 
                     $dialog->setOnExitProcess(function ($exitValue, $hasError) use ($dialog) {
-                        $this->actionButton->text = 'Запустить';
+                        if ($this->actionButton) {
+                            $this->actionButton->text = 'Запустить';
+                        }
 
                         if (!$exitValue && !$hasError && $dialog->closeAfterDoneCheckbox->selected) {
                             Ide::get()->getMainForm()->hideBottom();
@@ -260,7 +268,9 @@ class ExecuteProjectCommand extends AbstractCommand
                     });
 
                 } catch (IOException $e) {
-                    $this->actionButton->text = 'Запустить';
+                    if ($this->actionButton) {
+                        $this->actionButton->text = 'Запустить';
+                    }
 
                     if (!$dialog->visible) {
                         $dialog->show();

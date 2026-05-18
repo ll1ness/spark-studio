@@ -8,13 +8,10 @@ use ide\utils\Json;
 use php\gui\event\UXDragEvent;
 use php\gui\event\UXEvent;
 use php\gui\event\UXMouseEvent;
-use php\gui\layout\UXAnchorPane;
 use php\gui\layout\UXFlowPane;
 use php\gui\layout\UXScrollPane;
 use php\gui\paint\UXColor;
-use php\gui\shape\UXRectangle;
 use php\gui\UXContextMenu;
-use php\gui\UXForm;
 use php\gui\UXLabel;
 use php\gui\UXMenuItem;
 use php\gui\UXNode;
@@ -69,11 +66,6 @@ class FlowListViewDecorator implements \Countable
      */
     protected $isDragging = false;
 
-    /**
-     * @var UXForm
-     */
-    protected $selection;
-
     public function __construct(UXFlowPane $pane = null)
     {
         if ($pane == null) {
@@ -95,22 +87,11 @@ class FlowListViewDecorator implements \Countable
         $pane->classes->add('flow-list-view');
 
         $pane->on('mouseDown', function (UXMouseEvent $e) {
-            if ($e->button == 'SECONDARY' && $this->getSelectionNodes()) {
-                $this->menu->show($e->sender->form, $e->screenX, $e->screenY);
-            } else {
-                $this->selection->title = '...';
-                $this->selection->size = [1, 1];
-
-                if ($this->isMultipleSelection()) {
-                    $this->selection->data('drag', true);
+            if ($e->button == 'SECONDARY') {
+                if ($this->getSelectionNodes()) {
+                    $this->menu->show($e->sender->form, $e->screenX, $e->screenY);
                 }
-
-                $this->selection->data('dragX', $e->screenX);
-                $this->selection->data('dragY', $e->screenY);
-
-                $this->selection->x = $e->screenX;
-                $this->selection->y = $e->screenY;
-
+            } else {
                 $this->clearSelections();
             }
         }, __CLASS__);
@@ -118,86 +99,6 @@ class FlowListViewDecorator implements \Countable
         $pane->on('dragOver', [$this, 'doDragOver'], __CLASS__);
         $pane->on('dragDone', function (UXDragEvent $e) { $e->consume(); });
         $pane->on('dragDrop', [$this, 'doDragDrop'], __CLASS__);
-
-        $this->selection = new UXForm();
-        $this->selection->style = 'TRANSPARENT';
-        $this->selection->transparent = true;
-
-        $this->selection->layout->backgroundColor = UXColor::of('black');
-        $this->selection->layout->opacity = 0.5;
-
-        $pane->on('mouseDrag', function (UXMouseEvent $e) {
-            if ($this->selection->data('drag')) {
-                $dragX = $this->selection->data('dragX');
-                $dragY = $this->selection->data('dragY');
-
-                $width = ($e->screenX - $dragX);
-                $height = ($e->screenY - $dragY);
-
-                if (abs($width) > 2 && abs($height) > 2) {
-                    $this->selection->size = [1, 1];
-
-                    $this->selection->width = abs($width);
-                    $this->selection->height = abs($height);
-
-                    $this->selection->x = $dragX;
-                    $this->selection->y = $dragY;
-
-                    if ($width < 0) {
-                        $this->selection->x += $width;
-                    }
-
-                    if ($height < 0) {
-                        $this->selection->y += $height;
-                    }
-
-                    $this->selection->show();
-                }
-            }
-        }, __CLASS__);
-
-        $pane->on('mouseUp', function (UXMouseEvent $e) {
-            if (!$this->selection->visible) {
-                return;
-            }
-
-            if (!$e->controlDown) {
-                $this->clearSelections();
-            }
-
-            list($x, $y) = $this->pane->screenToLocal($this->selection->x, $this->selection->y);
-            list($w, $h) = $this->selection->size;
-
-            $selectedNodes = [];
-
-            foreach ($this->pane->children as $node) {
-                $nx = $node->x;
-                $ny = $node->y;
-
-                $nw = $node->width;
-                $nh = $node->height;
-
-                $nCenter = [$nx + round($nw / 2), $ny + round($nh / 2)];
-                $center = [$x + round($w / 2), $y + round($h / 2)];
-
-                $_w = abs($center[0] - $nCenter[0]);
-                $_h = abs($center[1] - $nCenter[1]);
-
-                $checkW = $_w < ($w / 2 + $nw / 2);
-                $checkH = $_h < ($h / 2 + $nh / 2);
-
-                if ($checkW && $checkH) {
-                    $selectedNodes[] = $node;
-                }
-            }
-
-            $this->setSelectionNodes($selectedNodes);
-
-            $this->selection->hide();
-            $this->selection->size = [1, 1];
-
-            $this->selection->data('drag', false);
-        }, __CLASS__);
 
         $this->id = Str::random();
 
@@ -532,8 +433,6 @@ class FlowListViewDecorator implements \Countable
                     return;
                 }
             }
-
-            $this->selection->hide();
 
             $e->acceptTransferModes(['MOVE']);
             $e->consume();

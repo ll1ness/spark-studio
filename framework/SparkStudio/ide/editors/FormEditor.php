@@ -2004,6 +2004,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         }
 
         $area->on('mouseDown', function ($e) {
+            $rect = $this->designer->getSelectionRectangle();
+            $rect->hide();
+            $rect->size = [1, 1];
+
             if ($this->selectionOverlay) {
                 $this->selectionOverlay->visible = false;
             }
@@ -2030,6 +2034,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $area->on('mouseDrag', function ($e) {
             if ($this->selectionIsOnNode) return;
 
+            $rect = $this->designer->getSelectionRectangle();
+            $rect->hide();
+            $rect->size = [1, 1];
+
             $overlay = $this->selectionOverlay;
             if (!$overlay) return;
 
@@ -2050,6 +2058,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         });
 
         $area->on('mouseUp', function ($e) {
+            $rect = $this->designer->getSelectionRectangle();
+            $rect->hide();
+            $rect->size = [1, 1];
+
             if ($this->selectionOverlay) {
                 $this->selectionOverlay->visible = false;
             }
@@ -2082,6 +2094,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         $this->designer->onNodeClick(function ($e) {
             $this->_onNodeClick($e);
+
+            $rect = $this->designer->getSelectionRectangle();
+            $rect->hide();
+            $rect->size = [1, 1];
 
             if ($this->selectionOverlay) {
                 $this->selectionOverlay->visible = false;
@@ -2348,6 +2364,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         if ($parent == null && $selectionRectangle->width >= 8 && $selectionRectangle->height >= 8) {
             $size = $selectionRectangle->size;
             $selectionRectangle->size = [1, 1];
+            $selectionRectangle->hide();
         }
 
         $snapSizeX = $this->designer->snapSizeX;
