@@ -282,7 +282,7 @@ class ExecuteProjectCommand extends AbstractCommand
                     $this->process = new Process(
                         $args,
                         $project->getRootDir(),
-                        $ide->makeEnvironment()
+                        null
                     );
 
                     $this->process = $this->process->start();
