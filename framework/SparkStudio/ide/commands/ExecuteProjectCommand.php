@@ -236,11 +236,6 @@ class ExecuteProjectCommand extends AbstractCommand
                 try {
                     $classPaths = arr::toList($this->behaviour->getSourceDirectories(), $this->behaviour->getProfileModules(['jar']));
 
-                    $ideClassPath = System::getProperty('java.class.path');
-                    if ($ideClassPath) {
-                        $classPaths = array_merge($classPaths, explode(File::PATH_SEPARATOR, $ideClassPath));
-                    }
-
                     $jrePath = $ide->getJrePath();
                     $javaBin = 'java';
 
@@ -248,8 +243,26 @@ class ExecuteProjectCommand extends AbstractCommand
                         $javaBin = $jrePath . '/bin/java';
                     }
 
+                    $ideRoot = $ide->getOwnFile('');
+                    $sourceDirs = ['gui', 'runtime', 'extensions', 'utils', 'framework', 'parser', 'database', 'debug', 'network'];
+
+                    foreach ($sourceDirs as $dir) {
+                        $parent = new File($ideRoot, $dir);
+                        if ($parent->isDirectory()) {
+                            foreach ($parent->findFiles() as $sub) {
+                                if ($sub->isDirectory() && !str::startsWith($sub->getName(), '.')) {
+                                    $classPaths[] = fs::abs($sub);
+                                }
+                            }
+                        }
+                    }
+
+                    Logger::warn("SparkStudio: classpath count = " . sizeof($classPaths));
+
+                    $joined = str::join($classPaths, File::PATH_SEPARATOR);
+
                     $args = array_merge(
-                        [$javaBin, '-cp', str::join($classPaths, File::PATH_SEPARATOR)],
+                        [$javaBin, '-cp', $joined],
                         explode(' ', $this->parametersField ? $this->parametersField->text : '')
                     );
 
