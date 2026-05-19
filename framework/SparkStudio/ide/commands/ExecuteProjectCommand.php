@@ -243,21 +243,30 @@ class ExecuteProjectCommand extends AbstractCommand
                         $javaBin = $jrePath . '/bin/java';
                     }
 
+                    $log = [];
+                    $log[] = "jrePath = " . ($jrePath ? (string) $jrePath : 'null');
+                    $log[] = "javaBin = " . $javaBin;
+
                     $ideRoot = $ide->getOwnFile('');
+                    $log[] = "ideRoot = " . $ideRoot->getPath();
                     $sourceDirs = ['gui', 'runtime', 'extensions', 'utils', 'framework', 'parser', 'database', 'debug', 'network'];
 
                     foreach ($sourceDirs as $dir) {
                         $parent = new File($ideRoot, $dir);
                         if ($parent->isDirectory()) {
+                            $log[] = "scanning $dir ...";
                             foreach ($parent->findFiles() as $sub) {
                                 if ($sub->isDirectory() && !str::startsWith($sub->getName(), '.')) {
                                     $classPaths[] = fs::abs($sub);
+                                    $log[] = "  added: " . $sub->getName();
                                 }
                             }
+                        } else {
+                            $log[] = "SKIP $dir (not found)";
                         }
                     }
 
-                    Logger::warn("SparkStudio: classpath count = " . sizeof($classPaths));
+                    $log[] = "classpath count = " . sizeof($classPaths);
 
                     $joined = str::join($classPaths, File::PATH_SEPARATOR);
 
@@ -266,7 +275,9 @@ class ExecuteProjectCommand extends AbstractCommand
                         explode(' ', $this->parametersField ? $this->parametersField->text : '')
                     );
 
-                    Logger::debug("Run -> " . str::join($args, ' '));
+                    try {
+                        Stream::putContents($project->getFile('.dn/run-debug.log'), str::join($log, "\n") . "\n---\n" . str::join($args, ' ') . "\n");
+                    } catch (\Exception $e) {}
 
                     $this->process = new Process(
                         $args,
