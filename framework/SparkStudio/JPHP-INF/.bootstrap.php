@@ -11,6 +11,18 @@ use php\gui\text\UXFont;
 use php\io\Stream;
 use php\lang\System;
 
+foreach ([System::getProperty('user.home') . '/.Spark/cache/bytecode_v1', System::getProperty('spark.path') . '/bin/cache/bytecode_v1'] as $cacheDir) {
+    if ($cacheDir && is_dir($cacheDir)) {
+        $it = new RecursiveDirectoryIterator($cacheDir, RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($files as $file) {
+            if ($file->isDir()) rmdir($file->getRealPath());
+            else unlink($file->getRealPath());
+        }
+        rmdir($cacheDir);
+    }
+}
+
 $cache = !System::getProperty('spark.noCodeCache');
 
 $loader = new IdeClassLoader($cache, IdeSystem::getOwnLibVersion());
