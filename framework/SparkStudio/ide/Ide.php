@@ -283,6 +283,16 @@ class Ide extends Application
 
                 $this->setOpenedProject(null);
 
+                foreach ([System::getProperty('user.home') . '/.Spark/cache/bytecode_v1', $this->getOwnFile('bin/cache/bytecode_v1')] as $cacheDir) {
+                    if ($cacheDir && File::of($cacheDir)->exists()) {
+                        try {
+                            FileUtils::deleteDirectory($cacheDir);
+                        } catch (\Exception $e) {
+                            Logger::warn("Unable to clear JPHP cache: " . $cacheDir);
+                        }
+                    }
+                }
+
                 foreach ($this->afterShow as $handle) {
                     $handle();
                 }
