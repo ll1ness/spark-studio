@@ -11,17 +11,19 @@ use php\gui\text\UXFont;
 use php\io\Stream;
 use php\lang\System;
 
-foreach ([System::getProperty('user.home') . '/.Spark/cache/bytecode_v1', System::getProperty('spark.path') . '/bin/cache/bytecode_v1'] as $cacheDir) {
-    if ($cacheDir && is_dir($cacheDir)) {
-        $it = new RecursiveDirectoryIterator($cacheDir, RecursiveDirectoryIterator::SKIP_DOTS);
-        $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($files as $file) {
-            if ($file->isDir()) rmdir($file->getRealPath());
-            else unlink($file->getRealPath());
+call_user_func(function () {
+    $rmDir = function ($path) use (&$rmDir) {
+        foreach (scandir($path) as $f) {
+            if ($f === '.' || $f === '..') continue;
+            $p = $path . '/' . $f;
+            if (is_dir($p)) $rmDir($p); else unlink($p);
         }
-        rmdir($cacheDir);
+        rmdir($path);
+    };
+    foreach ([System::getProperty('user.home') . '/.Spark/cache/bytecode_v1', System::getProperty('spark.path') . '/bin/cache/bytecode_v1'] as $cacheDir) {
+        if ($cacheDir && is_dir($cacheDir)) $rmDir($cacheDir);
     }
-}
+});
 
 $cache = !System::getProperty('spark.noCodeCache');
 
