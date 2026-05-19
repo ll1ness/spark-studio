@@ -44,6 +44,10 @@ abstract class AbstractJarBundle extends AbstractBundle
             } else {
                 $id = $this->findLibFile($dep);
 
+                if (!$id) {
+                    $id = $this->findLibDir($dep);
+                }
+
                 if ($id) {
                     $result[] = new ProjectModule($id, 'jarfile');
                 }
@@ -61,6 +65,28 @@ abstract class AbstractJarBundle extends AbstractBundle
         }
 
         return $result;
+    }
+
+    /**
+     * @param $name
+     * @return null|File
+     */
+    private function findLibDir($name)
+    {
+        $regex = Regex::of('(\.[0-9]+|\-[0-9]+)');
+        $name = $regex->with($name)->replace('');
+
+        $ideRoot = Ide::get()->getOwnFile('');
+        $searchDirs = ['gui', 'runtime', 'utils', 'framework', 'extensions'];
+
+        foreach ($searchDirs as $dir) {
+            $candidate = new File($ideRoot, "$dir/$name");
+            if ($candidate->isDirectory()) {
+                return $candidate;
+            }
+        }
+
+        return null;
     }
 
     public function onAdd(Project $project, AbstractBundle $owner = null)

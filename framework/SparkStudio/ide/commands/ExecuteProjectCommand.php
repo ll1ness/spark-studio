@@ -24,6 +24,7 @@ use php\io\File;
 use php\io\IOException;
 use php\io\Stream;
 use php\lang\IllegalStateException;
+use php\lang\System;
 use php\lang\Process;
 use php\lang\Thread;
 use php\lang\ThreadPool;
@@ -235,8 +236,20 @@ class ExecuteProjectCommand extends AbstractCommand
                 try {
                     $classPaths = arr::toList($this->behaviour->getSourceDirectories(), $this->behaviour->getProfileModules(['jar']));
 
+                    $ideClassPath = System::getProperty('java.class.path');
+                    if ($ideClassPath) {
+                        $classPaths = array_merge($classPaths, explode(File::PATH_SEPARATOR, $ideClassPath));
+                    }
+
+                    $jrePath = $ide->getJrePath();
+                    $javaBin = 'java';
+
+                    if ($jrePath) {
+                        $javaBin = $jrePath . '/bin/java';
+                    }
+
                     $args = array_merge(
-                        ['java', '-cp', str::join($classPaths, File::PATH_SEPARATOR)],
+                        [$javaBin, '-cp', str::join($classPaths, File::PATH_SEPARATOR)],
                         explode(' ', $this->parametersField ? $this->parametersField->text : '')
                     );
 

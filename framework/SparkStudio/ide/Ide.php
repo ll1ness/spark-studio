@@ -591,6 +591,14 @@ class Ide extends Application
             }
         }
 
+        if (!$jrePath || !$jrePath->exists()) {
+            $jrePath = System::getProperty('java.home');
+
+            if ($jrePath) {
+                $jrePath = File::of($jrePath);
+            }
+        }
+
         return $jrePath && $jrePath->exists() ? $jrePath->getCanonicalFile() : null;
     }
 
