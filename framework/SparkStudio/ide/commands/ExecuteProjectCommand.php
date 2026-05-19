@@ -38,6 +38,8 @@ use timer\AccurateTimer;
 
 class ExecuteProjectCommand extends AbstractCommand
 {
+    const DEFAULT_PARAMS = '-XX:+UseG1GC -Xms128M -Xmx1024m -Dfile.encoding=UTF-8 -Djphp.trace=true org.develnext.jphp.ext.javafx.FXLauncher';
+
     /** @var BuildProgressForm */
     protected $processDialog;
     /** @var UXButton */
@@ -94,7 +96,7 @@ class ExecuteProjectCommand extends AbstractCommand
         $this->actionButton->on('action', [$this, 'onActionExecute']);
 
         $this->parametersField = new UXTextField();
-        $this->parametersField->text = '-XX:+UseG1GC -Xms128M -Xmx1024m -Dfile.encoding=UTF-8 -Djphp.trace=true org.develnext.jphp.ext.javafx.FXLauncher';
+        $this->parametersField->text = self::DEFAULT_PARAMS;
         $this->parametersField->promptText = 'Введите параметры запуска...';
 
         return [$this->actionButton, $this->parametersField];
@@ -270,17 +272,20 @@ class ExecuteProjectCommand extends AbstractCommand
 
                     $joined = str::join($classPaths, File::PATH_SEPARATOR);
 
-                    $args = array_merge(
+                    $paramsText = $this->parametersField ? $this->parametersField->text : self::DEFAULT_PARAMS;
+                    $jvmArgs = explode(' ', $paramsText);
+
+                    $cmdArgs = array_merge(
                         [$javaBin, '-cp', $joined],
-                        explode(' ', $this->parametersField ? $this->parametersField->text : '')
+                        $jvmArgs
                     );
 
                     try {
-                        Stream::putContents($project->getFile('.dn/run-debug.log'), str::join($log, "\n") . "\n---\n" . str::join($args, ' ') . "\n");
+                        Stream::putContents($project->getFile('.dn/run-debug.log'), str::join($log, "\n") . "\n---\n" . str::join($cmdArgs, ' ') . "\n");
                     } catch (\Exception $e) {}
 
                     $this->process = new Process(
-                        $args,
+                        $cmdArgs,
                         $project->getRootDir(),
                         null
                     );

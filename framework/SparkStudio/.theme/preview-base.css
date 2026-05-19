@@ -1,0 +1,12 @@
+* {
+    -fx-base: derive(#ececec, 0%);
+    -fx-background: derive(-fx-base, 6%);
+    -fx-control-inner-background: derive(-fx-base, 10%);
+    -fx-text-base-color: ladder(-fx-base, black 49%, white 50%);
+    -fx-text-background-color: ladder(-fx-background, black 49%, white 50%);
+    -fx-text-fill: ladder(-fx-base, black 49%, white 50%);
+    -fx-accent: #0096c9;
+    -fx-default-button: #0096c9;
+    -fx-focus-color: #0096c9;
+    -fx-faint-focus-color: rgba(0, 150, 201, 0.2);
+}

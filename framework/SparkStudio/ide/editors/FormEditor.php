@@ -76,6 +76,7 @@ use php\gui\UXTooltip;
 use php\gui\layout\UXTilePane;
 use php\io\File;
 use php\io\IOException;
+use php\io\ResourceStream;
 use php\io\Stream;
 use php\lang\IllegalArgumentException;
 use php\lang\IllegalStateException;
@@ -1893,6 +1894,11 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $viewer = $this->layoutViewer = new UXScrollPane($area);
         $viewer->classes->add('sprk-mosaic-background');
 
+        try {
+            $previewCss = new ResourceStream('/.theme/preview-base.css');
+            $viewer->stylesheets->add($previewCss->toExternalForm());
+        } catch (\Exception $e) {}
+
         foreach ($this->stylesheets as $stylesheet) {
             $viewer->stylesheets->add($stylesheet);
         }
@@ -2165,16 +2171,23 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $this->behaviourBox->fillWidth = true;
 
             $propertiesUi = $this->propertiesPane->makeUi();
+            $propertiesScroll = new UXScrollPane($propertiesUi);
+            $propertiesScroll->fitToWidth = true;
+            $propertiesScroll->fitToHeight = true;
 
-            $this->rightSplit = new UXSplitPane([$eventListUi, $this->behaviourBox, $propertiesUi]);
+            $this->rightSplit = new UXSplitPane([$eventListUi, $this->behaviourBox, $propertiesScroll]);
             $this->rightSplit->orientation = 'VERTICAL';
 
-            UXSplitPane::setResizeWithParent($propertiesUi, true);
+            UXSplitPane::setResizeWithParent($eventListUi, true);
+            UXSplitPane::setResizeWithParent($this->behaviourBox, true);
+            UXSplitPane::setResizeWithParent($propertiesScroll, false);
 
             uiLater(function () {
+                $positions = [0.35, 0.7];
                 if ($this->getIdeConfig() && $this->getIdeConfig()->has('rightSplit.dividerPositions')) {
-                    $this->rightSplit->dividerPositions = $this->getIdeConfig()->getArray('rightSplit.dividerPositions', [0.33, 0.66]);
+                    $positions = $this->getIdeConfig()->getArray('rightSplit.dividerPositions', $positions);
                 }
+                $this->rightSplit->dividerPositions = $positions;
             });
 
             $rightScroll = new UXScrollPane($this->rightSplit);
@@ -2186,18 +2199,23 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
             $right = new UXAnchorPane();
             $right->prefWidth = 250;
-            $right->maxWidth = 250;
             $right->add($rightScroll);
             UXSplitPane::setResizeWithParent($right, false);
 
             $split = new UXSplitPane([$ui, $right]);
             $split->orientation = 'HORIZONTAL';
 
-            uiLater(function () use ($split, $right) {
-                $pw = $right->width;
-                $tw = $split->width;
-                if ($tw > 0 && $pw > 0) {
-                    $split->dividerPositions = [($tw - $pw) / $tw];
+            uiLater(function () use ($split) {
+                if ($this->getIdeConfig() && $this->getIdeConfig()->has('rightPanel.dividerPosition')) {
+                    $split->dividerPositions = [$this->getIdeConfig()->get('rightPanel.dividerPosition', 0.75)];
+                } else {
+                    $split->dividerPositions = [0.75];
+                }
+            });
+
+            $right->observer('width')->addListener(function ($old, $new) use ($split) {
+                if ($this->getIdeConfig() && $split->width > 0) {
+                    $this->getIdeConfig()->set('rightPanel.dividerPosition', ($split->width - $new) / $split->width);
                 }
             });
 

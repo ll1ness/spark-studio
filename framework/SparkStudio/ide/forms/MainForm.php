@@ -428,7 +428,8 @@ class MainForm extends AbstractIdeForm
         if ($content) {
             $this->consolePane->children->clear();
 
-            $content->height = (int) Ide::get()->getUserConfigValue('mainForm.consoleHeight', 350);
+            $consoleHeight = (int) Ide::get()->getUserConfigValue('mainForm.consoleHeight', 80);
+            $content->height = $consoleHeight;
 
             $content->observer('height')->addListener(function ($old, $new) use ($content) {
                 if (!$content->isFree()) {
@@ -439,12 +440,19 @@ class MainForm extends AbstractIdeForm
             UXAnchorPane::setAnchor($content, 0);
 
             $this->consolePane->add($content);
+            $this->consolePane->minHeight = $consoleHeight;
 
             $items = $this->centerSplit->items;
             if (!$items->has($this->consolePane)) {
-                $items->insert(max(0, $items->count - 1), $this->consolePane);
-                uiLater(function () {
-                    $this->centerSplit->dividerPositions = [0.6, 0.75];
+                $items->add($this->consolePane);
+                UXSplitPane::setResizeWithParent($this->consolePane, false);
+
+                uiLater(function () use ($consoleHeight) {
+                    $total = $this->centerSplit->height;
+                    if ($total > 0) {
+                        $pos = max(0, min(1, ($total - $consoleHeight) / $total));
+                        $this->centerSplit->dividerPositions = [$pos];
+                    }
                 });
             }
         } else {
