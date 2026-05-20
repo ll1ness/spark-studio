@@ -2166,21 +2166,21 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
                 $this->eventListPane->makeUi();
                 $eventListUi = $this->eventListPane->getUi();
             }
+            $eventListUi->minHeight = 100;
 
             $this->behaviourBox = new UXVBox();
             $this->behaviourBox->fillWidth = true;
+            $this->behaviourBox->minHeight = 100;
 
             $propertiesUi = $this->propertiesPane->makeUi();
-            $propertiesScroll = new UXScrollPane($propertiesUi);
-            $propertiesScroll->fitToWidth = true;
-            $propertiesScroll->fitToHeight = true;
+            $propertiesUi->maxHeight = 300;
 
-            $this->rightSplit = new UXSplitPane([$eventListUi, $this->behaviourBox, $propertiesScroll]);
+            $this->rightSplit = new UXSplitPane([$eventListUi, $this->behaviourBox, $propertiesUi]);
             $this->rightSplit->orientation = 'VERTICAL';
 
             UXSplitPane::setResizeWithParent($eventListUi, true);
             UXSplitPane::setResizeWithParent($this->behaviourBox, true);
-            UXSplitPane::setResizeWithParent($propertiesScroll, false);
+            UXSplitPane::setResizeWithParent($propertiesUi, false);
 
             uiLater(function () {
                 $positions = [0.35, 0.7];
