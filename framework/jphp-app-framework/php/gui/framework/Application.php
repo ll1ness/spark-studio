@@ -647,27 +647,7 @@ public function __construct($configPath = null)
             };
 
             if ($splashFormClass) {
-                $this->splash = $this->getForm($splashFormClass);
-
-                if ($this->splash) {
-                    Logger::info("Show splash screen ($splashFormClass)");
-
-                    /** @var AbstractForm $form */
-                    $form = $this->splash;
-                    $form->alwaysOnTop = true;
-
-                    $form->show();
-                    $form->toFront();
-
-                    if ($oldSplash = UXApplication::getSplash()) {
-                        $oldSplash->hide();
-                    }
-
-                    uiLater(function () use ($form, $startMain) {
-                        waitAsync(1000, $startMain);
-                    });
-                    return;
-                }
+                Logger::info("Skip splash window, start main form with embedded splash ($splashFormClass)");
             }
 
             $startMain();
