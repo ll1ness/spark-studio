@@ -31,13 +31,12 @@ use php\gui\framework\AbstractForm;
 use php\gui\framework\Preloader;
 use php\gui\layout\UXAnchorPane;
 use php\gui\layout\UXHBox;
-
+use php\gui\layout\UXStackPane;
 use php\gui\layout\UXVBox;
 use php\gui\UXAlert;
 use php\gui\UXApplication;
 use php\gui\UXButton;
 use php\gui\UXForm;
-use php\gui\UXMediaViewBox;
 use php\gui\UXImage;
 use php\gui\UXImageView;
 use php\gui\UXLabel;
@@ -203,22 +202,21 @@ class MainForm extends AbstractIdeForm
         UXAnchorPane::setBottomAnchor($splash, 22);
 
         try {
-            $videoFile = Ide::getOwnFile('framework/SparkStudio/.data/img/videoplayback.mp4');
+            $splashFile = Ide::getOwnFile('framework/SparkStudio/.data/img/splash_anim.gif');
 
-            if (!$videoFile->isFile()) {
-                Logger::warn("splash video file not found: " . $videoFile->getAbsolutePath());
+            if (!$splashFile->isFile()) {
+                Logger::warn("splash gif not found: " . $splashFile->getAbsolutePath());
             } else {
-                $path = $videoFile->getAbsolutePath();
+                $image = new UXImage($splashFile->getAbsolutePath());
+                $imageView = new UXImageView($image);
+                $imageView->preserveRatio = false;
 
-                $mediaView = new UXMediaViewBox();
-                $mediaView->open($path, true);
-                $mediaView->proportional = false;
-
-                UXAnchorPane::setAnchor($mediaView, 0);
-                $splash->add($mediaView);
+                $stack = new UXStackPane([$imageView]);
+                UXAnchorPane::setAnchor($stack, 0);
+                $splash->add($stack);
             }
         } catch (\Exception $e) {
-            Logger::warn("splash video failed: " . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
+            Logger::warn("splash image failed: " . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
         }
 
         $this->splashOverlay = $splash;
