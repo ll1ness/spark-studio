@@ -37,8 +37,6 @@ use php\gui\UXAlert;
 use php\gui\UXApplication;
 use php\gui\UXButton;
 use php\gui\UXForm;
-use php\gui\UXMedia;
-use php\gui\UXMediaPlayer;
 use php\gui\UXMediaView;
 use php\gui\UXImage;
 use php\gui\UXImageView;
@@ -212,12 +210,8 @@ class MainForm extends AbstractIdeForm
             } else {
                 Logger::info("splash video path: " . $videoFile->getAbsolutePath());
 
-                $media = new UXMedia($videoFile->toUrl());
-                $player = new UXMediaPlayer($media);
-                $player->play();
-
                 $mediaView = new UXMediaView();
-                $mediaView->player = $player;
+                $mediaView->open($videoFile->getAbsolutePath(), true);
                 $mediaView->proportional = false;
 
                 UXAnchorPane::setAnchor($mediaView, 0);
