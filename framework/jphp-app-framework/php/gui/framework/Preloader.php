@@ -49,7 +49,7 @@ class Preloader extends UXAnchorPane
         $this->visible = false;
 
         $this->position = [0, 0];
-        $this->opacity = 0.52;
+        $this->opacity = 0.6;
         $this->visible = false;
 
         $this->indicator = $indicator = new UXProgressIndicator();
@@ -84,7 +84,9 @@ class Preloader extends UXAnchorPane
         $this->add($indicator);
 
         $this->id = 'x-preloader';
-        $this->style = '-fx-background-color: white';
+        $this->style = '-fx-background-color: rgba(0, 0, 0, 0.6); -fx-accent: white;';
+
+        $label->style = '-fx-text-fill: white;';
 
         $pane->add($this);
     }
