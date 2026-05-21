@@ -30,6 +30,7 @@ use php\gui\framework\AbstractForm;
 use php\gui\framework\Preloader;
 use php\gui\layout\UXAnchorPane;
 use php\gui\layout\UXHBox;
+use php\gui\layout\UXStackPane;
 use php\gui\layout\UXVBox;
 use php\gui\UXAlert;
 use php\gui\UXApplication;
@@ -49,8 +50,6 @@ use php\gui\UXTab;
 use php\gui\UXTabPane;
 use php\gui\UXTextField;
 use php\gui\UXTreeView;
-use php\io\Stream;
-use php\util\Scanner;
 use php\io\File;
 use php\lib\fs;
 use php\lib\str;
@@ -121,14 +120,19 @@ class MainForm extends AbstractIdeForm
         return null;
     }
 
+    /**
+     * @var UXAnchorPane
+     */
+    private $splashOverlay;
+
     protected function init()
     {
         parent::init();
 
-        $this->opacity = 0.01;
+        $this->initSplashOverlay();
 
-        Ide::get()->on('start', function () {
-            $this->opacity = 1;
+        waitAsync(5000, function () {
+            $this->hideSplashOverlay();
         });
 
         $mainMenu = $this->mainMenu;
@@ -185,6 +189,40 @@ class MainForm extends AbstractIdeForm
 
             $this->footerLeftPane->children->clear();
         });
+    }
+
+    protected function initSplashOverlay()
+    {
+        $splash = new UXAnchorPane();
+        $splash->style = '-fx-background-color: #000000;';
+        UXAnchorPane::setTopAnchor($splash, 0);
+        UXAnchorPane::setLeftAnchor($splash, 0);
+        UXAnchorPane::setRightAnchor($splash, 0);
+        UXAnchorPane::setBottomAnchor($splash, 22);
+
+        try {
+            $img = new UXImage('res://.data/img/splash_anim.gif');
+            $imgView = new UXImageView($img);
+
+            $stack = new UXStackPane();
+            $stack->add($imgView);
+            UXAnchorPane::setAnchor($stack, 0);
+
+            $splash->add($stack);
+        } catch (\Exception $e) {
+            Logger::warn("splash anim gif failed: " . $e->getMessage());
+        }
+
+        $this->splashOverlay = $splash;
+        $this->add($splash);
+    }
+
+    protected function hideSplashOverlay()
+    {
+        if ($this->splashOverlay) {
+            $this->splashOverlay->free();
+            $this->splashOverlay = null;
+        }
     }
 
     public function updateFooter()
@@ -372,7 +410,8 @@ class MainForm extends AbstractIdeForm
                     Ide::get()->setUserConfigValue('lastProject', null);
                 }
 
-                Ide::get()->shutdown();
+                Ide::get()->setExitWhenReady(true);
+                $this->hide();
             } else {
                 if ($e) {
                     $e->consume();
@@ -383,8 +422,8 @@ class MainForm extends AbstractIdeForm
 
             $dialog = new MessageBoxForm(_('exit.message'), [_('exit.yes'), _('exit.no')]);
             if ($dialog->showDialog() && $dialog->getResultIndex() == 0) {
+                Ide::get()->setExitWhenReady(true);
                 $this->hide();
-                Ide::get()->shutdown();
             } else {
                 if ($e) {
                     $e->consume();
@@ -440,12 +479,10 @@ class MainForm extends AbstractIdeForm
             UXAnchorPane::setAnchor($content, 0);
 
             $this->consolePane->add($content);
-            $this->consolePane->minHeight = $consoleHeight;
 
             $items = $this->centerSplit->items;
             if (!$items->has($this->consolePane)) {
                 $items->add($this->consolePane);
-                UXSplitPane::setResizeWithParent($this->consolePane, false);
 
                 uiLater(function () use ($consoleHeight) {
                     $total = $this->centerSplit->height;
@@ -453,14 +490,20 @@ class MainForm extends AbstractIdeForm
                         $pos = max(0, min(1, ($total - $consoleHeight) / $total));
                         $this->centerSplit->dividerPositions = [$pos];
                     }
+                    $this->centerSplit->requestLayout();
                 });
             }
+
+            uiLater(function () {
+                $this->centerSplit->requestLayout();
+            });
         } else {
             $items = $this->centerSplit->items;
             if ($items->has($this->consolePane)) {
                 $items->remove($this->consolePane);
             }
             $this->consolePane->children->clear();
+            $this->centerSplit->requestLayout();
         }
     }
 }

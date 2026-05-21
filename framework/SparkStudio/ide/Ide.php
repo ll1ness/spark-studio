@@ -185,6 +185,10 @@ class Ide extends Application
      */
     protected $mode = 'prod';
 
+    private $openedWindows = 0;
+
+    private $exitWhenReady = false;
+
     public function __construct($configPath = null)
     {
         parent::__construct($configPath);
@@ -1486,6 +1490,28 @@ class Ide extends Application
             });
         });*/
 
+        $this->bind('showForm', function ($form) {
+            if ($form instanceof MainForm) {
+                return;
+            }
+            $this->openedWindows++;
+        });
+
+        $this->bind('hideForm', function ($form) {
+            if ($form instanceof MainForm) {
+                if ($this->exitWhenReady && $this->openedWindows <= 0) {
+                    $this->shutdown();
+                }
+                return;
+            }
+
+            $this->openedWindows--;
+
+            if ($this->exitWhenReady && $this->openedWindows <= 0) {
+                $this->shutdown();
+            }
+        });
+
         $this->afterShow(function () {
             $projectFile = $this->getUserConfigValue('lastProject');
 
@@ -1519,6 +1545,16 @@ class Ide extends Application
     public function isIdle()
     {
         return $this->idle;
+    }
+
+    public function isExitWhenReady(): bool
+    {
+        return $this->exitWhenReady;
+    }
+
+    public function setExitWhenReady(bool $value): void
+    {
+        $this->exitWhenReady = $value;
     }
 
     /**

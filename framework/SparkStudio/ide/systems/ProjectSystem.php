@@ -389,6 +389,15 @@ class ProjectSystem
 
         if ($project) {
             $project->close(true);
+
+            $projectFile = $project->getProjectFile();
+            $recentStr = Ide::get()->getUserConfigValue('recentProjects', '');
+            $recent = $recentStr ? explode(',', $recentStr) : [];
+            $recent = array_filter($recent, function ($p) use ($projectFile) {
+                return trim($p) && trim($p) !== $projectFile && fs::exists(trim($p));
+            });
+            array_unshift($recent, $projectFile);
+            Ide::get()->setUserConfigValue('recentProjects', implode(',', array_slice($recent, 0, 10)));
         }
 
         foreach (FileSystem::getOpened() as $hash => $info) {
