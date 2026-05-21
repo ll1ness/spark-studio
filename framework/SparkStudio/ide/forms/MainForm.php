@@ -205,7 +205,7 @@ class MainForm extends AbstractIdeForm
         try {
             $mediaView = new UXMediaViewBox();
             $mediaView->proportional = false;
-            $mediaView->open(Ide::getOwnFile('framework/SparkStudio/.data/img/videoplayback.mp4')->toUrl(), true);
+            $mediaView->open(Ide::getOwnFile('framework/SparkStudio/.data/img/videoplayback.mp4')->getAbsolutePath(), true);
             UXAnchorPane::setAnchor($mediaView, 0);
 
             $splash->add($mediaView);
