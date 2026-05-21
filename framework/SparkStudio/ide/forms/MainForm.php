@@ -37,7 +37,9 @@ use php\gui\UXAlert;
 use php\gui\UXApplication;
 use php\gui\UXButton;
 use php\gui\UXForm;
-use php\gui\UXMediaViewBox;
+use php\gui\UXMedia;
+use php\gui\UXMediaPlayer;
+use php\gui\UXMediaView;
 use php\gui\UXImage;
 use php\gui\UXImageView;
 use php\gui\UXLabel;
@@ -203,14 +205,26 @@ class MainForm extends AbstractIdeForm
         UXAnchorPane::setBottomAnchor($splash, 22);
 
         try {
-            $mediaView = new UXMediaViewBox();
-            $mediaView->proportional = false;
-            $mediaView->open(Ide::getOwnFile('framework/SparkStudio/.data/img/videoplayback.mp4')->getAbsolutePath(), true);
-            UXAnchorPane::setAnchor($mediaView, 0);
+            $videoFile = Ide::getOwnFile('framework/SparkStudio/.data/img/videoplayback.mp4');
 
-            $splash->add($mediaView);
+            if (!$videoFile->isFile()) {
+                Logger::warn("splash video file not found: " . $videoFile->getAbsolutePath());
+            } else {
+                Logger::info("splash video path: " . $videoFile->getAbsolutePath());
+
+                $media = new UXMedia($videoFile->toUrl());
+                $player = new UXMediaPlayer($media);
+                $player->play();
+
+                $mediaView = new UXMediaView();
+                $mediaView->player = $player;
+                $mediaView->proportional = false;
+
+                UXAnchorPane::setAnchor($mediaView, 0);
+                $splash->add($mediaView);
+            }
         } catch (\Exception $e) {
-            Logger::warn("splash video failed: " . $e->getMessage());
+            Logger::warn("splash video failed: " . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
         }
 
         $this->splashOverlay = $splash;
