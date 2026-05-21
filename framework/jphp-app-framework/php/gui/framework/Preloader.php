@@ -1,6 +1,7 @@
 <?php
 namespace php\gui\framework;
 
+use action\Animation;
 use php\gui\layout\UXAnchorPane;
 use php\gui\UXLabel;
 use php\gui\UXNode;
@@ -97,9 +98,11 @@ class Preloader extends UXAnchorPane
 
     public function show()
     {
+        $targetOpacity = $this->opacity;
+        $this->opacity = 0;
         parent::show();
-
         $this->toFront();
+        Animation::fadeTo($this, 200, $targetOpacity);
     }
 
     static function hidePreloader(UXNode $pane)
@@ -107,8 +110,14 @@ class Preloader extends UXAnchorPane
         $preloader = $pane->data('--preloader');
 
         if ($preloader) {
-            $preloader->free();
-            $pane->data('--preloader', null);
+            if ($preloader->data('--hiding')) {
+                return;
+            }
+            $preloader->data('--hiding', true);
+            Animation::fadeOut($preloader, 150, function () use ($preloader, $pane) {
+                $preloader->free();
+                $pane->data('--preloader', null);
+            });
         }
     }
 

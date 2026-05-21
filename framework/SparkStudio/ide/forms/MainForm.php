@@ -494,7 +494,9 @@ class MainForm extends AbstractIdeForm
 
             $items = $this->centerSplit->items;
             if (!$items->has($this->consolePane)) {
+                $this->consolePane->opacity = 0;
                 $items->add($this->consolePane);
+                Animation::fadeIn($this->consolePane, 300);
 
                 uiLater(function () use ($consoleHeight) {
                     $total = $this->centerSplit->height;
@@ -512,10 +514,15 @@ class MainForm extends AbstractIdeForm
         } else {
             $items = $this->centerSplit->items;
             if ($items->has($this->consolePane)) {
-                $items->remove($this->consolePane);
+                $overlay = $this->consolePane;
+                Animation::fadeOut($overlay, 250, function () use ($overlay, $items) {
+                    $items->remove($overlay);
+                    $overlay->children->clear();
+                    $this->centerSplit->requestLayout();
+                });
+            } else {
+                $this->consolePane->children->clear();
             }
-            $this->consolePane->children->clear();
-            $this->centerSplit->requestLayout();
         }
     }
 }

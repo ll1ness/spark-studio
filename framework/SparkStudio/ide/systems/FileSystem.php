@@ -1,6 +1,7 @@
 <?php
 namespace ide\systems;
 
+use action\Animation;
 use ide\editors\AbstractEditor;
 use ide\editors\form\FormEditorLeftPaneUi;
 use ide\editors\form\IdeTabPane;
@@ -581,12 +582,28 @@ class FileSystem
             }
 
             if ($switchToEditor) {
+                if ($win->layout) {
+                    $win->layout->opacity = 0;
+                }
                 $win->show();
                 $win->toFront();
+                if ($win->layout) {
+                    uiLater(function () use ($win) {
+                        Animation::fadeIn($win->layout, 300);
+                    });
+                }
             }
         } else {
             if (!$tab) {
                 $tab = static::makeTabForEditor($editor);
+
+                if ($tab->content) {
+                    $tab->content->opacity = 0;
+                    uiLater(function () use ($tab) {
+                        Animation::fadeIn($tab->content, 300);
+                    });
+                }
+
                 $changeHandler = $tab->data('change-handler');
 
                 if ($switchToEditor && is_callable($changeHandler)) {
@@ -649,14 +666,27 @@ class FileSystem
         }
 
         if ($removeUiEditor) {
-            if ($tab) {
-                Ide::get()->getMainForm()->{'fileTabPane'}->tabs->remove($tab);
-            }
+            if ($tab && $tab->content) {
+                $tabPane = Ide::get()->getMainForm()->{'fileTabPane'};
+                Animation::fadeOut($tab->content, 150, function () use ($tabPane, $tab, $win) {
+                    $tabPane->tabs->remove($tab);
 
-            if ($win) {
-                self::$freeze = true;
-                $win->hide();
-                self::$freeze = false;
+                    if ($win) {
+                        self::$freeze = true;
+                        $win->hide();
+                        self::$freeze = false;
+                    }
+                });
+            } else {
+                if ($tab) {
+                    Ide::get()->getMainForm()->{'fileTabPane'}->tabs->remove($tab);
+                }
+
+                if ($win) {
+                    self::$freeze = true;
+                    $win->hide();
+                    self::$freeze = false;
+                }
             }
         }
     }

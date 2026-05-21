@@ -1,6 +1,7 @@
 <?php
 namespace ide\editors;
 
+use action\Animation;
 use ide\formats\ProjectFormat;
 use ide\Ide;
 use ide\Logger;
@@ -210,7 +211,9 @@ class ProjectEditor extends AbstractEditor
 
             if ($this->contentPane->children[0] != $ui) {
                 UXAnchorPane::setAnchor($ui, 0);
+                $ui->opacity = 0;
                 $this->contentPane->children->setAll([$ui]);
+                Animation::fadeIn($ui, 250);
             }
 
             if ($setMenu) {
