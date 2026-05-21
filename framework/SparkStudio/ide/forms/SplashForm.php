@@ -1,6 +1,7 @@
 <?php
 namespace ide\forms;
 
+use action\Animation;
 use ide\Ide;
 use ide\Logger;
 use ide\systems\SplashTipSystem;
@@ -51,8 +52,12 @@ class SplashForm extends AbstractIdeForm
 
         $this->adjustMemorySettings();
 
+        $this->opacity = 0;
+
         waitAsync(3000, function() {
-            $this->hide();
+            Animation::fadeTo($this, 500, 0.0, function () {
+                $this->hide();
+            });
 
             uiLater(function() {
                 Notifications::success("Мастер Обновлений", "У вас установлена последняя версия Spark Studio " . Ide::get()->getConfig()->get('app.version'));
@@ -163,6 +168,8 @@ class SplashForm extends AbstractIdeForm
 
         if (Ide::get()->isDevelopment() && Ide::get()->isWindows()) {
             $this->opacity = ($this->opacity > 0.9) ? 0.5 : 1;
+        } else {
+            Animation::fadeTo($this, 600, 1.0);
         }
 
         uiLater(function () {

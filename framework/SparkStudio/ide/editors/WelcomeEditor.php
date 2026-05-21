@@ -1,6 +1,7 @@
 <?php
 namespace ide\editors;
 
+use action\Animation;
 use ide\commands\NewProjectCommand;
 use ide\commands\OpenProjectCommand;
 use ide\forms\OpenProjectForm;
@@ -48,6 +49,7 @@ class WelcomeEditor extends AbstractEditor
     {
         $root = new UXStackPane();
         $root->style = '-fx-background-color: #080808;';
+        $root->opacity = 0;
 
         $content = new UXVBox();
         $content->alignment = 'CENTER';
@@ -96,6 +98,10 @@ class WelcomeEditor extends AbstractEditor
         $columns->children->addAll([$leftCol, $rightCol]);
         $content->children->addAll([$logo, $columns]);
         $root->children->add($content);
+
+        uiLater(function () use ($root) {
+            Animation::fadeIn($root, 400);
+        });
 
         return $root;
     }

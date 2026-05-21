@@ -3,6 +3,7 @@ namespace ide\forms;
 
 use ide\editors\form\IdeTabPane;
 use ide\forms\mixins\SavableFormMixin;
+use action\Animation;
 use ide\Ide;
 use ide\IdeConfigurable;
 use ide\IdeException;
@@ -36,6 +37,9 @@ use php\gui\UXAlert;
 use php\gui\UXApplication;
 use php\gui\UXButton;
 use php\gui\UXForm;
+use php\gui\UXMedia;
+use php\gui\UXMediaPlayer;
+use php\gui\UXMediaView;
 use php\gui\UXImage;
 use php\gui\UXImageView;
 use php\gui\UXLabel;
@@ -201,16 +205,21 @@ class MainForm extends AbstractIdeForm
         UXAnchorPane::setBottomAnchor($splash, 22);
 
         try {
-            $img = new UXImage('res://.data/img/splash_anim.gif');
-            $imgView = new UXImageView($img);
+            $media = UXMedia::createFromResource('/.data/img/videoplayback.mp4');
+            $player = new UXMediaPlayer($media);
+            $player->play();
+
+            $mediaView = new UXMediaView();
+            $mediaView->proportional = false;
+            $mediaView->player = $player;
 
             $stack = new UXStackPane();
-            $stack->add($imgView);
+            $stack->add($mediaView);
             UXAnchorPane::setAnchor($stack, 0);
 
             $splash->add($stack);
         } catch (\Exception $e) {
-            Logger::warn("splash anim gif failed: " . $e->getMessage());
+            Logger::warn("splash video failed: " . $e->getMessage());
         }
 
         $this->splashOverlay = $splash;
@@ -220,8 +229,11 @@ class MainForm extends AbstractIdeForm
     protected function hideSplashOverlay()
     {
         if ($this->splashOverlay) {
-            $this->splashOverlay->free();
+            $overlay = $this->splashOverlay;
             $this->splashOverlay = null;
+            Animation::fadeOut($overlay, 500, function () use ($overlay) {
+                $overlay->free();
+            });
         }
     }
 
