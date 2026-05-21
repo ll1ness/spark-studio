@@ -1,5 +1,6 @@
 <?php
 namespace ide\editors\form;
+use action\Animation;
 use behaviour\custom\BlinkAnimationBehaviour;
 use ide\behaviour\AbstractBehaviourSpec;
 use ide\behaviour\IdeBehaviourManager;
@@ -197,6 +198,14 @@ class IdeBehaviourPane
         $box->children->insert(0, $controlPane);
 
         $this->initButtonAdd($controlPane, $targetId);
+
+        if ($box->children->count > 1) {
+            for ($i = 1; $i < $box->children->count; $i++) {
+                $child = $box->children[$i];
+                $child->opacity = 0;
+                Animation::fadeTo($child, 200, 1.0);
+            }
+        }
 
         return $this->lastUi = $box;
     }

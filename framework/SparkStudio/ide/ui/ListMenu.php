@@ -1,6 +1,7 @@
 <?php
 namespace ide\ui;
 
+use action\Animation;
 use ide\Ide;
 use ide\utils\UiUtils;
 use php\gui\layout\UXHBox;
@@ -255,5 +256,8 @@ class ListMenu extends UXListView
         $this->items->setAll(arr::of($this->items));
 
         $this->selectedIndexes = $selected;
+
+        $this->opacity = 0;
+        Animation::fadeTo($this, 200, 1.0);
     }
 }

@@ -6,6 +6,7 @@ use spark\lexer\token\FunctionStmtToken;
 use spark\lexer\token\MethodStmtToken;
 use ide\action\ActionEditor;
 use ide\autocomplete\AutoCompleteRegion;
+use action\Animation;
 use ide\editors\AbstractEditor;
 use ide\editors\CodeEditor;
 use ide\editors\menu\AbstractMenuCommand;
@@ -796,6 +797,9 @@ class IdeEventListPane
         }
 
         $this->setSelectedCode($selectedCode);
+
+        $this->uiList->opacity = 0.5;
+        Animation::fadeTo($this->uiList, 120, 1.0);
     }
 
     public function doDeleteEvent()

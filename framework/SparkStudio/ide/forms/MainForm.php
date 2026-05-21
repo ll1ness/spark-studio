@@ -31,15 +31,13 @@ use php\gui\framework\AbstractForm;
 use php\gui\framework\Preloader;
 use php\gui\layout\UXAnchorPane;
 use php\gui\layout\UXHBox;
-use php\gui\layout\UXStackPane;
+
 use php\gui\layout\UXVBox;
 use php\gui\UXAlert;
 use php\gui\UXApplication;
 use php\gui\UXButton;
 use php\gui\UXForm;
-use php\gui\UXMedia;
-use php\gui\UXMediaPlayer;
-use php\gui\UXMediaView;
+use php\gui\UXMediaViewBox;
 use php\gui\UXImage;
 use php\gui\UXImageView;
 use php\gui\UXLabel;
@@ -205,19 +203,12 @@ class MainForm extends AbstractIdeForm
         UXAnchorPane::setBottomAnchor($splash, 22);
 
         try {
-            $media = UXMedia::createFromResource('/.data/img/videoplayback.mp4');
-            $player = new UXMediaPlayer($media);
-            $player->play();
-
-            $mediaView = new UXMediaView();
+            $mediaView = new UXMediaViewBox();
             $mediaView->proportional = false;
-            $mediaView->player = $player;
+            $mediaView->open(Ide::getOwnFile('framework/SparkStudio/.data/img/videoplayback.mp4')->toUrl(), true);
+            UXAnchorPane::setAnchor($mediaView, 0);
 
-            $stack = new UXStackPane();
-            $stack->add($mediaView);
-            UXAnchorPane::setAnchor($stack, 0);
-
-            $splash->add($stack);
+            $splash->add($mediaView);
         } catch (\Exception $e) {
             Logger::warn("splash video failed: " . $e->getMessage());
         }

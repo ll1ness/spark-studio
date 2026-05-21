@@ -1,6 +1,7 @@
 <?php
 namespace ide\ui;
 
+use action\Animation;
 use ide\Ide;
 use ide\misc\AbstractCommand;
 use ide\misc\EventHandlerBehaviour;
@@ -309,7 +310,12 @@ class FlowListViewDecorator implements \Countable
         }
 
         $node->classes->add('list-cell');
+        $node->opacity = 0;
+        $node->scaleX = 0.95;
+        $node->scaleY = 0.95;
         $this->pane->add($node);
+        Animation::fadeTo($node, 200, 1.0);
+        Animation::scaleTo($node, 200, 1.0);
 
         $node->on('mouseDown', function (UXMouseEvent $e) {
             if (!$e->controlDown && !($e->button == 'SECONDARY' && $e->sender->classes->has('selected'))) {

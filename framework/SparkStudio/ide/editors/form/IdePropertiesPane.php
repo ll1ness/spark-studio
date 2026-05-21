@@ -140,6 +140,7 @@ class IdePropertiesPane
                     $group->update();
                 }
             }
+
         } else {
             $this->setOnlyNode($this->emptyNode);
         }

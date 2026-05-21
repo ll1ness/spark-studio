@@ -1,6 +1,7 @@
 <?php
 namespace ide\editors\sprite;
 
+use action\Animation;
 use game\SpriteSpec;
 use ide\forms\MessageBoxForm;
 use ide\Ide;
@@ -139,6 +140,9 @@ class IdeAnimationSpritePane
         if ($node = $this->actions->lookup('#delete')) {
             $node->enabled = $selected !== null;
         }
+
+        $this->animationList->opacity = 0;
+        Animation::fadeTo($this->animationList, 200, 1.0);
     }
 
     public function getUi()
