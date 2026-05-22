@@ -365,6 +365,10 @@ class PhpProjectBehaviour extends AbstractProjectBehaviour
             }
 
             foreach ($zipLibraries as $library) {
+                if (fs::isDir($library)) {
+                    continue;
+                }
+
                 $zip = new ZipFile($library);
                 foreach ($zip->statAll() as $stat) {
                     $name = $stat['name'];
@@ -409,9 +413,32 @@ class PhpProjectBehaviour extends AbstractProjectBehaviour
                             continue;
                         }
 
-                        try {
-                            $name = str::replace($name, '\\', '/');
+                        $name = str::replace($name, '\\', '/');
 
+                        if (fs::isDir($file)) {
+                            $filename = "$file/$name.php";
+
+                            if (fs::exists($filename)) {
+                                echo "Find class '$name' in ", $filename, "\n";
+
+                                $compiled = new File($generatedDirectory, $name . ".phb");
+                                fs::ensureParent($compiled);
+
+                                $includedFiles[FileUtils::hashName($filename)] = true;
+
+                                $fileStream = new FileStream($filename);
+                                $module = new Module($fileStream, false, true);
+                                $module->call();
+                                $module->dump($compiled, true);
+                                $fileStream->close();
+
+                                return;
+                            }
+
+                            continue;
+                        }
+
+                        try {
                             $url = new URL("jar:file:///$file!/$name.php");
 
                             $conn = $url->openConnection();
@@ -513,52 +540,100 @@ class PhpProjectBehaviour extends AbstractProjectBehaviour
                     continue;
                 }
 
-                $jar = new ZipFile($library);
+                if (fs::isDir($library)) {
+                    fs::scan($library, function ($filename) use ($generatedDirectory, $log, $scope) {
+                        $name = FileUtils::relativePath($library, $filename);
 
-                foreach ($jar->statAll() as $stat) {
-                    list($name) = [$stat['name']];
+                        if (str::startsWith($name, 'JPHP-INF/')) {
+                            return;
+                        }
 
-                    if (str::startsWith($name, 'JPHP-INF/')) {
-                        continue;
-                    }
+                        if (fs::ext($name) == 'php') {
+                            $compiled = new File($generatedDirectory, '/' . fs::pathNoExt($name) . ".phb");
 
-                    if (fs::ext($name) == 'php') {
-                        $compiled = new File($generatedDirectory, '/' . fs::pathNoExt($name) . ".phb");
+                            if (!$compiled->exists()) {
+                                if ($compiled->getParentFile() && !$compiled->getParentFile()->isDirectory()) {
+                                    $compiled->getParentFile()->mkdirs();
+                                }
 
-                        if (!$compiled->exists()) {
-                            if ($compiled->getParentFile() && !$compiled->getParentFile()->isDirectory()) {
-                                $compiled->getParentFile()->mkdirs();
-                            }
-
-                            $jar->read($name, function ($_, Stream $stream) use ($name, $compiled, $log, $scope) {
                                 $className = fs::pathNoExt($name);
                                 $className = str::replace($className, '/', '\\');
 
-                                try {
-                                    $done = $scope->execute(function () use ($stream, $compiled, $className, $log) {
-                                        if (!class_exists($className, false)) {
-                                            try {
-                                                $module = new Module($stream, false);
-                                                $module->dump($compiled, true);
-                                                return true;
-                                            } catch (Error $e) {
-                                                if ($log) {
-                                                    $log("[ERROR] Unable to compile '{$className}', {$e->getMessage()}, on line {$e->getLine()}");
-                                                    return false;
-                                                }
+                                $done = $scope->execute(function () use ($filename, $compiled, $className, $log) {
+                                    if (!class_exists($className, false)) {
+                                        try {
+                                            $stream = new FileStream($filename);
+                                            $module = new Module($stream, false);
+                                            $module->call();
+                                            $module->dump($compiled, true);
+                                            $stream->close();
+
+                                            return true;
+                                        } catch (Error $e) {
+                                            if ($log) {
+                                                $log("[ERROR] Unable to compile '{$className}', {$e->getMessage()}, on line {$e->getLine()}");
+                                                return false;
                                             }
                                         }
-
-                                        return false;
-                                    });
-
-                                    if ($log && $done) {
-                                        $log(":compile {$name}");
                                     }
-                                } finally {
-                                    $stream->close();
+
+                                    return false;
+                                });
+
+                                if ($log && $done) {
+                                    $log(":compile {$name}");
                                 }
-                            });
+                            }
+                        }
+                    });
+                } else {
+                    $jar = new ZipFile($library);
+
+                    foreach ($jar->statAll() as $stat) {
+                        list($name) = [$stat['name']];
+
+                        if (str::startsWith($name, 'JPHP-INF/')) {
+                            continue;
+                        }
+
+                        if (fs::ext($name) == 'php') {
+                            $compiled = new File($generatedDirectory, '/' . fs::pathNoExt($name) . ".phb");
+
+                            if (!$compiled->exists()) {
+                                if ($compiled->getParentFile() && !$compiled->getParentFile()->isDirectory()) {
+                                    $compiled->getParentFile()->mkdirs();
+                                }
+
+                                $jar->read($name, function ($_, Stream $stream) use ($name, $compiled, $log, $scope) {
+                                    $className = fs::pathNoExt($name);
+                                    $className = str::replace($className, '/', '\\');
+
+                                    try {
+                                        $done = $scope->execute(function () use ($stream, $compiled, $className, $log) {
+                                            if (!class_exists($className, false)) {
+                                                try {
+                                                    $module = new Module($stream, false);
+                                                    $module->dump($compiled, true);
+                                                    return true;
+                                                } catch (Error $e) {
+                                                    if ($log) {
+                                                        $log("[ERROR] Unable to compile '{$className}', {$e->getMessage()}, on line {$e->getLine()}");
+                                                        return false;
+                                                    }
+                                                }
+                                            }
+
+                                            return false;
+                                        });
+
+                                        if ($log && $done) {
+                                            $log(":compile {$name}");
+                                        }
+                                    } finally {
+                                        $stream->close();
+                                    }
+                                });
+                            }
                         }
                     }
                 }
