@@ -212,7 +212,7 @@ class MainForm extends AbstractIdeForm
                 $imageView->preserveRatio = false;
 
                 $stack = new UXStackPane([$imageView]);
-                $stack->style = '-fx-border-color: #000000; -fx-border-width: 1px;';
+                $imageView->style = '-fx-border-color: #000000; -fx-border-width: 1px;';
                 UXAnchorPane::setAnchor($stack, 0);
                 $splash->add($stack);
             }
