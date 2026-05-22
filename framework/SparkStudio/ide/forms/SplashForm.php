@@ -169,7 +169,7 @@ class SplashForm extends AbstractIdeForm
         if (Ide::get()->isDevelopment() && Ide::get()->isWindows()) {
             $this->opacity = ($this->opacity > 0.9) ? 0.5 : 1;
         } else {
-            Animation::fadeTo($this, 600, 1.0);
+            Animation::fadeTo($this, 500, 1.0);
         }
 
         uiLater(function () {

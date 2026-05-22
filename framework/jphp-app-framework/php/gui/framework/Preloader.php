@@ -104,7 +104,7 @@ class Preloader extends UXAnchorPane
         $this->opacity = 0;
         parent::show();
         $this->toFront();
-        Animation::fadeTo($this, 200, $targetOpacity);
+        Animation::fadeTo($this, 500, $targetOpacity);
     }
 
     static function hidePreloader(UXNode $pane)
@@ -116,7 +116,7 @@ class Preloader extends UXAnchorPane
                 return;
             }
             $preloader->data('--hiding', true);
-            Animation::fadeOut($preloader, 150, function () use ($preloader, $pane) {
+            Animation::fadeOut($preloader, 500, function () use ($preloader, $pane) {
                 $preloader->free();
                 $pane->data('--preloader', null);
             });

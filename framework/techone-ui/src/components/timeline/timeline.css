@@ -58,7 +58,7 @@
 
 .to-timeline-item[data-state="active"]::before {
   background: #cccc00;
-  animation: timeline-pulse 2s ease-in-out infinite;
+  animation: timeline-pulse 0.5s ease-in-out infinite;
 }
 
 .to-timeline-item[data-state="error"]::before {

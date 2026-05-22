@@ -314,8 +314,8 @@ class FlowListViewDecorator implements \Countable
         $node->scaleX = 0.95;
         $node->scaleY = 0.95;
         $this->pane->add($node);
-        Animation::fadeTo($node, 200, 1.0);
-        Animation::scaleTo($node, 200, 1.0);
+        Animation::fadeTo($node, 500, 1.0);
+        Animation::scaleTo($node, 500, 1.0);
 
         $node->on('mouseDown', function (UXMouseEvent $e) {
             if (!$e->controlDown && !($e->button == 'SECONDARY' && $e->sender->classes->has('selected'))) {

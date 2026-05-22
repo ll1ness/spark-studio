@@ -9,7 +9,7 @@ namespace php\gui\animation;
  */
 class UXAnimationTimer
 {
-    const FRAME_INTERVAL = 1 / 60;
+    const FRAME_INTERVAL = 1 / 30;
     const FRAME_INTERVAL_MS = self::FRAME_INTERVAL * 1000;
 
     /**

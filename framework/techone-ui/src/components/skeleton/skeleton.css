@@ -6,7 +6,7 @@
     #0f0f0f 75%
   );
   background-size: 200% 100%;
-  animation: to-skeleton-shimmer 1.5s linear infinite;
+  animation: to-skeleton-shimmer 0.5s linear infinite;
   border-radius: 4px;
   height: 16px;
 }

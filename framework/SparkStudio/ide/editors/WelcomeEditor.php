@@ -100,7 +100,7 @@ class WelcomeEditor extends AbstractEditor
         $root->children->add($content);
 
         uiLater(function () use ($root) {
-            Animation::fadeIn($root, 400);
+            Animation::fadeIn($root, 500);
         });
 
         return $root;

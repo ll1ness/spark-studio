@@ -799,7 +799,7 @@ class IdeEventListPane
         $this->setSelectedCode($selectedCode);
 
         $this->uiList->opacity = 0.5;
-        Animation::fadeTo($this->uiList, 120, 1.0);
+        Animation::fadeTo($this->uiList, 500, 1.0);
     }
 
     public function doDeleteEvent()

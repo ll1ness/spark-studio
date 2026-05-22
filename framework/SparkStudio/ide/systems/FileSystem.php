@@ -589,7 +589,7 @@ class FileSystem
                 $win->toFront();
                 if ($win->layout) {
                     uiLater(function () use ($win) {
-                        Animation::fadeIn($win->layout, 300);
+                        Animation::fadeIn($win->layout, 500);
                     });
                 }
             }
@@ -600,7 +600,7 @@ class FileSystem
                 if ($tab->content) {
                     $tab->content->opacity = 0;
                     uiLater(function () use ($tab) {
-                        Animation::fadeIn($tab->content, 300);
+                        Animation::fadeIn($tab->content, 500);
                     });
                 }
 
@@ -668,7 +668,7 @@ class FileSystem
         if ($removeUiEditor) {
             if ($tab && $tab->content) {
                 $tabPane = Ide::get()->getMainForm()->{'fileTabPane'};
-                Animation::fadeOut($tab->content, 150, function () use ($tabPane, $tab, $win) {
+                Animation::fadeOut($tab->content, 500, function () use ($tabPane, $tab, $win) {
                     $tabPane->tabs->remove($tab);
 
                     if ($win) {

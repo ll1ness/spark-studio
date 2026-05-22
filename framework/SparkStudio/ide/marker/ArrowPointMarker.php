@@ -202,10 +202,10 @@ class ArrowPointMarker extends AbstractMarker
             $this->popup->showByNode($node, $offsetX, $offsetY);
 
             $this->vibration->enable();
-            Animation::fadeIn($this->popup, 800, function () use ($tooltip, $tooltipX, $tooltipY) {
+            Animation::fadeIn($this->popup, 500, function () use ($tooltip, $tooltipX, $tooltipY) {
                 $tooltip->opacity = 0;
                 $tooltip->show($this->popup, $tooltipX, $tooltipY);
-                Animation::fadeIn($tooltip, 400);
+                Animation::fadeIn($tooltip, 500);
             });
         }
     }
@@ -217,8 +217,8 @@ class ArrowPointMarker extends AbstractMarker
         $this->tooltip->layout->mouseTransparent = true;
         $this->popup->layout->mouseTransparent = true;
 
-        Animation::fadeOut($this->tooltip, 800);
-        Animation::fadeOut($this->popup, 800, function () {
+        Animation::fadeOut($this->tooltip, 500);
+        Animation::fadeOut($this->popup, 500, function () {
             $this->popup->hide();
             $this->vibration->disable();
 

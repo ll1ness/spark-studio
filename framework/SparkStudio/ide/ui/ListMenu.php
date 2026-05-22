@@ -258,6 +258,6 @@ class ListMenu extends UXListView
         $this->selectedIndexes = $selected;
 
         $this->opacity = 0;
-        Animation::fadeTo($this, 200, 1.0);
+        Animation::fadeTo($this, 500, 1.0);
     }
 }

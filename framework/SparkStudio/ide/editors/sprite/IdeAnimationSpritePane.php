@@ -142,7 +142,7 @@ class IdeAnimationSpritePane
         }
 
         $this->animationList->opacity = 0;
-        Animation::fadeTo($this->animationList, 200, 1.0);
+        Animation::fadeTo($this->animationList, 500, 1.0);
     }
 
     public function getUi()

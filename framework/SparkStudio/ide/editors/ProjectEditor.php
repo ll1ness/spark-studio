@@ -213,7 +213,7 @@ class ProjectEditor extends AbstractEditor
                 UXAnchorPane::setAnchor($ui, 0);
                 $ui->opacity = 0;
                 $this->contentPane->children->setAll([$ui]);
-                Animation::fadeIn($ui, 250);
+                Animation::fadeIn($ui, 500);
             }
 
             if ($setMenu) {

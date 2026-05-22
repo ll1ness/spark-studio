@@ -21,7 +21,7 @@ abstract class AnimationBehaviour extends AbstractBehaviour
      *
      * @var int
      **/
-    public $duration = 1000;
+    public $duration = 500;
 
     /**
      * @var string

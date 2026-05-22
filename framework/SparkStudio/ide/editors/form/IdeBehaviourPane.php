@@ -203,7 +203,7 @@ class IdeBehaviourPane
             for ($i = 1; $i < $box->children->count; $i++) {
                 $child = $box->children[$i];
                 $child->opacity = 0;
-                Animation::fadeTo($child, 200, 1.0);
+                Animation::fadeTo($child, 500, 1.0);
             }
         }
 
