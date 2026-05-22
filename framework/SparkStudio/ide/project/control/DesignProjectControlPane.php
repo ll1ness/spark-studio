@@ -153,8 +153,6 @@ class DesignProjectControlPane extends AbstractProjectControlPane
 
 
         $menu = new ContextMenu(null, [
-            new DesignProjectControlPane_SkinClearCommand($this),
-            '-',
             new DesignProjectControlPane_SkinConvertToTheme($this),
         ]);
 
@@ -291,44 +289,3 @@ class DesignProjectControlPane_SkinConvertToTheme extends AbstractMenuCommand
     }
 }
 
-class DesignProjectControlPane_SkinClearCommand extends AbstractMenuCommand
-{
-    /**
-     * @var DesignProjectControlPane
-     */
-    private $pane;
-
-    /**
-     * DesignProjectControlPane_SkinClearCommand constructor.
-     * @param DesignProjectControlPane $pane
-     */
-    public function __construct(DesignProjectControlPane $pane)
-    {
-        $this->pane = $pane;
-    }
-
-    public function getName()
-    {
-        return "(Без скина)";
-    }
-
-    public function getIcon()
-    {
-        return 'icons/clear16.png';
-    }
-
-    public function onExecute($e = null, AbstractEditor $editor = null)
-    {
-        if ($gui = GuiFrameworkProjectBehaviour::get()) {
-            $gui->clearSkin();
-            $this->pane->refresh();
-        }
-    }
-
-    public function onBeforeShow($item, AbstractEditor $editor = null)
-    {
-        parent::onBeforeShow($item, $editor);
-
-        $item->enabled = !!GuiFrameworkProjectBehaviour::get()->getCurrentSkin();
-    }
-}

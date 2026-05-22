@@ -1903,6 +1903,8 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $viewer->stylesheets->add($stylesheet);
         }
 
+        $viewer->classes->add('root');
+
         $viewer->on('mouseUp', function ($e) {
             $this->selectForm();
         });

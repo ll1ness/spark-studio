@@ -117,10 +117,6 @@ class SkinManagerForm extends AbstractIdeForm
                     $cell->graphic = new ListExtendedItem($skin->getName(), str::upperFirst($desc), ico('brush16'));
                 }
 
-            } else {
-                $cell->text = null;
-                $cell->graphic = $ui = new ListExtendedItem('(Без скина)', 'Убрать скин из проекта', ico('brush16'));
-                $ui->setTitleThin(true);
             }
         });
 
@@ -177,7 +173,7 @@ class SkinManagerForm extends AbstractIdeForm
         if ($this->list->selectedIndex < 0) {
             MessageBoxForm::warning('Выберите скин ...');
         } else {
-            $this->setResult($this->list->selectedItem ? $this->list->selectedItem->getSkin() : ProjectSkin::createEmpty());
+            $this->setResult($this->list->selectedItem->getSkin());
             $this->hide();
         }
     }
@@ -222,7 +218,7 @@ class SkinManagerForm extends AbstractIdeForm
 
     public function updateList()
     {
-        $this->list->items->setAll([null]);
+        $this->list->items->setAll([]);
         $resources = Ide::get()->getLibrary()->getResources('skins');
 
         foreach ($resources as $resource) {
