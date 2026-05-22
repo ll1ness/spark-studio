@@ -6,7 +6,6 @@
 
 [![Version](https://img.shields.io/badge/version-16.7.5--autumn-6366f1?style=flat-square)]()
 [![Runtime](https://img.shields.io/badge/runtime-JPHP%20%2B%20JavaFX-ff6600?style=flat-square)]()
-[![UI](https://img.shields.io/badge/UI-TechOne%20v1.4.1-0ea5e9?style=flat-square)]()
 [![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)]()
 [![Platform](https://img.shields.io/badge/platform-Java%208%2B-informational?style=flat-square)]()
 </div>
