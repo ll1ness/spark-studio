@@ -156,6 +156,88 @@ class MessageBoxForm extends AbstractIdeForm
         $this->centerOnScreen();
     }
 
+    /**
+     * Show this message box as an in-window modal overlay.
+     * Buttons close the overlay and call $onClose when done.
+     *
+     * @param callable|null $onClose
+     */
+    public function showModal(callable $onClose = null)
+    {
+        $this->flag->free();
+        $this->doOpen();
+
+        // Override button actions to close the modal overlay
+        foreach ($this->buttonBox->children as $button) {
+            if ($button instanceof UXButton) {
+                $button->on('action', function () {
+                    Ide::get()->hideModal();
+                }, 'modal-overlay');
+            }
+        }
+
+        Ide::get()->showModal($this->layout, $onClose);
+    }
+
+    /**
+     * Show a warning message box as an in-window modal.
+     *
+     * @param string $message
+     * @param callable|null $onClose
+     */
+    static function warningModal($message, callable $onClose = null)
+    {
+        $dialog = new static($message, ['OK']);
+        $dialog->makeWarning();
+        $dialog->showModal($onClose);
+    }
+
+    /**
+     * Show a confirm dialog as an in-window modal.
+     * $onResult receives true for 'Yes', false otherwise.
+     *
+     * @param string $message
+     * @param callable $onResult (bool $confirmed)
+     */
+    static function confirmModal($message, callable $onResult)
+    {
+        $dialog = new static($message, ['Да', 'Нет, отмена']);
+
+        $dialog->flag->free();
+        $dialog->doOpen();
+
+        // Rebuild button handlers for modal overlay
+        $dialog->buttonBox->children->clear();
+
+        $yesBtn = new UXButton('Да');
+        $yesBtn->maxHeight = 10000;
+        $yesBtn->minWidth = 90;
+        $yesBtn->height = 30;
+        $yesBtn->paddingLeft = $yesBtn->paddingRight = 15;
+        $yesBtn->style = '-fx-font-weight: bold;' . UiUtils::fontSizeStyle();
+        $yesBtn->on('action', function () use ($onResult) {
+            Ide::get()->hideModal();
+            $onResult(true);
+        });
+
+        $noBtn = new UXButton('Нет, отмена');
+        $noBtn->maxHeight = 10000;
+        $noBtn->minWidth = 90;
+        $noBtn->height = 30;
+        $noBtn->paddingLeft = $noBtn->paddingRight = 15;
+        $noBtn->style = UiUtils::fontSizeStyle();
+        $noBtn->on('action', function () use ($onResult) {
+            Ide::get()->hideModal();
+            $onResult(false);
+        });
+
+        $dialog->buttonBox->add($yesBtn);
+        $dialog->buttonBox->add($noBtn);
+
+        $dialog->layout->requestLayout();
+        Ide::get()->showModal($dialog->layout);
+    }
+
     static function confirm($message, $owner = null)
     {
         $dialog = new static($message, ['Да', 'Нет, отмена'], $owner);

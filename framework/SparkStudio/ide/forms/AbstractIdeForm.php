@@ -74,4 +74,28 @@ class AbstractIdeForm extends AbstractForm
         });
     }
 
+    /**
+     * Show this form's content inside the IDE window as a modal overlay,
+     * instead of opening a separate OS window.
+     *
+     * @param callable|null $onClose called when modal is closed
+     */
+    public function showInModal(callable $onClose = null)
+    {
+        if (!$this->layout) {
+            return;
+        }
+
+        // Load events/bindings if not already done (constructor handles this)
+        uiLater(function () use ($onClose) {
+            $this->trigger('show', null);
+            Ide::get()->showModal($this->layout, function () use ($onClose) {
+                $this->trigger('hide', null);
+                if ($onClose) {
+                    $onClose();
+                }
+            });
+        });
+    }
+
 }
