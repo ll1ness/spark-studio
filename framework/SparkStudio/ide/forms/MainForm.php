@@ -126,11 +126,20 @@ class MainForm extends AbstractIdeForm
      */
     private $splashOverlay;
 
+    /** @var UXStackPane */
+    private $modalOverlay;
+
+    /**
+     * @var callable|null
+     */
+    private $onModalClose;
+
     protected function init()
     {
         parent::init();
 
         $this->initSplashOverlay();
+        $this->initModalOverlay();
 
         waitAsync(5000, function () {
             $this->hideSplashOverlay();
@@ -233,6 +242,82 @@ class MainForm extends AbstractIdeForm
                 $overlay->free();
             });
         }
+    }
+
+    protected function initModalOverlay()
+    {
+        $bg = new UXAnchorPane();
+        $bg->style = '-fx-background-color: rgba(0,0,0,0.55);';
+
+        $content = new UXAnchorPane();
+        $content->maxWidth = 520;
+        $content->maxHeight = 600;
+        $content->style = implode(';', [
+            '-fx-background-color: #1e1e1e',
+            '-fx-border-color: #333',
+            '-fx-border-radius: 8',
+            '-fx-background-radius: 8',
+            '-fx-padding: 16',
+        ]);
+
+        $wrapper = new UXStackPane([$content]);
+        UXAnchorPane::setAnchor($bg, 0);
+        UXAnchorPane::setAnchor($wrapper, 0);
+
+        $overlay = new UXAnchorPane();
+        $overlay->visible = false;
+        UXAnchorPane::setTopAnchor($overlay, 0);
+        UXAnchorPane::setLeftAnchor($overlay, 0);
+        UXAnchorPane::setRightAnchor($overlay, 0);
+        UXAnchorPane::setBottomAnchor($overlay, 22);
+        $overlay->add($bg);
+        $overlay->add($wrapper);
+
+        $this->modalOverlay = $overlay;
+        $this->add($overlay);
+
+        // Click on background to close
+        $bg->on('mouseDown', function () {
+            $this->hideModalContent();
+        });
+    }
+
+    public function showModalContent(UXNode $content, callable $onClose = null)
+    {
+        $this->onModalClose = $onClose;
+
+        // Replace content inside the overlay's content pane
+        $wrapper = $this->modalOverlay->children[1]; // UXStackPane
+        /** @var UXAnchorPane $pane */
+        $pane = $wrapper->children[0];
+        $pane->children->clear();
+        $pane->children->add($content);
+
+        $this->modalOverlay->visible = true;
+        $this->modalOverlay->opacity = 0;
+        Animation::fadeIn($this->modalOverlay, 200);
+    }
+
+    public function hideModalContent()
+    {
+        if (!$this->modalOverlay || !$this->modalOverlay->visible) {
+            return;
+        }
+
+        $wrapper = $this->modalOverlay->children[1];
+        /** @var UXAnchorPane $pane */
+        $pane = $wrapper->children[0];
+
+        Animation::fadeOut($this->modalOverlay, 200, function () use ($pane) {
+            $this->modalOverlay->visible = false;
+            $pane->children->clear();
+
+            if ($this->onModalClose) {
+                $cb = $this->onModalClose;
+                $this->onModalClose = null;
+                $cb();
+            }
+        });
     }
 
     public function updateFooter()
