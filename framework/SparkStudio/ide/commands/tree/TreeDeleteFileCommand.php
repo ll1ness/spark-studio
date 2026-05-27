@@ -9,7 +9,6 @@ use ide\project\ProjectTree;
 use ide\systems\FileSystem;
 use ide\utils\FileUtils;
 use php\gui\UXDesktop;
-use php\gui\UXDialog;
 use php\lang\Process;
 use php\lib\fs;
 
@@ -58,7 +57,7 @@ class TreeDeleteFileCommand extends AbstractMenuCommand
                     }
 
                     if (!$success) {
-                        UXDialog::showAndWait("Ошибка удаления $file", 'ERROR');
+                        Ide::showError("Ошибка удаления $file");
                     }
                 }
             }

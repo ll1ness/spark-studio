@@ -5,7 +5,6 @@ use ide\editors\AbstractEditor;
 use ide\forms\BuildSuccessForm;
 use ide\Ide;
 use ide\misc\AbstractCommand;
-use php\gui\UXDialog;
 use php\gui\UXFileChooser;
 use php\gui\UXSeparator;
 use php\io\File;
@@ -66,7 +65,7 @@ class ExportProjectCommand extends AbstractProjectCommand
                 Ide::toast(_('toast.project.save.zip.done'));
             }
         } else {
-            UXDialog::show(_('alert.project.export.fail'));
+            Ide::showError(_('alert.project.export.fail'));
         }
     }
 }

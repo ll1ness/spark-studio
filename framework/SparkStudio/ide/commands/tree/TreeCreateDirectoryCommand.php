@@ -3,9 +3,9 @@ namespace ide\commands\tree;
 
 use ide\editors\AbstractEditor;
 use ide\editors\menu\AbstractMenuCommand;
+use ide\Ide;
 use ide\forms\InputMessageBoxForm;
 use ide\project\ProjectTree;
-use php\gui\UXDialog;
 use php\lib\fs;
 use php\util\Regex;
 
@@ -42,13 +42,13 @@ class TreeCreateDirectoryCommand extends AbstractMenuCommand
             $dir = $file->isDirectory() ? "$file/$name" : "{$file->getParent()}/$name";
 
             if (fs::exists($dir)) {
-                UXDialog::showAndWait('Файл или папка с таким названием уже существует.', 'ERROR');
+                Ide::showError('Файл или папка с таким названием уже существует.');
                 $this->onExecute($e, $editor);
                 return;
             }
 
             if (!fs::makeDir($dir)) {
-                UXDialog::showAndWait('Невозможно создать папку с таким названием.');
+                Ide::showMessage('Невозможно создать папку с таким названием.');
             } else {
                 $this->tree->expandSelected();
             }

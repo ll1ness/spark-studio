@@ -40,7 +40,6 @@ use php\gui\UXCheckbox;
 use php\gui\UXClipboard;
 use php\gui\UXContextMenu;
 use php\gui\UXDesktop;
-use php\gui\UXDialog;
 use php\gui\UXForm;
 use php\gui\UXLabel;
 use php\gui\UXListView;
@@ -721,7 +720,7 @@ class CodeEditor extends AbstractEditor
         if ($pos == -1) {
             if ($this->findDialogLastIndex == 0) {
                 if (!$silent) {
-                    UXDialog::showAndWait('Ничего не найдено.');
+                    Ide::showMessage('Ничего не найдено.');
                     $dialog->show();
                 }
 
@@ -771,7 +770,7 @@ class CodeEditor extends AbstractEditor
                     $result = $this->_findSearchText($this->getReplaceDialog(), $text, $options, true);
 
                     if (!$result) {
-                        UXDialog::showAndWait('Ничего не найдено.');
+                        Ide::showMessage('Ничего не найдено.');
                         break;
                     }
 
@@ -796,7 +795,7 @@ class CodeEditor extends AbstractEditor
 
             case 'REPLACE':
                 if (!$this->textArea->selectedText) {
-                    UXDialog::showAndWait('Ничего не найдено.');
+                    Ide::showMessage('Ничего не найдено.');
                     break;
                 }
 

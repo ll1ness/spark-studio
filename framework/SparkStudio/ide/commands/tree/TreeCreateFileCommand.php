@@ -7,7 +7,7 @@ use ide\forms\InputMessageBoxForm;
 use ide\project\ProjectTree;
 use ide\systems\FileSystem;
 use ide\utils\FileUtils;
-use php\gui\UXDialog;
+use ide\Ide;
 use php\lib\fs;
 use php\util\Regex;
 
@@ -45,7 +45,7 @@ class TreeCreateFileCommand extends AbstractMenuCommand
             $dir = fs::normalize($dir);
 
             if (fs::exists($dir)) {
-                UXDialog::showAndWait('Файл или папка с таким названием уже существует.', 'ERROR');
+                Ide::showError('Файл или папка с таким названием уже существует.');
                 $this->onExecute($e, $editor);
                 return;
             }
@@ -57,7 +57,7 @@ class TreeCreateFileCommand extends AbstractMenuCommand
                 FileUtils::put($dir, '');
 
                 if (!fs::isFile($dir)) {
-                    UXDialog::showAndWait("Невозможно создать файл с таким названием.\n -> $dir", 'ERROR');
+                    Ide::showError("Невозможно создать файл с таким названием.\n -> $dir");
                 } else {
                     $this->tree->expandSelected();
                 }

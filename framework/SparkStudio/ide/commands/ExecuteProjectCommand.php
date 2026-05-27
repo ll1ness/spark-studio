@@ -17,7 +17,6 @@ use ide\utils\FileUtils;
 use php\gui\event\UXEvent;
 use php\gui\framework\ScriptEvent;
 use php\gui\UXButton;
-use php\gui\UXDialog;
 use php\gui\UXTextField;
 use php\gui\UXRichTextArea;
 use php\io\File;
@@ -323,7 +322,7 @@ class ExecuteProjectCommand extends AbstractCommand
             });
         } else {
             $this->process = null;
-            UXDialog::show('Ошибка запуска', 'ERROR');
+            Ide::showError('Ошибка запуска');
         }
     }
 }

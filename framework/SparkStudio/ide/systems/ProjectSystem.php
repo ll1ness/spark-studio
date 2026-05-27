@@ -14,7 +14,6 @@ use ide\project\ProjectImporter;
 use ide\ui\Notifications;
 use ide\utils\FileUtils;
 use php\gui\UXApplication;
-use php\gui\UXDialog;
 use php\gui\UXDirectoryChooser;
 use php\io\File;
 use php\io\IOException;
@@ -163,7 +162,7 @@ class ProjectSystem
             });
 
             if (!$files) {
-                UXDialog::show('В архиве не обнаружен файл проекта', 'ERROR');
+                Ide::showError('В архиве не обнаружен файл проекта');
                 return;
             }
 
