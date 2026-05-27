@@ -20,6 +20,7 @@ use php\lang\Thread;
 use php\lib\Items;
 use php\lib\Str;
 use timer\AccurateTimer;
+use ide\forms\MessageBoxForm;
 use ide\ui\Notifications;
 use ide\utils\Json;
 use php\gui\UXApplication;
@@ -177,10 +178,16 @@ function uiText($object)
 /**
  * Функция для отображения подтверждающего диалога.
  * @param string $message Сообщение для подтверждения.
- * @return bool Вернет true, если пользователь выбрал 'Да', иначе false.
+ * @param callable|null $onResult Если передан, показывает in-window модал (асинхронно).
+ * @return bool|null Вернет true, если пользователь выбрал 'Да', иначе false (синхронный режим).
  */
-function uiConfirm($message)
+function uiConfirm($message, callable $onResult = null)
 {
+    if ($onResult !== null) {
+        MessageBoxForm::confirmModal($message, $onResult);
+        return null;
+    }
+
     $alert = new UXAlert('CONFIRMATION');
     $alert->headerText = $alert->title = 'Вопрос';
     $alert->contentText = $message;
@@ -217,18 +224,28 @@ function dump($var)
 /**
  * Простое сообщение с ожиданием закрытия.
  * @param string $message Сообщение для отображения.
+ * @param callable|null $onClose Если передан, показывает in-window модал (асинхронно).
  */
-function alert($message)
+function alert($message, callable $onClose = null)
 {
+    if ($onClose !== null) {
+        \ide\Ide::showMessage($message, $onClose);
+        return;
+    }
     UXDialog::showAndWait($message);
 }
 
 /**
  * Простое сообщение с ожиданием закрытия.
  * @param string $message Сообщение для отображения.
+ * @param callable|null $onClose Если передан, показывает in-window модал (асинхронно).
  */
-function message($message)
+function message($message, callable $onClose = null)
 {
+    if ($onClose !== null) {
+        \ide\Ide::showMessage($message, $onClose);
+        return;
+    }
     UXDialog::showAndWait($message);
 }
 

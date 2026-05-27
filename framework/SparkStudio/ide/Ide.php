@@ -9,6 +9,7 @@ use ide\editors\value\ElementPropertyEditor;
 use ide\formats\AbstractFormat;
 use ide\formats\IdeFormatOwner;
 use ide\forms\MainForm;
+use ide\forms\MessageBoxForm;
 use ide\forms\SplashForm;
 use ide\l10n\L10n;
 use ide\library\IdeLibrary;
@@ -1584,6 +1585,39 @@ class Ide extends Application
     public function hideModal()
     {
         $this->getMainForm()->hideModalContent();
+    }
+
+
+    /**
+     * Show an information message inside the IDE window.
+     * @param string $text
+     * @param callable|null $onClose
+     */
+    public static function showMessage($text, callable $onClose = null)
+    {
+        MessageBoxForm::warningModal($text, $onClose);
+    }
+
+    /**
+     * Show an error message inside the IDE window.
+     * @param string $text
+     * @param callable|null $onClose
+     */
+    public static function showError($text, callable $onClose = null)
+    {
+        $dialog = new MessageBoxForm($text, ['ОК']);
+        $dialog->iconImage = 'icons/error32.png';
+        $dialog->showModal($onClose);
+    }
+
+    /**
+     * Show a warning message inside the IDE window.
+     * @param string $text
+     * @param callable|null $onClose
+     */
+    public static function showWarning($text, callable $onClose = null)
+    {
+        MessageBoxForm::warningModal($text, $onClose);
     }
 
 
