@@ -48,6 +48,7 @@ use php\gui\UXImageView;
 use php\gui\UXMenu;
 use php\gui\UXMenuButton;
 use php\gui\UXMenuItem;
+use php\gui\UXNode;
 use php\gui\UXSeparator;
 use php\gui\UXTextArea;
 use php\io\File;
@@ -1564,6 +1565,25 @@ class Ide extends Application
     public function getMainForm()
     {
         return parent::getMainForm();
+    }
+
+
+    /**
+     * Show a modal inside the IDE window.
+     * @param UXNode $content
+     * @param callable $onClose (optional)
+     */
+    public function showModal(UXNode $content, callable $onClose = null)
+    {
+        $this->getMainForm()->showModalContent($content, $onClose);
+    }
+
+    /**
+     * Hide the current in-window modal.
+     */
+    public function hideModal()
+    {
+        $this->getMainForm()->hideModalContent();
     }
 
 
