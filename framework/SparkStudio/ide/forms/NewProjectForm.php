@@ -16,7 +16,6 @@ use php\gui\layout\UXHBox;
 use php\gui\layout\UXVBox;
 use php\gui\paint\UXColor;
 use php\gui\UXApplication;
-use php\gui\UXDialog;
 use php\gui\UXDirectoryChooser;
 use php\gui\UXFileChooser;
 use php\gui\UXImageView;
@@ -184,7 +183,7 @@ class NewProjectForm extends AbstractIdeForm
         $template = Items::first($this->templateList->selectedItems);
 
         if (!$template || !is_object($template)) {
-            UXDialog::show(_('project.new.alert.select.template'));
+            Ide::showMessage(_('project.new.alert.select.template'));
             return;
         }
 
@@ -192,7 +191,7 @@ class NewProjectForm extends AbstractIdeForm
 
         if (!$path->isDirectory()) {
             if (!$path->mkdirs()) {
-                UXDialog::show(_('project.new.error.create.project.directory'), 'ERROR');
+                Ide::showError(_('project.new.error.create.project.directory'));
                 return;
             }
         }
@@ -200,12 +199,12 @@ class NewProjectForm extends AbstractIdeForm
         $name = str::trim($this->nameField->text);
 
         if (!$name) {
-            UXDialog::show(_('project.new.error.name.required'), 'ERROR');
+            Ide::showError(_('project.new.error.name.required'));
             return;
         }
 
         if (!fs::valid($name)) {
-            UXDialog::show(_('project.new.error.name.invalid') . " \n\n$name", 'ERROR');
+            Ide::showError(_('project.new.error.name.invalid') . " \n\n$name");
             return;
         }
 
@@ -214,7 +213,7 @@ class NewProjectForm extends AbstractIdeForm
         $regex = new Regex('^[a-z\\_]{2,15}$');
 
         if (!$regex->test($package)) {
-            UXDialog::show(_('project.new.error.package.invalid') . "\n* " . _('project.new.error.package.invalid.description'), 'ERROR');
+            Ide::showError(_('project.new.error.package.invalid') . "\n* " . _('project.new.error.package.invalid.description'));
             return;
         }
 

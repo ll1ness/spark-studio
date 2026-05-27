@@ -29,7 +29,6 @@ use php\gui\layout\UXScrollPane;
 use php\gui\layout\UXVBox;
 use php\gui\UXApplication;
 use php\gui\UXButton;
-use php\gui\UXDialog;
 use php\gui\UXDirectoryChooser;
 use php\gui\UXFileChooser;
 use php\gui\UXForm;
@@ -476,7 +475,7 @@ class OpenProjectForm extends AbstractIdeForm
                     }
                 });
             } else {
-                UXDialog::show(_('project.open.error'), 'ERROR');
+                Ide::showError(_('project.open.error'));
             }
         }
     }
@@ -514,7 +513,7 @@ class OpenProjectForm extends AbstractIdeForm
 
             if (!$path->isDirectory()) {
                 if (!$path->mkdirs()) {
-                    UXDialog::show(_('project.open.fail.create.directory'), 'ERROR');
+                    Ide::showError(_('project.open.fail.create.directory'));
                     return;
                 }
             }
