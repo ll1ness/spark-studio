@@ -6,7 +6,6 @@ use ide\Ide;
 use ide\IdeClassLoader;
 use ide\Logger;
 use ide\systems\IdeSystem;
-use php\gui\UXDialog;
 use php\gui\text\UXFont;
 use php\io\Stream;
 use php\lang\System;
@@ -70,7 +69,7 @@ function dump($arg)
     $str = ob_get_contents();
     ob_end_clean();
 
-    UXDialog::showAndWait($str);
+    Ide::showMessage($str);
 }
 
 /**

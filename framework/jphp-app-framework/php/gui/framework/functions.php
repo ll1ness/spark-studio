@@ -204,7 +204,7 @@ function uiConfirm($message, callable $onResult = null)
  */
 function pre($var)
 {
-    UXDialog::showAndWait(print_r($var, true));
+    alert(print_r($var, true));
 }
 
 /**
@@ -218,7 +218,7 @@ function dump($var)
     $text = ob_get_contents();
     ob_end_clean();
 
-    UXDialog::showAndWait($text);
+    alert($text);
 }
 
 /**
