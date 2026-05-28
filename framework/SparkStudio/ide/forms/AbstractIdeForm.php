@@ -60,11 +60,27 @@ class AbstractIdeForm extends AbstractForm
 
     public function show()
     {
-        parent::show();
-
+        // MainForm handles its own display (splash + window).
         if ($this instanceof MainForm) {
+            parent::show();
             return;
         }
+
+        // SplashForm is shown before the main window/overlay is ready,
+        // it must keep the separate OS window behavior.
+        if ($this instanceof SplashForm) {
+            parent::show();
+            return;
+        }
+
+        // Show inside the IDE window as a modal overlay by default.
+        if (Ide::isCreated() && Ide::get()->getMainForm()) {
+            $this->showInModal();
+            return;
+        }
+
+        // Fallback: open as a separate window (e.g. before Ide is ready).
+        parent::show();
 
         uiLater(function () {
             if ($this->layout) {
@@ -86,11 +102,14 @@ class AbstractIdeForm extends AbstractForm
             return;
         }
 
-        // Load events/bindings if not already done (constructor handles this)
-        uiLater(function () use ($onClose) {
-            $this->trigger('show', null);
-            Ide::get()->showModal($this->layout, function () use ($onClose) {
-                $this->trigger('hide', null);
+        $self = $this;
+
+        uiLater(function () use ($self, $onClose) {
+            $self->data('--modal-shown', true);
+            $self->trigger('show', null);
+            Ide::get()->showModal($self->layout, function () use ($self, $onClose) {
+                $self->data('--modal-shown', false);
+                $self->trigger('hide', null);
                 if ($onClose) {
                     $onClose();
                 }
@@ -98,4 +117,66 @@ class AbstractIdeForm extends AbstractForm
         });
     }
 
+    /**
+     * Async modal version of showAndWait().
+     * Shows the form in the overlay and calls $onResult with the form instance
+     * after it is closed, so callers can read $this->getResult().
+     *
+     * Usage — migrate from:
+     *   $dialog = new SomeForm();
+     *   $dialog->showAndWait();
+     *   $result = $dialog->getResult();
+     *
+     * To:
+     *   $dialog = new SomeForm();
+     *   $dialog->showModal(function ($dialog) {
+     *       $result = $dialog->getResult();
+     *   });
+     *
+     * @param callable|null $onResult called when modal closes, receives $this
+     */
+    public function showModal(callable $onResult = null)
+    {
+        if (!$this->layout) {
+            return;
+        }
+
+        $self = $this;
+
+        uiLater(function () use ($self, $onResult) {
+            $self->data('--modal-shown', true);
+            $self->trigger('show', null);
+            Ide::get()->showModal($self->layout, function () use ($self, $onResult) {
+                $self->data('--modal-shown', false);
+                $self->trigger('hide', null);
+                if ($onResult) {
+                    $onResult($self);
+                }
+            });
+        });
+    }
+
+    /**
+     * Convenience alias to close this form's modal overlay.
+     */
+    public function closeModal()
+    {
+        if (Ide::isCreated() && Ide::get()->getMainForm()) {
+            Ide::get()->hideModal();
+        }
+    }
+
+    /**
+     * Override hide() to support the in-window modal overlay.
+     * If the form is currently shown as a modal overlay, close that instead.
+     */
+    public function hide()
+    {
+        if ($this->data('--modal-shown')) {
+            $this->closeModal();
+        } else {
+            parent::hide();
+        }
+    }
+}
 }
