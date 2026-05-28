@@ -5,10 +5,10 @@ use ide\editors\common\FormListEditor;
 use ide\editors\common\ObjectListEditorButtonRender;
 use ide\editors\common\ObjectListEditorCellRender;
 use ide\forms\mixins\DialogFormMixin;
+use ide\Ide;
 use ide\project\behaviours\GuiFrameworkProjectBehaviour;
 use php\gui\event\UXEvent;
 use php\gui\UXComboBox;
-use php\gui\UXDialog;
 use php\gui\UXListView;
 
 /**
@@ -71,7 +71,7 @@ class SetMainFormForm extends AbstractIdeForm
     public function doClose(UXEvent $e)
     {
         $e->consume();
-        UXDialog::show('Выберите главную форму проекта и нажмите Сохранить');
+        Ide::showMessage('Выберите главную форму проекта и нажмите Сохранить');
     }
 
     /**

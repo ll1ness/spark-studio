@@ -280,7 +280,7 @@ class BuildProgressForm extends AbstractIdeForm implements ProjectConsoleOutput
                     return;
                 }
             } else {
-                UXDialog::show('Дождитесь сборки для закрытия прогресса.');
+                Ide::showMessage('Дождитесь сборки для закрытия прогресса.');
                 $e->consume();
 
                 return;

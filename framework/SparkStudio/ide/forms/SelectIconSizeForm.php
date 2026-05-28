@@ -5,7 +5,7 @@ use ide\ui\FlowListViewDecorator;
 use ide\ui\ImageBox;
 use php\gui\event\UXMouseEvent;
 use php\gui\layout\UXScrollPane;
-use php\gui\UXDialog;
+use ide\Ide;
 use php\gui\UXHyperlink;
 use php\gui\UXImage;
 use php\gui\UXLabel;
@@ -92,7 +92,7 @@ class SelectIconSizeForm extends AbstractIdeForm
             $this->setResult($size);
             $this->hide();
         } else {
-            UXDialog::show('Выберите нужный размер иконки');
+            Ide::showMessage('Выберите нужный размер иконки');
         }
     }
 }
