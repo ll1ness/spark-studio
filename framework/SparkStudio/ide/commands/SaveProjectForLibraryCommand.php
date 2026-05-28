@@ -10,7 +10,6 @@ use ide\Ide;
 use ide\library\IdeLibraryProjectResource;
 use ide\misc\AbstractCommand;
 use ide\project\Project;
-use php\gui\UXDialog;
 
 class SaveProjectForLibraryCommand extends AbstractProjectCommand
 {
@@ -21,72 +20,25 @@ class SaveProjectForLibraryCommand extends AbstractProjectCommand
 
     public function getIcon()
     {
-        return 'icons/library16.png';
+        return 'icons/blocks16.png';
     }
 
-    public function isAlways()
+    public function getCategory()
     {
-        return true;
+        return 'project';
     }
-
-    /*public function getCategory()
-    {
-        return 'library';
-    }*/
 
     public function onExecute($e = null, AbstractEditor $editor = null)
     {
-        $project = Ide::project();
+        $project = Ide::get()->getOpenedProject();
 
         if ($project) {
-            $resource = $oldResource = null;
-
-            $oldResourcePath = $project->getIdeLibraryConfig()->get('resource');
-            if (\Files::isFile($oldResourcePath)) {
-                $resource = Ide::get()->getLibrary()->findResource('projects', $oldResourcePath);
-                $oldResource = $resource;
-            }
-
-            $dialog = new SaveProjectForLibraryForm($resource);
-
-            retry:
-            $dialog->setResult($project);
+            $dialog = new SaveProjectForLibraryForm();
 
             if ($dialog->showDialog()) {
-                $result = $dialog->getResult();
+                $resource = $dialog->getResult();
 
-                if ($oldResource) {
-                    Ide::get()->getLibrary()->delete($oldResource);
-                }
-
-                /** @var IdeLibraryProjectResource $resource */
-                $resource = Ide::get()->getLibrary()->makeResource('projects', $result['name'] . ".zip");
-
-                if (!$resource) {
-                    $msg = new MessageBoxForm(_('confirm.project.library.name.conflict'), ['yes' => _('btn.yes.rewrite'), 'no' => _('btn.no')]);
-
-                    if ($msg->showDialog()) {
-                        if ($msg->getResultIndex() == 1) {
-                            goto retry;
-                        }
-
-                        $resource = Ide::get()->getLibrary()->makeResource('projects', $result['name'] . ".zip", true);
-                    }
-                }
-
-                if ($resource) {
-                    uiLater(function () use ($resource) {
-                        $openDialog = new OpenProjectForm('library');
-                        $openDialog->show();
-                        $openDialog->selectLibraryResource($resource);
-                        $openDialog->toast(_('toast.project.save.in.library.done'));
-                    });
-
-                    $project->getIdeLibraryConfig()->set('resource', $resource->getPath());
-
-                    $resource->setName($result['name']);
-                    $resource->setDescription($result['description']);
-                    $project->export($resource->getPath());
+                if ($resource instanceof IdeLibraryProjectResource) {
                     $resource->save();
                     $project->save();
 
@@ -96,7 +48,7 @@ class SaveProjectForLibraryCommand extends AbstractProjectCommand
                 }
             }
         } else {
-            UXDialog::show(_('alert.project.save.in.library.fail'));
+            Ide::showMessage(_('alert.project.save.in.library.fail'));
         }
     }
 }
