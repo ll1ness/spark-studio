@@ -2278,6 +2278,11 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $tilePane->prefTileWidth = 52;
         $tilePane->prefTileHeight = 52;
 
+        $popup = new UXPopupWindow();
+        $popup->autoHide = true;
+        $popup->hideOnEscape = true;
+        $popup->style = '-fx-background-color: transparent;';
+
         foreach ($elements as $element) {
             $btn = new UXButton();
             $btn->prefWidth = 48;
@@ -2289,7 +2294,9 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
                 $icon->size = [24, 24];
                 $btn->graphic = $icon;
             }
-            $btn->on('click', function () use ($element) {
+            $btn->on('click', function () use ($element, $popup) {
+                $popup->hide();
+
                 $editor = FileSystem::getSelectedEditor();
                 if ($editor instanceof FormEditor) {
                     $layout = $editor->getLayout();
@@ -2310,12 +2317,9 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $scroll->prefHeight = 350;
         $scroll->prefWidth = 280;
         $scroll->maxHeight = 400;
+        $scroll->style = '-fx-background-color: #0f0f0f; -fx-border-color: #1e1e1e; -fx-border-width: 1px; -fx-background-radius: 6px; -fx-border-radius: 6px;';
 
-        $popup = new UXPopupWindow();
         $popup->layout = $scroll;
-        $popup->autoHide = true;
-        $popup->hideOnEscape = true;
-        $popup->style = '-fx-background-color: #0f0f0f; -fx-border-color: #1e1e1e; -fx-border-width: 1px; -fx-background-radius: 6px; -fx-border-radius: 6px;';
         $popup->show(Ide::get()->getMainForm(), Mouse::x(), Mouse::y());
     }
 
