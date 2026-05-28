@@ -212,10 +212,6 @@ class ExecuteProjectCommand extends AbstractCommand
 
             Ide::get()->getMainForm()->showBottom($dialog->layout);
 
-            $dialog->opacity = 0.01;
-            $dialog->show();
-            $dialog->hide();
-
             if ($this->actionButton) {
                 $this->actionButton->text = 'Остановить';
             }
