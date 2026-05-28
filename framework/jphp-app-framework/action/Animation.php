@@ -25,15 +25,13 @@ use timer\AccurateTimer;
 class Animation
 {
     /**
-     * Fade animation
-     * --RU--
-     * Анимация затухания
+     * Fade animation — uses JavaFX FadeTransition for smooth 60fps.
      *
      * @param $object
-     * @param $duration
-     * @param $value
+     * @param int $duration in millis
+     * @param float $value target opacity (0.0 – 1.0)
      * @param callable|null $callback
-     * @return null|UXAnimationTimer
+     * @return UXAnimationTimer|UXFadeAnimation|null
      */
     static function fadeTo($object, $duration, $value, callable $callback = null)
     {
@@ -54,9 +52,28 @@ class Animation
             return null;
         }
 
-        $diff = $value - $object->opacity;
+        // Use native JavaFX FadeTransition for smooth 60fps animation.
+        $from = (double) $object->opacity;
 
-        $steps = $duration / UXAnimationTimer::FRAME_INTERVAL_MS;
+        try {
+            $anim = new UXFadeAnimation($duration, $object);
+            $anim->fromValue = $from;
+            $anim->toValue = (double) $value;
+            $anim->on('finish', function () use ($object, $value, $callback) {
+                $object->opacity = (double) $value;
+                if ($callback) {
+                    $callback();
+                }
+            });
+            $anim->play();
+            return $anim;
+        } catch (\Throwable $e) {
+            // Fallback: timer-based animation
+        }
+
+        $diff = $value - $object->opacity;
+        $interval = max(10, (int) ($duration / 60));
+        $steps = max(1, (int) ($duration / $interval));
         $step = $diff / $steps;
 
         $timer = new UXAnimationTimer(function () use ($object, $step, $value, $callback, &$steps) {
@@ -84,7 +101,6 @@ class Animation
         });
 
         $timer->start();
-
         return $timer;
     }
 
@@ -99,15 +115,13 @@ class Animation
     }
 
     /**
-     * Scale animation.
-     * --RU--
-     * Анимация масштабирования.
+     * Scale animation — time-based interpolation for smooth 60fps.
      *
      * @param UXNode $object
-     * @param int $duration
+     * @param int $duration in millis
      * @param double $value
      * @param callable $callback
-     * @return UXAnimationTimer
+     * @return UXAnimationTimer|null
      */
     static function scaleTo(UXNode $object, $duration, $value, callable $callback = null)
     {
@@ -131,33 +145,32 @@ class Animation
             return null;
         }
 
-        $diff = $value - $object->scaleX;
+        $startScale = (double) $object->scaleX;
+        $diff = $value - $startScale;
+        $startTime = microtime(true) * 1000.0;
 
-        $steps = $duration / UXAnimationTimer::FRAME_INTERVAL_MS;
-        $step = $diff / $steps;
-        $steps = abs($steps);
+        $timer = new UXAnimationTimer(function () use ($object, $startScale, $diff, $duration, $value, $callback, $startTime) {
+            $elapsed = (microtime(true) * 1000.0) - $startTime;
+            $progress = $elapsed / (double) $duration;
 
-        $timer = new UXAnimationTimer(function () use ($object, $value, $step, &$steps, $callback) {
-            $object->scaleX += $step;
-            $object->scaleY = $object->scaleX;
-
-            $steps--;
-
-            if ($steps <= 0) {
-                $object->scaleX = $object->scaleY = $value;
+            if ($progress >= 1.0) {
+                $object->scaleX = $object->scaleY = (double) $value;
 
                 if ($callback) {
                     $callback();
                 }
 
-                return true;
+                return true; // stop timer
             }
 
-            return false;
+            $currentValue = $startScale + $diff * $progress;
+            $object->scaleX = $currentValue;
+            $object->scaleY = $currentValue;
+
+            return false; // continue timer
         });
 
         $object->data(Animation::class . "#scaleTo", $timer);
-
         $timer->start();
         return $timer;
     }
@@ -184,16 +197,14 @@ class Animation
     }
 
     /**
-     * Displace animation.
-     * --RU--
-     * Анимация смещения.
+     * Displace animation — time-based interpolation for smooth 60fps.
      *
      * @param UXNode|UXWindow $object
      * @param int $duration
      * @param double $x
      * @param double $y
      * @param callable $callback
-     * @return UXAnimationTimer
+     * @return UXAnimationTimer|array|null
      */
     static function displace($object, $duration, $x, $y, callable $callback = null)
     {
@@ -201,9 +212,7 @@ class Animation
     }
 
     /**
-     * Move to point animation.
-     * --RU--
-     * Анимация перемещения к точке.
+     * Move to point animation — time-based interpolation for smooth 60fps.
      *
      * @param UXNode|UXWindow $object
      * @param int $duration
@@ -245,32 +254,31 @@ class Animation
         }
 
         if ($object instanceof UXNode || $object instanceof UXWindow || $object instanceof PositionableBehaviour) {
-            $xOffset = $x - $object->x;
-            $yOffset = $y - $object->y;
+            $startX = (double) $object->x;
+            $startY = (double) $object->y;
+            $diffX = $x - $startX;
+            $diffY = $y - $startY;
+            $startTime = microtime(true) * 1000.0;
 
-            $steps = $duration / UXAnimationTimer::FRAME_INTERVAL_MS;
+            $timer = new UXAnimationTimer(function () use ($object, $startX, $startY, $diffX, $diffY, $duration, $x, $y, $callback, $startTime) {
+                $elapsed = (microtime(true) * 1000.0) - $startTime;
+                $progress = $elapsed / (double) $duration;
 
-            $xStep = $xOffset / $steps;
-            $yStep = $yOffset / $steps;
-
-            $timer = new UXAnimationTimer(function () use ($object, $xStep, $yStep, $x, $y, $callback, &$steps) {
-                $object->x += $xStep;
-                $object->y += $yStep;
-
-                $steps--;
-
-                if ($steps <= 0) {
-                    $object->position = [round($object->x), round($object->y)];
+                if ($progress >= 1.0) {
+                    $object->position = [round($x), round($y)];
+                    $object->data(Animation::class . "#moveTo", null);
 
                     if ($callback) {
-                        $object->data(Animation::class . "#moveTo", null);
                         $callback();
                     }
 
-                    return true;
+                    return true; // stop timer
                 }
 
-                return false;
+                $object->x = $startX + $diffX * $progress;
+                $object->y = $startY + $diffY * $progress;
+
+                return false; // continue timer
             });
 
             $object->data(Animation::class . "#moveTo", $timer);
