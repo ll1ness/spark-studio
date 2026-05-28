@@ -248,19 +248,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
     protected $markerNode;
 
     /**
-     * @var UXPane
+     * Temporary state for Ctrl+Click multi-selection.
+     * @var array|null ['ctrl' => bool, 'prevSelected' => UXNode[], 'targetNode' => UXNode]
      */
-    protected $selectionOverlay;
-
-    /**
-     * @var float
-     */
-    protected $selectionStartX = 0;
-
-    /**
-     * @var float
-     */
-    protected $selectionStartY = 0;
+    protected $_selectionState = null;
 
     /**
      * @var bool
@@ -2000,29 +1991,12 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         $this->designer = new UXDesigner($this->layout);
 
-        $overlayParent = $this->layout->parent;
-
-        if ($overlayParent) {
-            $overlay = new UXPane();
-            $overlay->mouseTransparent = true;
-            $overlay->visible = false;
-            $overlay->style = '-fx-background-color: rgba(51, 153, 255, 0.3); -fx-border-color: rgb(51, 153, 255); -fx-border-width: 1px;';
-            $overlayParent->add($overlay);
-            $this->selectionOverlay = $overlay;
-        }
-
+        // Simplified mouse handling: no drag-to-select rectangle.
+        // Multi-selection is done with Ctrl+Click instead.
         $area->on('mouseDown', function ($e) {
-            $rect = $this->designer->getSelectionRectangle();
-            $rect->hide();
-            $rect->size = [1, 1];
-
-            if ($this->selectionOverlay) {
-                $this->selectionOverlay->visible = false;
-            }
-
+            // Find if clicking on a registered node (for Ctrl+Click tracking).
             $node = $e->target;
             $isOnNode = false;
-
             while ($node) {
                 if ($this->designer->isRegisteredNode($node)) {
                     $isOnNode = true;
@@ -2031,71 +2005,23 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
                 $node = $node->parent;
             }
 
-            if (!$isOnNode) {
-                $this->selectionStartX = $e->screenX;
-                $this->selectionStartY = $e->screenY;
+            if ($isOnNode && $e->controlDown) {
+                // Save state before the designer processes the click.
+                // The designer will auto-select just this node; we'll restore
+                // the previous multi-selection in onNodeClick.
+                $this->_selectionState = [
+                    'prevSelected' => $this->designer->getSelectedNodes(),
+                    'targetNode'   => $node,
+                ];
+            } else {
+                $this->_selectionState = null;
             }
 
             $this->selectionIsOnNode = $isOnNode;
         });
 
-        $area->on('mouseDrag', function ($e) {
-            if ($this->selectionIsOnNode) return;
-
-            $rect = $this->designer->getSelectionRectangle();
-            $rect->hide();
-            $rect->size = [1, 1];
-
-            $overlay = $this->selectionOverlay;
-            if (!$overlay) return;
-
-            $parent = $overlay->parent;
-            if (!$parent) return;
-
-            list($x1, $y1) = $parent->screenToLocal($this->selectionStartX, $this->selectionStartY);
-            list($x2, $y2) = $parent->screenToLocal($e->screenX, $e->screenY);
-
-            $dx = abs($x2 - $x1);
-            $dy = abs($y2 - $y1);
-
-            if ($dx < 5 && $dy < 5) return;
-
-            $overlay->position = [min($x1, $x2), min($y1, $y2)];
-            $overlay->size = [$dx, $dy];
-            $overlay->visible = true;
-        });
-
         $area->on('mouseUp', function ($e) {
-            $rect = $this->designer->getSelectionRectangle();
-            $rect->hide();
-            $rect->size = [1, 1];
-
-            if ($this->selectionOverlay) {
-                $this->selectionOverlay->visible = false;
-            }
-
             if (!$this->selectionIsOnNode) {
-                $dx = abs($e->screenX - $this->selectionStartX);
-                $dy = abs($e->screenY - $this->selectionStartY);
-
-                if ($dx >= 5 && $dy >= 5) {
-                    $sx = min($e->screenX, $this->selectionStartX);
-                    $sy = min($e->screenY, $this->selectionStartY);
-                    $ex = max($e->screenX, $this->selectionStartX);
-                    $ey = max($e->screenY, $this->selectionStartY);
-
-                    list($lx, $ly) = $this->layout->screenToLocal($sx, $sy);
-                    list($rx, $ry) = $this->layout->screenToLocal($ex, $ey);
-
-                    $nodes = $this->designer->getNodesInArea($lx, $ly, $rx - $lx, $ry - $ly);
-
-                    $this->designer->unselectAll();
-
-                    foreach ($nodes as $node) {
-                        $this->designer->selectNode($node);
-                    }
-                }
-
                 $this->_onAreaMouseUp($e);
             }
         });
@@ -2103,14 +2029,37 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $this->designer->onNodeClick(function ($e) {
             $this->_onNodeClick($e);
 
-            $rect = $this->designer->getSelectionRectangle();
-            $rect->hide();
-            $rect->size = [1, 1];
+            // Ctrl+Click: toggle single-node multi-selection.
+            if ($e->controlDown && $this->_selectionState) {
+                $target    = $this->_selectionState['targetNode'];
+                $prevSel   = $this->_selectionState['prevSelected'];
 
-            if ($this->selectionOverlay) {
-                $this->selectionOverlay->visible = false;
+                // Check if the target node was already in the previous selection.
+                $wasSelected = false;
+                foreach ($prevSel as $sn) {
+                    if ($sn === $target) { $wasSelected = true; break; }
+                }
+
+                if ($wasSelected) {
+                    // Deselect the clicked node, re-select the rest.
+                    $this->designer->unselectNode($target);
+                    foreach ($prevSel as $sn) {
+                        if ($sn !== $target) {
+                            $this->designer->selectNode($sn);
+                        }
+                    }
+                } else {
+                    // Add the clicked node to the previous selection.
+                    foreach ($prevSel as $sn) {
+                        $this->designer->selectNode($sn);
+                    }
+                    // The clicked node is already selected by the designer.
+                }
+
+                $this->_selectionState = null;
             }
         });
+
         $this->designer->onNodePick(function () {
             $this->_onNodePick();
         });
@@ -2528,29 +2477,6 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
     protected function _onNodeClick(UXMouseEvent $e)
     {
         $this->layout->requestFocus();
-    }
-
-    protected function updateSelectionOverlay($rect)
-    {
-        $overlay = $this->selectionOverlay;
-        if (!$overlay) return;
-
-        $w = $rect->width;
-        $h = $rect->height;
-
-        if ($w <= 0 || $h <= 0 || ($w == 1 && $h == 1)) {
-            $overlay->visible = false;
-            return;
-        }
-
-        $parent = $overlay->parent;
-        if (!$parent) return;
-
-        list($x, $y) = $parent->screenToLocal($rect->x, $rect->y);
-
-        $overlay->position = [$x, $y];
-        $overlay->size = [$w, $h];
-        $overlay->visible = true;
     }
 
     public static function fetchElementProperties(AbstractFormElement $element)
