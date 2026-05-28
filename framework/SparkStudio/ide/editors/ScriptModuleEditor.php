@@ -440,6 +440,12 @@ class ScriptModuleEditor extends FormEditor
     {
         $pane = parent::makeDesigner(true);
         $this->designer->snapSizeX = $this->designer->snapSizeY = 16;
+
+        // Make the module editor's background match the form editor —
+        // use the mosaic pattern from sprk-mosaic-background instead of flat color.
+        $this->layout->backgroundColor = null;
+        $this->layout->style = '-fx-border-width: 0; -fx-border-style: none;';
+
         return $pane;
     }
 
