@@ -6,7 +6,6 @@ use ide\forms\BuildSuccessForm;
 use ide\forms\BuildTypeConfigForm;
 use ide\Ide;
 use ide\project\Project;
-use php\gui\UXDialog;
 use php\io\File;
 use php\io\MemoryStream;
 use php\io\Stream;
@@ -175,14 +174,14 @@ OUT
     function onExecute(Project $project, $finished = true)
     {
         if (!Ide::get()->isWindows()) {
-            UXDialog::showAndWait('Данная функция доступна только на Windows.');
+            Ide::showMessage('Данная функция доступна только на Windows.');
             return;
         }
 
         $config = $this->getConfig();
 
         if (!$config['name']) {
-            UXDialog::showAndWait('Укажите название программы', 'ERROR');
+            Ide::showError('Укажите название программы');
             if ($this->showConfigDialog()) {
                 $this->onExecute($project, $finished);
             }
@@ -198,7 +197,7 @@ OUT
         }*/
 
         if (!$config['version']) {
-            UXDialog::showAndWait('Укажите версию программы', 'ERROR');
+            Ide::showError('Укажите версию программы');
             if ($this->showConfigDialog()) {
                 $this->onExecute($project, $finished);
             }

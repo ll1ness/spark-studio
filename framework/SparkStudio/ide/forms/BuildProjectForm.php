@@ -11,7 +11,6 @@ use php\gui\framework\AbstractForm;
 use php\gui\layout\UXHBox;
 use php\gui\layout\UXVBox;
 use php\gui\UXButton;
-use php\gui\UXDialog;
 use php\gui\UXHyperlink;
 use php\gui\UXLabel;
 use php\gui\UXListCell;
@@ -134,7 +133,7 @@ class BuildProjectForm extends AbstractIdeForm
                 $this->hide();
             }
         } else {
-            UXDialog::show('Данная функция находится в разработке.', 'INFORMATION');
+            Ide::showMessage('Данная функция находится в разработке.');
         }
     }
 }

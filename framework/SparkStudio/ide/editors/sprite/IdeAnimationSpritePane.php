@@ -315,14 +315,14 @@ class IdeAnimationSpritePane
     public function checkAnimationName($name, $checkExists = true)
     {
         if ($checkExists && isset($this->spec->animations[$name])) {
-            UXDialog::showAndWait("'$name' анимация уже существует", 'ERROR');
+            Ide::showError("'$name' анимация уже существует");
             return false;
         }
 
         if (Regex::match('^[a-zA-Z0-9_]+$', $name)) {
             return true;
         } else {
-            UXDialog::showAndWait("'$name' неподходящее названия для анимации, используйте только английские буквы, цифры и знак подчеркивания", 'ERROR');
+            Ide::showError("'$name' неподходящее названия для анимации, используйте только английские буквы, цифры и знак подчеркивания");
             return false;
         }
     }

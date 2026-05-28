@@ -305,7 +305,7 @@ class GameSpriteEditor extends AbstractEditor
 
         $canvas->writeImageAsync("png", "$name.png", null, function ($success) use ($name) {
             if (!$success) {
-                UXDialog::showAndWait("Невозможно записать файл $name.png", 'ERROR');
+                Ide::showError("Невозможно записать файл $name.png");
             }
         });
 
@@ -620,7 +620,7 @@ class GameSpriteEditor extends AbstractEditor
             if ($dialog->getResultIndex() == 0) {
                 foreach ($this->findFrameFiles() as $file) {
                     if (!$file->delete()) {
-                        UXDialog::showAndWait("Невозможно удалить файл $file", 'ERROR');
+                        Ide::showError("Невозможно удалить файл $file");
                     }
                 }
 

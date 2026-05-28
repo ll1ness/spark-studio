@@ -1,12 +1,12 @@
 <?php
 namespace ide\editors\value;
 
+use ide\Ide;
 use ide\forms\FontPropertyEditorForm;
 use ide\forms\ModuleListEditorForm;
 use ide\systems\FileSystem;
 use php\gui\event\UXMouseEvent;
 use php\gui\text\UXFont;
-use php\gui\UXDialog;
 use php\gui\UXList;
 use php\lib\Str;
 use php\lib\String;
@@ -24,12 +24,12 @@ class GameFixturePropertyEditor extends TextPropertyEditor
         $this->textField->promptText = 'редактировать';
         $this->textField->editable = false;
         $this->textField->on('click', function () {
-            UXDialog::showAndWait('Функция в разработке ...');
+            Ide::showMessage('Функция в разработке ...');
             //$this->showDialog();
         });
 
         $this->dialogButton->on('click', function (UXMouseEvent $e) {
-            UXDialog::showAndWait('Функция в разработке ...');
+            Ide::showMessage('Функция в разработке ...');
             //$this->showDialog();
         });
 
