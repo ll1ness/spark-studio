@@ -20,7 +20,6 @@ use php\gui\layout\UXHBox;
 use php\gui\layout\UXPane;
 use php\gui\layout\UXVBox;
 use php\gui\UXButton;
-use php\gui\UXDialog;
 use php\gui\UXLabel;
 use php\gui\UXLabeled;
 use php\gui\UXNode;
@@ -285,7 +284,7 @@ class IdeBehaviourPane
             $target = $this->behaviourManager->getTarget($targetId);
 
             if (!$target) {
-                UXDialog::showAndWait('Незарегистрированный тип компонента', 'ERROR');
+                Ide::showError('Незарегистрированный тип компонента');
                 return;
             }
 

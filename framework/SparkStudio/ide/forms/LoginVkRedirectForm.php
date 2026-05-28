@@ -10,7 +10,6 @@ use php\gui\UXDesktop;
 use php\gui\framework\AbstractForm;
 use php\gui\UXButton;
 use php\gui\UXClipboard;
-use php\gui\UXDialog;
 use php\gui\UXHyperlink;
 use php\gui\UXTextField;
 use script\TimerScript;
@@ -87,12 +86,12 @@ class LoginVkRedirectForm extends AbstractIdeForm
 
         Ide::service()->account()->authExternalAsync($this->confirmField->text, function (ServiceResponse $response) {
             if ($response->isSuccess()) {
-                UXDialog::show($response->message());
+                Ide::showMessage($response->message());
 
                 $this->setResult($response->data());
                 $this->hide();
             } else {
-                UXDialog::show($response->message(), 'ERROR');
+                Ide::showError($response->message());
             }
         });
     }

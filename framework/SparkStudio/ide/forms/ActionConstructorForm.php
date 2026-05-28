@@ -43,8 +43,7 @@ use php\gui\UXButton;
 use php\gui\UXCheckbox;
 use php\gui\UXClipboard;
 use php\gui\UXComboBox;
-use php\gui\UXContextMenu;
-use php\gui\UXDialog;
+use php\gui\UXColor;
 use php\gui\UXForm;
 use php\gui\UXLabel;
 use php\gui\UXListCell;
@@ -959,7 +958,7 @@ class ActionConstructorForm extends AbstractIdeForm
     public function actionConvert()
     {
         if ($this->list->items->count == 0) {
-            UXDialog::show('Нет действий для конвертирования в php код');
+            Ide::showMessage('Нет действий для конвертирования в php код');
             return;
         }
 
