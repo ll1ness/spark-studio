@@ -2471,6 +2471,13 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             uiLater(function () use ($node) {
                 $this->updateProperties($node);
             });
+        } else {
+            // Click on the form itself (no child element under cursor).
+            // The designer consumes the mouse event, so the area's mouseUp
+            // never fires — we must handle form selection here instead.
+            uiLater(function () {
+                $this->selectForm();
+            });
         }
     }
 
