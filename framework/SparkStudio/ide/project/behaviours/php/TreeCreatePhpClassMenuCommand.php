@@ -10,7 +10,6 @@ use ide\Ide;
 use ide\project\ProjectTree;
 use ide\systems\FileSystem;
 use ide\utils\FileUtils;
-use php\gui\UXDialog;
 use php\lib\fs;
 use php\lib\str;
 use php\util\Regex;
@@ -56,7 +55,7 @@ class TreeCreatePhpClassMenuCommand extends AbstractMenuCommand
             $f = fs::normalize($f);
 
             if (fs::exists($f)) {
-                UXDialog::showAndWait('Файл или папка с таким названием уже существует.', 'ERROR');
+                Ide::showError('Файл или папка с таким названием уже существует.');
                 $this->onExecute($e, $editor);
                 return;
             }
@@ -81,7 +80,7 @@ class TreeCreatePhpClassMenuCommand extends AbstractMenuCommand
             $project->createFile($absoluteFile, $template);
 
             if (!fs::isFile($f)) {
-                UXDialog::showAndWait("Невозможно создать файл с таким названием.\n -> $f", 'ERROR');
+                Ide::showError("Невозможно создать файл с таким названием.\n -> $f");
             } else {
                 $this->tree->expandSelected();
                 FileSystem::open($f);

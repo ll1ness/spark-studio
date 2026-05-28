@@ -17,7 +17,6 @@ use php\gui\UXApplication;
 use php\io\File;
 use ide\Logger;
 use php\gui\UXSeparator;
-use php\gui\UXDialog;
 use ide\utils\FileUtils;
 use php\gui\UXDesktop;
 use php\util\Regex;
@@ -173,7 +172,7 @@ public function addSettingsPane(UXNode $node, $prepend = true)
                         FileSystem::open(Ide::project()->getMainProjectFile());
                         break;
                     } else {
-                        UXDialog::showAndWait("Невозможно дать проекту введенное имя '$name', попробуйте другое.", 'ERROR');
+                        Ide::showError("Невозможно дать проекту введенное имя '$name', попробуйте другое.");
                     }
                 }
             }

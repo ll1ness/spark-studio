@@ -2,9 +2,9 @@
 namespace ide\forms;
 
 
+use ide\Ide;
 use ide\tool\AbstractTool;
 use ide\tool\AbstractToolInstaller;
-use php\gui\UXDialog;
 use php\gui\UXLabel;
 use php\gui\UXTextArea;
 
@@ -61,7 +61,7 @@ class ToolInstallForm extends AbstractIdeForm
                     waitAsync(2000, [$this, 'hide']);
                     //$this->hide();
                 } else {
-                    UXDialog::show('Ошибка установки ' . $this->installer->getTool()->getName(), 'ERROR');
+                    Ide::showError('Ошибка установки ' . $this->installer->getTool()->getName());
                 }
             });
         }, __CLASS__);

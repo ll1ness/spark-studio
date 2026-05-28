@@ -4,7 +4,6 @@ namespace ide\forms;
 use ide\account\api\ServiceResponse;
 use ide\Ide;
 use ide\ui\Notifications;
-use php\gui\UXDialog;
 use php\gui\UXPasswordField;
 
 /**
@@ -38,7 +37,7 @@ class AccountChangePasswordForm extends AbstractOnlineIdeForm
     public function doSave()
     {
         if ($this->checkPasswordField->text !== $this->newPasswordField->text) {
-            UXDialog::show('Введите одинаковые пароли', 'ERROR');
+            Ide::showError('Введите одинаковые пароли');
             return;
         }
 

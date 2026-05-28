@@ -11,7 +11,6 @@ use php\gui\framework\AbstractForm;
 use php\gui\layout\UXHBox;
 use php\gui\layout\UXVBox;
 use php\gui\UXApplication;
-use php\gui\UXDialog;
 use php\gui\UXImageView;
 use php\gui\UXLabel;
 use php\gui\UXListCell;
@@ -242,14 +241,14 @@ class BehaviourCreateForm extends AbstractIdeForm
 
         if ($selected) {
             if ($this->alreadyAddedBehaviours[get_class($selected)]) {
-                UXDialog::show('Данное поведение уже добавлено объекту');
+                Ide::showMessage('Данное поведение уже добавлено объекту');
                 return;
             }
 
             $this->setResult($selected);
             $this->hide();
         } else {
-            UXDialog::show('Выберите поведение, чтобы его добавить');
+            Ide::showMessage('Выберите поведение, чтобы его добавить');
         }
     }
 

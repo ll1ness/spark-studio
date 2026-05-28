@@ -3,6 +3,7 @@
 namespace ide\forms;
 
 use ide\forms\mixins\DialogFormMixin;
+use ide\Ide;
 use ide\utils\UiUtils;
 use InvalidArgumentException;
 use php\gui\framework\AbstractForm;
@@ -17,7 +18,6 @@ use php\gui\UXToggleButton;
 use php\lib\str;
 use php\util\Flow;
 use php\gui\UXFileChooser;
-use php\gui\UXDialog;
 
 /**
  * Class FontPropertyEditorForm
@@ -122,9 +122,9 @@ class FontPropertyEditorForm extends AbstractForm
                 $targetFile = $targetDir . '/' . basename($file);
                 if (copy($file, $targetFile)) {
                     $this->fontCombobox->items->add(basename($file, '.ttf'));
-                    UXDialog::show('Шрифт успешно добавлен, перезапустите ide для применения шрифта', 'INFORMATION');
+                    Ide::showMessage('Шрифт успешно добавлен, перезапустите ide для применения шрифта');
                 } else {
-                    UXDialog::show('Ошибка при добавлении шрифта', 'ERROR');
+                    Ide::showError('Ошибка при добавлении шрифта');
                 }
             }
         });

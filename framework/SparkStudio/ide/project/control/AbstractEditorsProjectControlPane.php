@@ -12,7 +12,6 @@ use php\gui\event\UXMouseEvent;
 use php\gui\layout\UXHBox;
 use php\gui\layout\UXVBox;
 use php\gui\UXButton;
-use php\gui\UXDialog;
 use php\gui\UXNode;
 use php\gui\UXSeparator;
 use php\lib\fs;
@@ -131,7 +130,7 @@ abstract class AbstractEditorsProjectControlPane extends AbstractProjectControlP
 
                     if (fs::exists($newFile))
                     {
-                        UXDialog::showAndWait("Введенное имя '$name' уже занято, введите другое.", 'WARNING');
+                        Ide::showError("Введенное имя '$name' уже занято, введите другое.");
                         $this->doClone();
                         return;
                     }
@@ -221,7 +220,7 @@ abstract class AbstractEditorsProjectControlPane extends AbstractProjectControlP
                     });
 
                     if (fs::exists($file)) {
-                        UXDialog::show('Ошибка удаления, что-то пошло не так', 'ERROR');
+                        Ide::showError('Ошибка удаления, что-то пошло не так');
                         return true;
                     } else {
                         if ($project = Ide::project()) {
