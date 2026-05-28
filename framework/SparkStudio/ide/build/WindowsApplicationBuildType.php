@@ -13,8 +13,6 @@ use ide\project\Project;
 use ide\systems\ProjectSystem;
 use ide\utils\FileUtils;
 use php\gui\event\UXEvent;
-use php\gui\UXAlert;
-use php\gui\UXDialog;
 use php\gui\UXFileChooser;
 use php\gui\UXImage;
 use php\gui\UXImageView;
@@ -100,7 +98,7 @@ class WindowsApplicationBuildType extends AbstractBuildType
             /** @var UXTextField $icon */
             $icon = $event->target->scene->window->{'o_exeIcoPath'};
 
-            $localFile = Ide::get()->getOpenedProject()->getIdeDir() . "/" . Str::replace(__CLASS__, '\\', '.') . ".ico";
+            $localFile = Ide::get()->getOpenedProject()->getIdeDir() . "/" . Str::replace(__CLASS__, '\', '.') . ".ico";
             FileUtils::copyFile($file, $localFile);
 
             $icon->text = FileUtils::relativePath(Ide::get()->getOpenedProject()->getRootDir(), $localFile);
@@ -138,11 +136,8 @@ class WindowsApplicationBuildType extends AbstractBuildType
         }
 
         if ($jreHome && $config['jre']) {
-            $alert = new UXAlert('INFORMATION');
-            $alert->contentText = 'Копируем Java VM, это может занять некоторое время ...';
-            $alert->show();
+            Ide::showMessage('Копируем Java VM, это может занять некоторое время ...');
             $this->copyJre($project);
-            $alert->hide();
         }
 
         $template = new Launch4jConfigTemplate();
