@@ -2421,7 +2421,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
     protected function _onAreaMouseUp(UXMouseEvent $e = null)
     {
         $this->save();
-        $this->updateProperties($this);
+        $this->selectForm();
 
         uiLater(function () {
             $this->layout->requestFocus();
