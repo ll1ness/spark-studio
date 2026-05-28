@@ -28,7 +28,6 @@ use php\gui\layout\UXScrollPane;
 use php\gui\layout\UXVBox;
 use php\gui\UXButton;
 use php\gui\UXCheckbox;
-use php\gui\UXDialog;
 use php\gui\UXLabel;
 use php\gui\UXNode;
 use php\io\File;
@@ -811,7 +810,7 @@ class BundleProjectBehaviour extends AbstractProjectBehaviour
         }
 
         if ($resource && $resource->isHidden()) {
-            UXDialog::showAndWait("{$resource->getName()} - Системный пакет расширений.");
+            Ide::showMessage("{$resource->getName()} - Системный пакет расширений.");
             return;
         }
 
@@ -866,7 +865,7 @@ class BundleProjectBehaviour extends AbstractProjectBehaviour
                 if ($projectEditor instanceof ProjectEditor) {
                     $projectEditor->navigate(BundlesProjectControlPane::class);
                 } else {
-                    UXDialog::show('Unable to navigate the project editor', 'ERROR');
+                    Ide::showError('Unable to navigate the project editor');
                 }
             });
             $this->uiPackages->add($addButton);

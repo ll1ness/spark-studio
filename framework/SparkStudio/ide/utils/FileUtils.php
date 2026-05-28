@@ -6,7 +6,6 @@ use ide\Logger;
 use ide\ui\Notifications;
 use php\compress\ZipFile;
 use php\gui\UXApplication;
-use php\gui\UXDialog;
 use php\io\File;
 use php\io\FileStream;
 use php\io\IOException;
@@ -29,7 +28,7 @@ class FileUtils
     public static function validate($name)
     {
         if (!fs::valid($name)) {
-            UXDialog::show('Некорректное название, присутствуют системные символы, которые нельзя использовать в названии файлов.', 'ERROR');
+            Ide::showError('Некорректное название, присутствуют системные символы, которые нельзя использовать в названии файлов.');
             return false;
         }
 

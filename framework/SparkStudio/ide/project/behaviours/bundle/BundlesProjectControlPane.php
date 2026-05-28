@@ -28,7 +28,6 @@ use php\gui\event\UXMouseEvent;
 use php\gui\layout\UXHBox;
 use php\gui\layout\UXVBox;
 use php\gui\UXButton;
-use php\gui\UXDialog;
 use php\gui\UXFileChooser;
 use php\gui\UXHyperlink;
 use php\gui\UXLabel;
@@ -457,7 +456,7 @@ class BundlesProjectControlPane extends AbstractProjectControlPane
 
                 if (!fs::exists($file)) {
                     uiLater(function () {
-                        UXDialog::show('Ошибка загрузки пакета');
+                        Ide::showMessage('Ошибка загрузки пакета');
                     });
                     return;
                 }
