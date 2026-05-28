@@ -98,7 +98,7 @@ class WindowsApplicationBuildType extends AbstractBuildType
             /** @var UXTextField $icon */
             $icon = $event->target->scene->window->{'o_exeIcoPath'};
 
-            $localFile = Ide::get()->getOpenedProject()->getIdeDir() . "/" . Str::replace(__CLASS__, '\', '.') . ".ico";
+            $localFile = Ide::get()->getOpenedProject()->getIdeDir() . "/" . Str::replace(__CLASS__, '\\', '.') . ".ico";
             FileUtils::copyFile($file, $localFile);
 
             $icon->text = FileUtils::relativePath(Ide::get()->getOpenedProject()->getRootDir(), $localFile);
