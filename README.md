@@ -25,7 +25,7 @@ Spark Studio is an IDE for creating cross-platform desktop GUI applications in P
 - Export to JAR/EXE/MSI
 - English and Russian interfaces
 
-## Quick start (Developer Mode)
+## Quick start
 
 ```bash
 ./bin/[OS].sh #ex. ./bin/linux.sh
