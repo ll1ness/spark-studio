@@ -13,6 +13,7 @@ use ide\project\ProjectFile;
 use ide\systems\ProjectSystem;
 use ide\utils\FileUtils;
 use php\compress\ZipFile;
+use php\gui\UXApplication;
 use php\io\File;
 use php\io\IOException;
 use php\io\Stream;
@@ -217,16 +218,128 @@ class AntOneJarBuildType extends AbstractBuildType
         $dialog->setOnExitProcess($onExitProcess);
 
         ProjectSystem::saveOnlyRequired();
-        ProjectSystem::compileAll(Project::ENV_PROD, $dialog, 'ant onejar', function ($success) use ($project, $dialog) {
-            if ($success) {
-                $this->makeAntBuildFile($project, $this->getConfig());
+        ProjectSystem::compileAll(Project::ENV_PROD, $dialog, 'build jar', function ($success) use ($project, $dialog, $onExitProcess) {
+            if (!$success) { $dialog->stopWithError(); return; }
 
-                $process = new Process([Ide::get()->getApacheAntProgram(), 'onejar'], $project->getRootDir(), Ide::get()->makeEnvironment());
+            try {
+                $distDir = $project->getRootDir() . "/build/dist";
+                fs::makeDir("$distDir/lib");
 
-                $process = $process->start();
+                // 1) Create sprk-compiled-module.jar from compiled .phb files
+                $compiledJar = ZipFile::create("$distDir/lib/sprk-compiled-module.jar");
+                fs::scan($project->getSrcGeneratedDirectory(), function ($f) use ($compiledJar) {
+                    if (fs::ext($f) == 'phb') {
+                        $rel = FileUtils::relativePath($project->getSrcGeneratedDirectory(), $f);
+                        $compiledJar->add($rel, new File($f));
+                    }
+                });
+                if ($php = PhpProjectBehaviour::get()) {
+                    if (!$php->isByteCodeEnabled()) {
+                        fs::scan($project->getSrcDirectory(), function ($f) use ($compiledJar) {
+                            if (fs::ext($f) == 'php' || fs::ext($f) == 'phb') {
+                                $rel = FileUtils::relativePath($project->getSrcDirectory(), $f);
+                                $compiledJar->add($rel, new File($f));
+                            }
+                        });
+                    }
+                }
+                $compiledJar = null;
 
-                $dialog->watchProcess($process);
-            } else {
+                // 2) Copy library jars
+                $project->copyModuleFiles("$distDir/lib");
+
+                // 3) Read extensions list + collect library jar paths
+                $extList = '';
+                $libJars = [];
+
+                foreach ($project->getModules() as $module) {
+                    if ($module->getType() != 'jarfile') continue;
+                    $name = fs::name($module->getId());
+                    if ($libJars[$name]) continue;
+                    $libJars[$name] = true;
+
+                    $libFile = "$distDir/lib/$name";
+                    if (!fs::isFile($libFile)) continue;
+
+                    try {
+                        $zf = new ZipFile($libFile);
+                        if ($zf->has('META-INF/services/php.runtime.ext.support.Extension')) {
+                            $zf->read('META-INF/services/php.runtime.ext.support.Extension', function ($stat, Stream $stream) use (&$extList) {
+                                $extList .= (string)$stream . "\n\n";
+                            });
+                        }
+                    } catch (\Exception $e) {
+                        Logger::warn("Cannot read {$module->getId()}: {$e->getMessage()}");
+                    }
+                }
+
+                // 4) Write extensions file
+                if ($extList) {
+                    $genDir = "$distDir/gen/META-INF/services";
+                    fs::makeDir($genDir);
+                    FileUtils::put("$genDir/php.runtime.ext.support.Extension", $extList);
+                }
+
+                // 5) Create final uber-jar
+                $jarName = $project->getName() ?: 'app';
+                $finalJar = ZipFile::create("$distDir/$jarName.jar");
+
+                // Add compiled module contents
+                $zf = new ZipFile("$distDir/lib/sprk-compiled-module.jar");
+                $zf->readAll(function ($stat, Stream $stream) use ($finalJar) {
+                    $finalJar->addFromString($stat['name'], (string)$stream);
+                });
+                $zf = null;
+
+                // Add gen directory
+                if (fs::isDir("$distDir/gen")) {
+                    fs::scan("$distDir/gen", function ($f) use ($finalJar) {
+                        $rel = FileUtils::relativePath("$distDir/gen", $f);
+                        $finalJar->add($rel, new File($f));
+                    });
+                }
+
+                // Merge library jars (skip JPHP-INF/sdk/ and .php files)
+                foreach ($project->getModules() as $module) {
+                    if ($module->getType() != 'jarfile') continue;
+                    $name = fs::name($module->getId());
+
+                    $libFile = "$distDir/lib/$name";
+                    if (!fs::isFile($libFile)) continue;
+
+                    try {
+                        $zf = new ZipFile($libFile);
+                        $zf->readAll(function ($stat, Stream $stream) use ($finalJar) {
+                            $entry = $stat['name'];
+                            if (str::startsWith($entry, 'JPHP-INF/sdk/')) return;
+                            if (fs::ext($entry) == 'php') return;
+                            $finalJar->addFromString($entry, (string)$stream);
+                        });
+                        $zf = null;
+                    } catch (\Exception $e) {
+                        Logger::warn("Cannot merge $name: {$e->getMessage()}");
+                    }
+                }
+
+                // Add manifest
+                $manifest = "Manifest-Version: 1.0
+\nMain-Class: org.develnext.jphp.ext.javafx.FXLauncher
+\n
+\n";
+                $finalJar->addFromString('META-INF/MANIFEST.MF', $manifest);
+
+                $finalJar = null;
+
+                // Cleanup intermediate files
+                fs::delete("$distDir/lib/sprk-compiled-module.jar");
+
+                Logger::info("Build OK -> $distDir/$jarName.jar");
+                UXApplication::runLater(function () use ($onExitProcess) {
+                    $onExitProcess(0);
+                });
+
+            } catch (\Exception $e) {
+                Logger::warn("Build error: {$e->getMessage()}");
                 $dialog->stopWithError();
             }
         });
