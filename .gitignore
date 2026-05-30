@@ -4,3 +4,6 @@ bin/jre/
 .DS_Store
 Thumbs.db
 *.log
+bin/SparkStudio.exe
+bin/launcher.res
+dist/
