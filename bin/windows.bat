@@ -5,7 +5,7 @@ rem ---- resolve SCRIPT_DIR and APP_HOME ----
 set "SCRIPT_DIR=%~dp0"
 for %%I in ("%SCRIPT_DIR%..") do set "APP_HOME=%%~fI"
 
-rem ---- build classpath ----
+rem ---- build classpath (same order as linux.sh) ----
 set "CP=%APP_HOME%\runtime\jphp-core"
 set "CP=%CP%;%APP_HOME%\runtime\jphp-runtime"
 set "CP=%CP%;%APP_HOME%\gui\jphp-gui-ext"
@@ -38,7 +38,7 @@ set "CP=%CP%;%APP_HOME%\utils\zt-zip"
 set "CP=%CP%;%APP_HOME%\framework\SparkStudio"
 set "CP=%CP%;%APP_HOME%\framework\jphp-app-framework"
 
-rem ---- java options ----
+rem ---- java options (from linux.sh) ----
 set "JAVA_OPTS=-Xms256M -XX:ReservedCodeCacheSize=150m"
 set "JAVA_OPTS=%JAVA_OPTS% -Dsun.io.useCanonCaches=false"
 set "JAVA_OPTS=%JAVA_OPTS% -Djava.net.preferIPv4Stack=true"
@@ -47,20 +47,20 @@ set "JAVA_OPTS=%JAVA_OPTS% -Dspark.launcher=root"
 set "JAVA_OPTS=%JAVA_OPTS% -Dspark.path=%APP_HOME%"
 set "JAVA_OPTS=%JAVA_OPTS% -Dglass.disableGrab=true"
 
-rem ---- java home ----
+rem ---- java home (bundled JRE) ----
 set "JAVA_HOME=%APP_HOME%\bin\jre"
 
-rem ---- logs dir ----
+rem ---- create log dir ----
 set "LOG_DIR=%APP_HOME%\bin\logs"
 if not exist "%LOG_DIR%" mkdir "%LOG_DIR%"
 
-rem ---- clean cache ----
+rem ---- clean JPHP bytecode cache ----
 if exist "%USERPROFILE%\.Spark\cache\bytecode_v1" rd /s /q "%USERPROFILE%\.Spark\cache\bytecode_v1"
 if exist "%APP_HOME%\bin\cache\bytecode_v1" rd /s /q "%APP_HOME%\bin\cache\bytecode_v1"
 
-rem ---- Linux-specific GDK_BACKEND / LD_PRELOAD / x11-nograb skipped ----
+rem ---- Linux-specific GDK_BACKEND/LD_PRELOAD skipped ----
 
-rem ---- set cwd to APP_HOME (app uses relative ./ paths) ----
+rem ---- cd to APP_HOME (app uses relative ./ paths) ----
 cd /D "%APP_HOME%"
 
 rem ---- launch ----
