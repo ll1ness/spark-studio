@@ -2,13 +2,13 @@
 namespace ide\commands;
 
 use ide\build\AbstractBuildType;
+use ide\build\AntOneJarBuildType;
 use ide\editors\AbstractEditor;
 use ide\forms\BuildProjectForm;
 use ide\forms\MessageBoxForm;
 use ide\Ide;
 use ide\misc\AbstractCommand;
 use php\lang\IllegalArgumentException;
-use php\lang\IllegalStateException;
 
 class BuildProjectCommand extends AbstractCommand
 {
@@ -60,9 +60,21 @@ class BuildProjectCommand extends AbstractCommand
             }
         }
 
-        $dialog = new BuildProjectForm();
-        $dialog->setBuildTypes($this->buildTypes);
-        $dialog->showAndWait();
+        $warning = new MessageBoxForm(
+            'Проект будет собран в JAR-файл. Продолжить?',
+            ['Собрать JAR', 'Отмена']
+        );
+
+        if ($warning->showDialog() && $warning->getResultIndex() == 0) {
+            foreach ($this->buildTypes as $buildType) {
+                if ($buildType instanceof AntOneJarBuildType) {
+                    if ($buildType->fetchConfig()) {
+                        $buildType->onExecute(Ide::get()->getOpenedProject());
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     public function register($any)

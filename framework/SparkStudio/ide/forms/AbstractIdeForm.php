@@ -21,6 +21,13 @@ use php\util\Regex;
  */
 class AbstractIdeForm extends AbstractForm
 {
+    /**
+     * Set to true in subclasses that should open as a native OS window
+     * instead of the default in-window modal overlay behaviour.
+     * @var bool
+     */
+    protected $nativeWindow = false;
+
     public function __construct(UXForm $origin = null)
     {
         parent::__construct($origin);
@@ -70,6 +77,19 @@ class AbstractIdeForm extends AbstractForm
         // it must keep the separate OS window behavior.
         if ($this instanceof SplashForm) {
             parent::show();
+            return;
+        }
+
+        // Allow subclasses to opt into a native OS window.
+        if ($this->nativeWindow) {
+            parent::show();
+
+            uiLater(function () {
+                if ($this->layout) {
+                    $this->size = $this->layout->size;
+                }
+                $this->centerOnScreen();
+            });
             return;
         }
 

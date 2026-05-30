@@ -49,6 +49,8 @@ class BuildProgressForm extends AbstractIdeForm implements ProjectConsoleOutput
 {
     use SavableFormMixin;
 
+    protected $nativeWindow = true;
+
     /**
      * @var Process
      */
