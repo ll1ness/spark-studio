@@ -112,7 +112,7 @@ class BuildSuccessForm extends AbstractIdeForm
     {
         Logger::info("Show build success: buildPath = {$this->buildPath}");
 
-        $this->runButton->enabled = !!$this->onRun;
+        $this->runButton->free();
         $this->openButton->enabled = !!$this->onOpenDirectory;
 
         $this->pathField->text = File::of($this->buildPath);
