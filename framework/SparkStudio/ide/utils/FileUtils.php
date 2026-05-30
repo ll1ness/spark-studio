@@ -105,11 +105,7 @@ class FileUtils
 
     public static function normalizeName($name)
     {
-        $name = Str::replace($name, '\\', '/');
-
-        $name = Str::replace($name, '/////', '/');
-        $name = Str::replace($name, '////', '/');
-        $name = Str::replace($name, '///', '/');
+        $name = Str::replace($name, "\\", '/');
         $name = Str::replace($name, '//', '/');
 
         return $name;

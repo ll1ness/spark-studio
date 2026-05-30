@@ -541,10 +541,22 @@ class PhpProjectBehaviour extends AbstractProjectBehaviour
                 }
 
                 if (fs::isDir($library)) {
-                    fs::scan($library, function ($filename) use ($generatedDirectory, $log, $scope) {
+                    fs::scan($library, function ($filename) use ($generatedDirectory, $log, $scope, $library) {
                         $name = FileUtils::relativePath($library, $filename);
+                        $name = str::replace($name, '\\', '/');
 
-                        if (str::startsWith($name, 'JPHP-INF/')) {
+                        // If relativePath returned an absolute path (e.g. on Windows with mixed slash styles),
+                        // compute relative path manually
+                        if (str::contains($name, ':/')) {
+                            $name = str::replace($filename, '\\', '/');
+                            $libPath = str::replace($library, '\\', '/');
+                            if (str::startsWith($name, $libPath)) {
+                                $name = str::sub($name, str::length($libPath));
+                            }
+                            $name = trim($name, '/');
+                        }
+
+                        if (str::startsWith($name, 'JPHP-INF/') || str::contains($name, '/JPHP-INF/')) {
                             return;
                         }
 
