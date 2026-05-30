@@ -57,27 +57,27 @@ class ProjectSystem
         $th = new Thread(function () use ($project, $consoleOutput, $callback, $env, $hintCommand) {
             try {
                 $project->preCompile($env, function ($log) use ($consoleOutput) {
-                    uiLater(function () use ($consoleOutput, $log) {
+                    UXApplication::runLater(function () use ($consoleOutput, $log) {
                         $consoleOutput->addConsoleLine($log, 'gray');
                     });
                 });
 
                 $project->compile($env, function ($log) use ($consoleOutput) {
-                    uiLater(function () use ($consoleOutput, $log) {
+                    UXApplication::runLater(function () use ($consoleOutput, $log) {
                         $consoleOutput->addConsoleLine($log, 'blue');
                     });
                 });
 
-                uiLater(function () use ($consoleOutput, $project, $hintCommand) {
+                UXApplication::runLater(function () use ($consoleOutput, $project, $hintCommand) {
                     $consoleOutput->addConsoleLine('> ' . $hintCommand, 'green');
                     $consoleOutput->addConsoleLine('   --> ' . $project->getRootDir() . ' ..', 'gray');
                 });
 
-                uiLater(function () use ($callback) {
+                UXApplication::runLater(function () use ($callback) {
                     $callback(true);
                 });
             } catch (\Throwable $e) {
-                uiLater(function () use ($consoleOutput, $e, $callback) {
+                UXApplication::runLater(function () use ($consoleOutput, $e, $callback) {
                     $file = Ide::project() ? Ide::project()->getAbsoluteFile($e->getFile())->getRelativePath() : $e->getFile();
 
                     $consoleOutput->addConsoleLine("[ERROR] Cannot build project");
@@ -258,7 +258,7 @@ class ProjectSystem
                         $msg->showDialog();
 
                         if ($msg->getResultIndex() == 0) {
-                            uiLater(function () {
+                            UXApplication::runLater(function () {
                                 $dialog = new OpenProjectForm();
                                 $dialog->showDialog();
                             });
@@ -299,7 +299,7 @@ class ProjectSystem
                                 FileSystem::open('~welcome');
                                 Ide::get()->getMainForm()->hidePreloader();
 
-                                uiLater(function () {
+                                UXApplication::runLater(function () {
                                     $dialog = new OpenProjectForm();
                                     $dialog->showDialog();
                                 });
