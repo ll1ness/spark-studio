@@ -1501,15 +1501,15 @@ class Ide extends Application
 
         $this->bind('hideForm', function ($form) {
             if ($form instanceof MainForm) {
-                if ($this->exitWhenReady && $this->openedWindows <= 0) {
-                    $this->shutdown();
-                }
+                // Main form closed — always shut down the application.
+                $this->shutdown();
                 return;
             }
 
             $this->openedWindows--;
 
-            if ($this->exitWhenReady && $this->openedWindows <= 0) {
+            if ($this->openedWindows <= 0) {
+                // All secondary windows are closed, shut down.
                 $this->shutdown();
             }
         });
@@ -1663,6 +1663,11 @@ class Ide extends Application
      */
     public function shutdown()
     {
+        // Guard against recursive calls (e.g. hideForm event → shutdown → mainForm->hide() → hideForm → shutdown).
+        if ($this->shutdown) {
+            return;
+        }
+
         $this->shutdown = true;
 
         $done = false;
