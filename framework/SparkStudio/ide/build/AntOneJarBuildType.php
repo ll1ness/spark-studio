@@ -203,6 +203,7 @@ class AntOneJarBuildType extends AbstractBuildType
                         return;
                     }
 
+                    $dialog->hide();
                     $dialog = new BuildSuccessForm();
                     $dialog->setBuildPath($this->getBuildPath($project));
                     $dialog->setOpenDirectory($this->getBuildPath($project));
