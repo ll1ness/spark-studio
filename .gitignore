@@ -7,3 +7,10 @@ Thumbs.db
 bin/SparkStudio.exe
 bin/launcher.res
 dist/
+build/jre/
+build/SparkStudio.exe
+build/spark-studio.jar
+build/languages/
+build/php-sdk/
+build/projectExtension.ico
+__pycache__/
