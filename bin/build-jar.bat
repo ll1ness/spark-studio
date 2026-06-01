@@ -141,16 +141,32 @@ echo.
 echo [4/5] Creating JAR file...
 echo.
 
-rem ---- Use PowerShell to create JAR (ZIP with .jar extension) ----
+rem ---- Use PowerShell to create JAR with forward slashes in paths ----
 powershell -NoProfile -Command ^
     "$src='%STAGE_DIR:\=\\%'; " ^
     "$dst='%JAR_FILE:\=\\%'; " ^
     "if(Test-Path $dst){Remove-Item $dst}; " ^
-    "Add-Type -AssemblyName System.IO.Compression.FileSystem; " ^
-    "[System.IO.Compression.ZipFile]::CreateFromDirectory($src,$dst,[System.IO.Compression.CompressionLevel]::Optimal,$false); " ^
-    "$zip=[System.IO.Compression.ZipFile]::OpenRead($dst); " ^
-    "Write-Host ('JAR created with '+$zip.Entries.Count+' entries'); " ^
-    "$zip.Dispose()"
+    "Add-Type -AssemblyName System.IO.Compression; " ^
+    "$stream=[System.IO.File]::Open($dst, [System.IO.FileMode]::Create); " ^
+    "$zip=New-Object System.IO.Compression.ZipArchive($stream, [System.IO.Compression.ZipArchiveMode]::Create); " ^
+    "$files=[System.IO.Directory]::GetFiles($src,'*',[System.IO.SearchOption]::AllDirectories); " ^
+    "$count=0; " ^
+    "foreach($f in $files){ " ^
+    "    $rel=$f.Substring($src.Length+1).Replace('\','/'); " ^
+    "    $entry=$zip.CreateEntry($rel, 'Optimal'); " ^
+    "    $w=$entry.Open(); " ^
+    "    $b=[System.IO.File]::ReadAllBytes($f); " ^
+    "    $w.Write($b,0,$b.Length); " ^
+    "    $w.Close(); " ^
+    "    $count++; " ^
+    "}; " ^
+    "$zip.Dispose(); " ^
+    "$stream.Dispose(); " ^
+    "Write-Host ('JAR created with '+$count+' entries')"
+if !ERRORLEVEL! NEQ 0 (
+    echo    ERROR: JAR creation failed!
+    goto :error
+)
 if !ERRORLEVEL! NEQ 0 (
     echo    ERROR: PowerShell JAR creation failed!
     goto :error
