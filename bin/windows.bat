@@ -14,8 +14,20 @@ set "JAVA_OPTS=%JAVA_OPTS% -Dspark.launcher=root"
 set "JAVA_OPTS=%JAVA_OPTS% -Dspark.path=%APP_HOME%"
 set "JAVA_OPTS=%JAVA_OPTS% -Dglass.disableGrab=true"
 
-rem ---- java home (bundled JRE) ----
-set "JAVA_HOME=%APP_HOME%\bin\jre"
+rem ---- resolve java executable from system ----
+if not "%JAVA_HOME%"=="" (
+    set "JAVA_EXE=%JAVA_HOME%\bin\java"
+    goto :found_java
+)
+where java >nul 2>nul
+if !ERRORLEVEL! EQU 0 (
+    set "JAVA_EXE=java"
+    goto :found_java
+)
+powershell -NoProfile -Command "(New-Object -ComObject WScript.Shell).Popup('ERROR: Java not found. Install Java or set JAVA_HOME.',0,'Error',16)"
+exit /b 1
+
+:found_java
 
 rem ---- create log dir ----
 set "LOG_DIR=%APP_HOME%\bin\logs"
@@ -30,44 +42,62 @@ cd /D "%APP_HOME%"
 
 rem ---- check for pre-built JAR ----
 if exist "%APP_HOME%\build\spark-studio.jar" (
-    rem ---- launch from JAR ----
-    "%JAVA_HOME%\bin\java" %JAVA_OPTS% -jar "%APP_HOME%\build\spark-studio.jar" %* >"%LOG_DIR%\output.log" 2>"%LOG_DIR%\error.log"
-) else (
-    rem ---- build classpath from directories (fallback) ----
-    set "CP=%APP_HOME%\runtime\jphp-core"
-    set "CP=%CP%;%APP_HOME%\runtime\jphp-runtime"
-    set "CP=%CP%;%APP_HOME%\gui\jphp-gui-ext"
-    set "CP=%CP%;%APP_HOME%\gui\jphp-gui-richtext-ext"
-    set "CP=%CP%;%APP_HOME%\gui\jphp-desktop-ext"
-    set "CP=%CP%;%APP_HOME%\gui\jphp-systemtray-ext"
-    set "CP=%CP%;%APP_HOME%\gui\spark-designer"
-    set "CP=%CP%;%APP_HOME%\gui\reactfx-M5"
-    set "CP=%CP%;%APP_HOME%\gui\richtextfx"
-    set "CP=%CP%;%APP_HOME%\gui\undofx"
-    set "CP=%CP%;%APP_HOME%\gui\wellbehavedfx"
-    set "CP=%CP%;%APP_HOME%\parser\antlr4-runtime"
-    set "CP=%CP%;%APP_HOME%\parser\spark-lexer"
-    set "CP=%CP%;%APP_HOME%\parser\jphp-parser"
-    set "CP=%CP%;%APP_HOME%\extensions\jphp-json-ext"
-    set "CP=%CP%;%APP_HOME%\extensions\jphp-xml-ext"
-    set "CP=%CP%;%APP_HOME%\extensions\jphp-zend-ext"
-    set "CP=%CP%;%APP_HOME%\extensions\jphp-zip-ext"
-    set "CP=%CP%;%APP_HOME%\database\HikariCP-java6"
-    set "CP=%CP%;%APP_HOME%\database\jphp-sql-ext"
-    set "CP=%CP%;%APP_HOME%\debug\jphp-debugger"
-    set "CP=%CP%;%APP_HOME%\network\flowless"
-    set "CP=%CP%;%APP_HOME%\utils\asm-all"
-    set "CP=%CP%;%APP_HOME%\utils\commons-codec"
-    set "CP=%CP%;%APP_HOME%\utils\gson"
-    set "CP=%CP%;%APP_HOME%\utils\highlights"
-    set "CP=%CP%;%APP_HOME%\utils\javassist-GA"
-    set "CP=%CP%;%APP_HOME%\utils\slf4j-api"
-    set "CP=%CP%;%APP_HOME%\utils\zt-zip"
-    set "CP=%CP%;%APP_HOME%\framework\SparkStudio"
-    set "CP=%CP%;%APP_HOME%\framework\jphp-app-framework"
-
-    rem ---- launch from classpath ----
-    "%JAVA_HOME%\bin\java" %JAVA_OPTS% -cp "%CP%" org.develnext.jphp.ext.javafx.FXLauncher %* >"%LOG_DIR%\output.log" 2>"%LOG_DIR%\error.log"
+    "%JAVA_EXE%" -version
+    "%JAVA_EXE%" %JAVA_OPTS% -jar "%APP_HOME%\build\spark-studio.jar" %*
+    if !ERRORLEVEL! NEQ 0 (
+        echo Java exit code: !ERRORLEVEL!
+        pause
+    )
+    goto :eof
 )
+
+rem ---- build classpath from directories ----
+set "CP=%APP_HOME%\runtime\jphp-core"
+set "CP=%CP%;%APP_HOME%\runtime\jphp-runtime"
+set "CP=%CP%;%APP_HOME%\gui\jphp-gui-ext"
+set "CP=%CP%;%APP_HOME%\gui\jphp-gui-richtext-ext"
+set "CP=%CP%;%APP_HOME%\gui\jphp-desktop-ext"
+set "CP=%CP%;%APP_HOME%\gui\jphp-systemtray-ext"
+set "CP=%CP%;%APP_HOME%\gui\spark-designer"
+set "CP=%CP%;%APP_HOME%\gui\reactfx-M5"
+set "CP=%CP%;%APP_HOME%\gui\richtextfx"
+set "CP=%CP%;%APP_HOME%\gui\undofx"
+set "CP=%CP%;%APP_HOME%\gui\wellbehavedfx"
+set "CP=%CP%;%APP_HOME%\parser\antlr4-runtime"
+set "CP=%CP%;%APP_HOME%\parser\spark-lexer"
+set "CP=%CP%;%APP_HOME%\parser\jphp-parser"
+set "CP=%CP%;%APP_HOME%\extensions\jphp-json-ext"
+set "CP=%CP%;%APP_HOME%\extensions\jphp-xml-ext"
+set "CP=%CP%;%APP_HOME%\extensions\jphp-zend-ext"
+set "CP=%CP%;%APP_HOME%\extensions\jphp-zip-ext"
+set "CP=%CP%;%APP_HOME%\database\HikariCP-java6"
+set "CP=%CP%;%APP_HOME%\database\jphp-sql-ext"
+set "CP=%CP%;%APP_HOME%\debug\jphp-debugger"
+set "CP=%CP%;%APP_HOME%\network\flowless"
+set "CP=%CP%;%APP_HOME%\utils\asm-all"
+set "CP=%CP%;%APP_HOME%\utils\commons-codec"
+set "CP=%CP%;%APP_HOME%\utils\gson"
+set "CP=%CP%;%APP_HOME%\utils\highlights"
+set "CP=%CP%;%APP_HOME%\utils\javassist-GA"
+set "CP=%CP%;%APP_HOME%\utils\slf4j-api"
+set "CP=%CP%;%APP_HOME%\utils\zt-zip"
+set "CP=%CP%;%APP_HOME%\framework\SparkStudio"
+set "CP=%CP%;%APP_HOME%\framework\jphp-app-framework"
+
+rem ---- show Java version ----
+"%JAVA_EXE%" -version
+
+rem ---- launch from classpath ----
+"%JAVA_EXE%" %JAVA_OPTS% -cp "%CP%" org.develnext.jphp.ext.javafx.FXLauncher %*
+if !ERRORLEVEL! NEQ 0 (
+    echo.
+    echo Java exit code: !ERRORLEVEL!
+    pause
+    exit /b !ERRORLEVEL!
+)
+
+echo.
+echo Process completed successfully.
+pause
 
 endlocal
