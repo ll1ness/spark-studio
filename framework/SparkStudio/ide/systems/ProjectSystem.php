@@ -31,11 +31,45 @@ use timer\AccurateTimer;
  */
 class ProjectSystem
 {
+    /** @var Thread|null */
+    protected static $compileThread = null;
+
+    /** @var bool */
+    protected static $compileStopped = false;
+
     protected static function clear()
     {
         //WatcherSystem::clear();
         //WatcherSystem::clearListeners();
         Ide::get()->unregisterCommands();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isCompiling()
+    {
+        return static::$compileThread !== null && static::$compileThread->isAlive();
+    }
+
+    /**
+     * Stop the current compilation.
+     */
+    public static function stopCompile()
+    {
+        static::$compileStopped = true;
+
+        if (static::$compileThread && static::$compileThread->isAlive()) {
+            static::$compileThread->interrupt();
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isCompileStopped()
+    {
+        return static::$compileStopped;
     }
 
     /**
@@ -53,6 +87,8 @@ class ProjectSystem
         if (!$project) {
             return;
         }
+
+        static::$compileStopped = false;
 
         $th = new Thread(function () use ($project, $consoleOutput, $callback, $env, $hintCommand) {
             try {
@@ -78,18 +114,25 @@ class ProjectSystem
                 });
             } catch (\Throwable $e) {
                 UXApplication::runLater(function () use ($consoleOutput, $e, $callback) {
-                    $file = Ide::project() ? Ide::project()->getAbsoluteFile($e->getFile())->getRelativePath() : $e->getFile();
+                    if (static::$compileStopped) {
+                        $consoleOutput->addConsoleLine("[INFO] Compilation was stopped by user.");
+                    } else {
+                        $file = Ide::project() ? Ide::project()->getAbsoluteFile($e->getFile())->getRelativePath() : $e->getFile();
 
-                    $consoleOutput->addConsoleLine("[ERROR] Cannot build project");
-                    $consoleOutput->addConsoleLine("  -> {$file}");
-                    $consoleOutput->addConsoleLine("  -> {$e->getMessage()}, on line {$e->getLine()}", 'red');
+                        $consoleOutput->addConsoleLine("[ERROR] Cannot build project");
+                        $consoleOutput->addConsoleLine("  -> {$file}");
+                        $consoleOutput->addConsoleLine("  -> {$e->getMessage()}, on line {$e->getLine()}", 'red');
+                    }
 
                     $callback(false);
                 });
+            } finally {
+                static::$compileThread = null;
             }
         });
         $th->setName("ProjectSystem.compileAll #" . str::random());
 
+        static::$compileThread = $th;
         $th->start();
     }
 

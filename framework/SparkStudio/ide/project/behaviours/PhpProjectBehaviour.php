@@ -342,18 +342,34 @@ class PhpProjectBehaviour extends AbstractProjectBehaviour
             $zipLibraries = $this->collectZipLibraries();
 
             $generatedDirectory = $this->project->getSrcFile('', true);
-            $dirs = [$generatedDirectory, $this->project->getSrcFile('')];
+            $compileDirs = [$generatedDirectory, $this->project->getSrcFile('')];
 
             $includedFiles = [];
 
             if ($bundle = BundleProjectBehaviour::get()) {
                 foreach ($bundle->fetchAllBundles($env) as $one) {
-                    $dirs[] = $one->getProjectVendorDirectory();
+                    $compileDirs[] = $one->getProjectVendorDirectory();
+                }
+            }
+
+            $resolveDirs = $compileDirs;
+
+            $ideRoot = Ide::getOwnFile('');
+            $sourceDirs = ['gui', 'runtime', 'extensions', 'utils', 'framework', 'parser', 'database', 'debug', 'network'];
+
+            foreach ($sourceDirs as $dir) {
+                $parent = new File($ideRoot, $dir);
+                if ($parent->isDirectory()) {
+                    foreach ($parent->findFiles() as $sub) {
+                        if ($sub->isDirectory() && !str::startsWith($sub->getName(), '.')) {
+                            $resolveDirs[] = fs::abs($sub);
+                        }
+                    }
                 }
             }
 
             // Add packages -------------------------------
-            foreach ($dirs as $dir) {
+            foreach ($resolveDirs as $dir) {
                 fs::scan("$dir/.packages", function ($filename) use ($scope) {
                     $ext = fs::ext($filename);
 
@@ -383,13 +399,13 @@ class PhpProjectBehaviour extends AbstractProjectBehaviour
             }
             // ----------------------------------------------
 
-            $scope->execute(function () use ($zipLibraries, $generatedDirectory, $dirs, &$includedFiles) {
+            $scope->execute(function () use ($zipLibraries, $generatedDirectory, $resolveDirs, &$includedFiles) {
                 ob_implicit_flush(true);
 
-                spl_autoload_register(function ($name) use ($zipLibraries, $generatedDirectory, $dirs, &$includedFiles) {
+                spl_autoload_register(function ($name) use ($zipLibraries, $generatedDirectory, $resolveDirs, &$includedFiles) {
                     echo("Try class '$name' auto load\n");
 
-                    foreach ($dirs as $dir) {
+                    foreach ($resolveDirs as $dir) {
                         $filename = "$dir/$name.php";
 
                         if (fs::exists($filename)) {
@@ -466,7 +482,7 @@ class PhpProjectBehaviour extends AbstractProjectBehaviour
                 });
             });
 
-            foreach ($dirs as $i => $dir) {
+            foreach ($compileDirs as $i => $dir) {
                 fs::scan($dir, function ($filename) use ($log, $scope, $i, $useByteCode, $generatedDirectory, $dir, &$includedFiles) {
                     $relativePath = FileUtils::relativePath($dir, $filename);
 
