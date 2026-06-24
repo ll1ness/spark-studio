@@ -136,6 +136,11 @@ class OneJarBuildType extends AbstractBuildType
         $dialog = new BuildProgressForm();
         $dialog->show();
 
+        $dialog->setStopProcedure(function () {
+            ProjectSystem::stopCompile();
+            return true;
+        });
+
         $onExitProcess = function ($exitValue) use ($project, $dialog, $finished, $config) {
             Logger::info("Finish executing: exitValue = $exitValue");
 
@@ -160,6 +165,7 @@ class OneJarBuildType extends AbstractBuildType
                     $dialog = new BuildSuccessForm();
                     $dialog->setBuildPath($this->getBuildPath($project));
                     $dialog->setOpenDirectory($this->getBuildPath($project));
+                    $dialog->setCreateBatFile($this->getBuildPath($project) . "/{$project->getName()}.jar");
 
                     $pathToProgram = [Ide::get()->getJrePath() . "/bin/java",  "-jar", "{$this->getBuildPath($project)}/{$project->getName()}.jar"];
 

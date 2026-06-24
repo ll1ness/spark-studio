@@ -216,9 +216,17 @@ class ExecuteProjectCommand extends AbstractCommand
                 $this->actionButton->text = 'Остановить';
             }
 
-            $dialog->closeButton->on('action', function () {
+            $dialog->closeButton->on('action', function () use ($dialog) {
+                if (ProjectSystem::isCompiling()) {
+                    ProjectSystem::stopCompile();
+                }
                 Ide::get()->getMainForm()->hideBottom();
             }, __CLASS__);
+
+            $dialog->setStopProcedure(function () {
+                ProjectSystem::stopCompile();
+                return true;
+            });
 
             ProjectSystem::saveOnlyRequired();
             ProjectSystem::compileAll(Project::ENV_DEV, $dialog, 'java -cp ... org.develnext.jphp.ext.javafx.FXLauncher', function ($success) use ($dialog, $project, $ide) {

@@ -234,6 +234,11 @@ class WindowsApplicationBuildType extends AbstractBuildType
         $dialog = new BuildProgressForm();
         $dialog->show();
 
+        $dialog->setStopProcedure(function () {
+            ProjectSystem::stopCompile();
+            return true;
+        });
+
         $jreHome = Ide::get()->getJrePath();
         $launch4j = Ide::get()->getLaunch4JProgram();
 
