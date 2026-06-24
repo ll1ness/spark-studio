@@ -151,7 +151,7 @@ class BuildSuccessForm extends AbstractIdeForm
 
         try {
             FileUtils::put($batPath, $content);
-            UXDialog::show("Файл запуска создан:\n{$batPath}", "Создан .bat файл");
+            UXDialog::show("Файл запуска создан:\n{$batPath}", 'INFORMATION');
         } catch (\Exception $e) {
             Ide::showError("Не удалось создать .bat файл: " . $e->getMessage());
         }
