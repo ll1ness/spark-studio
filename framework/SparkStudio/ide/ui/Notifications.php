@@ -17,7 +17,10 @@ class Notifications
         $notify->location = 'TOP_RIGHT';
         $notify->animationType = 'POPUP';
         $notify->verGap = 30;
-        $notify->show();
+
+        uiLater(function () use ($notify) {
+            $notify->show();
+        });
 
         return $notify;
     }

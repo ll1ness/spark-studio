@@ -3,15 +3,16 @@ namespace ide\forms;
 
 use ide\Ide;
 use ide\Logger;
+use ide\utils\FileUtils;
 use php\gui\UXDesktop;
 use php\gui\framework\AbstractForm;
 use php\gui\UXButton;
+use php\gui\UXDialog;
 use php\gui\UXImageView;
 use php\gui\UXTextField;
 use php\io\File;
 use php\io\IOException;
 use php\lang\Process;
-use php\lib\fs;
 use php\lib\str;
 
 /**
@@ -21,6 +22,7 @@ use php\lib\str;
  * @property UXImageView $icon
  * @property UXButton $runButton
  * @property UXButton $openButton
+ * @property UXButton $batButton
  * @property UXButton $exitButton
  * @property UXTextField $pathField
  */
@@ -40,6 +42,11 @@ class BuildSuccessForm extends AbstractIdeForm
      * @var string
      */
     protected $buildPath;
+
+    /**
+     * @var string|null
+     */
+    protected $jarPath;
 
     protected function init()
     {
@@ -98,6 +105,14 @@ class BuildSuccessForm extends AbstractIdeForm
     }
 
     /**
+     * @param string $jarPath полный путь к .jar файлу
+     */
+    public function setCreateBatFile($jarPath)
+    {
+        $this->jarPath = $jarPath;
+    }
+
+    /**
      * @param string $buildPath
      */
     public function setBuildPath($buildPath)
@@ -114,8 +129,32 @@ class BuildSuccessForm extends AbstractIdeForm
 
         $this->runButton->free();
         $this->openButton->enabled = !!$this->onOpenDirectory;
+        $this->batButton->visible = !!$this->jarPath;
+        $this->batButton->managed = !!$this->jarPath;
 
         $this->pathField->text = File::of($this->buildPath);
+    }
+
+    /**
+     * @event batButton.action
+     */
+    public function doBatClick()
+    {
+        $jarFile = File::of($this->jarPath);
+        $jarName = $jarFile->getName();
+        $batPath = $this->buildPath . "/" . str::replace($jarName, '.jar', '') . ".bat";
+
+        $content = "@echo off\r\n" .
+            "cd /d \"%~dp0\"\r\n" .
+            "java -jar \"{$jarName}\" %*\r\n" .
+            "pause\r\n";
+
+        try {
+            FileUtils::put($batPath, $content);
+            UXDialog::show("Файл запуска создан:\n{$batPath}", "Создан .bat файл");
+        } catch (\Exception $e) {
+            Ide::showError("Не удалось создать .bat файл: " . $e->getMessage());
+        }
     }
 
     /**

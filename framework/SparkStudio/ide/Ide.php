@@ -1506,11 +1506,8 @@ class Ide extends Application
                 return;
             }
 
-            $this->openedWindows--;
-
-            if ($this->openedWindows <= 0) {
-                // All secondary windows are closed, shut down.
-                $this->shutdown();
+            if ($this->openedWindows > 0) {
+                $this->openedWindows--;
             }
         });
 
