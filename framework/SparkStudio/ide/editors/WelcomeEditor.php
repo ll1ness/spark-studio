@@ -6,6 +6,7 @@ use ide\commands\NewProjectCommand;
 use ide\commands\OpenProjectCommand;
 use ide\forms\OpenProjectForm;
 use ide\Ide;
+use ide\systems\IdeSystem;
 use php\gui\layout\UXAnchorPane;
 use php\gui\layout\UXHBox;
 use php\gui\layout\UXStackPane;
@@ -56,10 +57,28 @@ class WelcomeEditor extends AbstractEditor
         $content->spacing = 32;
         $content->maxWidth = 680;
 
-        $logo = new UXLabel('SPARKSTUDIO');
-        $logo->font = UXFont::of('System Bold', 36);
-        $logo->alignment = 'CENTER';
-        $logo->maxWidth = 99999;
+        $logoLabel = new UXLabel('SPARKSTUDIO');
+        $logoLabel->font = UXFont::of('System Bold', 36);
+        $logoLabel->alignment = 'CENTER';
+        $logoLabel->maxWidth = 99999;
+
+        $logoBox = new UXHBox();
+        $logoBox->alignment = 'CENTER';
+        $logoBox->spacing = 12;
+
+        try {
+            $logoFile = IdeSystem::getOwnFile('logo.png');
+            if ($logoFile && fs::isFile($logoFile)) {
+                $logoImage = new UXImage(File::of($logoFile)->getAbsolutePath());
+                $logoView = new UXImageView($logoImage);
+                $logoView->fitHeight = 36;
+                $logoView->preserveRatio = true;
+                $logoBox->children->add($logoView);
+            }
+        } catch (\Exception $e) {
+        }
+
+        $logoBox->children->add($logoLabel);
 
         $columns = new UXHBox();
         $columns->spacing = 60;
@@ -96,7 +115,7 @@ class WelcomeEditor extends AbstractEditor
         $rightCol->children->add($this->makeRecentSection());
 
         $columns->children->addAll([$leftCol, $rightCol]);
-        $content->children->addAll([$logo, $columns]);
+        $content->children->addAll([$logoBox, $columns]);
         $root->children->add($content);
 
         uiLater(function () use ($root) {

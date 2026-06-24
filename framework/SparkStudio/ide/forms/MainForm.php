@@ -174,12 +174,24 @@ class MainForm extends AbstractIdeForm
 
         UXAnchorPane::setAnchor($tree, 0);
 
+        $this->directoryTree->visible = false;
+        $this->directoryTree->managed = false;
+
         Ide::get()->bind('shutdown', function () {
             $this->ideConfig()->set("splitTree.dividerPositions", $this->splitTree->dividerPositions);
             $this->ideConfig()->set("centerSplit.dividerPositions", $this->centerSplit->dividerPositions);
         });
 
         Ide::get()->bind('openProject', function () use ($tree) {
+            if (!$this->directoryTree->visible) {
+                $this->directoryTree->visible = true;
+                $this->directoryTree->managed = true;
+
+                if ($this->ideConfig()->has('splitTree.dividerPositions')) {
+                    $this->splitTree->dividerPositions = $this->ideConfig()->getArray('splitTree.dividerPositions', [0.2]);
+                }
+            }
+
             $project = Ide::project();
             $project->getTree()->setView($tree);
 
@@ -196,6 +208,9 @@ class MainForm extends AbstractIdeForm
                 $tree->treeSource->shutdown();
             }
             $tree->treeSource = null;
+
+            $this->directoryTree->visible = false;
+            $this->directoryTree->managed = false;
 
             $this->footerLeftPane->children->clear();
         });
