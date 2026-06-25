@@ -144,10 +144,16 @@ class BuildSuccessForm extends AbstractIdeForm
         $jarName = $jarFile->getName();
         $batPath = $this->buildPath . "/" . str::replace($jarName, '.jar', '') . ".bat";
 
+        $jrePath = Ide::get()->getJrePath();
+        $javaExe = $jrePath ? str::replace($jrePath, '/', '\\') . '\\bin\\java.exe' : 'java';
+
         $content = "@echo off\r\n" .
+            "setlocal\r\n" .
+            "set \"JAVA_HOME={$jrePath}\"\r\n" .
             "cd /d \"%~dp0\"\r\n" .
-            "java -jar \"{$jarName}\" %*\r\n" .
-            "pause\r\n";
+            "\"{$javaExe}\" -jar \"{$jarName}\" %*\r\n" .
+            "if errorlevel 1 pause\r\n" .
+            "endlocal\r\n";
 
         try {
             FileUtils::put($batPath, $content);
