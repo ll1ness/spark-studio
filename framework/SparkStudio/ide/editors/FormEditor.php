@@ -1909,7 +1909,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $viewer->on('dragDrop', $this->makeDesignerDragDropHandler());
 
         if (!$fullArea) {
-            $viewer->content = new UXGroup([$area]);
+            $viewer->content = $area;
             $viewer->fitToWidth = true;
             $viewer->fitToHeight = true;
 
@@ -1921,16 +1921,9 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $designPane->add($this->layout);
             $this->trigger('makeDesignPane', [$designPane]);
 
-            $designPane->onResize(function () use ($designPane) {
-                $this->designer->update();
-
-                // update form properties.
-                if (!$this->designer->getSelectedNodes()) {
-                    $this->updateProperties($this, ['size']);
-                }
-
-                $pw = $designPane->width;
-                $ph = $designPane->height;
+            $recenterDesignPane = function () use ($designPane, $viewer) {
+                $pw = $viewer->viewportBounds['width'];
+                $ph = $viewer->viewportBounds['height'];
                 $lw = $this->layout->width;
                 $lh = $this->layout->height;
 
@@ -1942,19 +1935,27 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
                 } else {
                     $designPane->position = [0, 0];
                 }
+            };
+
+            $designPane->onResize(function () use ($designPane, $recenterDesignPane) {
+                $this->designer->update();
+
+                if (!$this->designer->getSelectedNodes()) {
+                    $this->updateProperties($this, ['size']);
+                }
+
+                $recenterDesignPane();
             });
 
-            $pw = $designPane->width;
-            $ph = $designPane->height;
-            $lw = $this->layout->width;
-            $lh = $this->layout->height;
+            $viewer->observer('width')->addListener(function () use ($recenterDesignPane) {
+                uiLater($recenterDesignPane);
+            });
 
-            if ($pw > $lw || $ph > $lh) {
-                $designPane->position = [
-                    max(0, ($pw - $lw) / 2),
-                    max(0, ($ph - $lh) / 2)
-                ];
-            }
+            $viewer->observer('height')->addListener(function () use ($recenterDesignPane) {
+                uiLater($recenterDesignPane);
+            });
+
+            uiLater($recenterDesignPane);
         } else {
             $this->markerNode = $this->layout;
 
