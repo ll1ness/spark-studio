@@ -753,3 +753,20 @@
 .modules-editor {
     -fx-control-inner-background: #2C5260;
 }
+
+/* === LIST EXTENDED ITEMS (skin manager, menus) === */
+.sprk-list-menu {
+    -fx-background-insets: 0;
+    -fx-focus-color: -fx-control-inner-background;
+    -fx-faint-focus-color: -fx-control-inner-background;
+}
+
+.sprk-list-menu-title {
+    -fx-font-weight: bold;
+    -fx-padding: 0;
+    -fx-text-fill: #f0f0f0;
+}
+
+.sprk-list-menu-description {
+    -fx-text-fill: #888888;
+}
