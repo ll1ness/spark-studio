@@ -14,3 +14,4 @@ build/languages/
 build/php-sdk/
 build/projectExtension.ico
 __pycache__/
+bin/sparkstudio.exe
