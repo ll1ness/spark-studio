@@ -319,6 +319,34 @@ class IdeActionsPane extends UXHBox
         $zoom = round($value * 100);
         $this->zoomSelect->value = "{$zoom}%";
         $this->designPane->zoom = $value;
+        $this->designer->zoom = $value;
+        $this->eventHandler->trigger('change');
+    }
+
+    public function zoomIn()
+    {
+        $zoomList = [10, 25, 33, 50, 67, 75, 100, 125, 150, 200, 300, 400, 500];
+        $current = round($this->designPane->zoom * 100);
+
+        foreach ($zoomList as $level) {
+            if ($level > $current) {
+                $this->setZoom($level / 100);
+                return;
+            }
+        }
+    }
+
+    public function zoomOut()
+    {
+        $zoomList = [10, 25, 33, 50, 67, 75, 100, 125, 150, 200, 300, 400, 500];
+        $current = round($this->designPane->zoom * 100);
+
+        for ($i = count($zoomList) - 1; $i >= 0; $i--) {
+            if ($zoomList[$i] < $current) {
+                $this->setZoom($zoomList[$i] / 100);
+                return;
+            }
+        }
     }
 
     public function getZoom()

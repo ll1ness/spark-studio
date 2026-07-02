@@ -264,6 +264,11 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
     protected $actionsPane;
 
     /**
+     * @var callable
+     */
+    protected $recenterDesignPane;
+
+    /**
      * @var UXSplitPane
      */
     protected $rightSplit;
@@ -1272,6 +1277,10 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
         $ui->getEventHandler()->on('change', function () {
             $this->save();
+
+            if ($this->recenterDesignPane) {
+                uiLater($this->recenterDesignPane);
+            }
         });
 
         return $ui;
@@ -1921,20 +1930,16 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $designPane->add($this->layout);
             $this->trigger('makeDesignPane', [$designPane]);
 
-            $recenterDesignPane = function () use ($designPane, $viewer) {
+            $this->recenterDesignPane = $recenterDesignPane = function () use ($designPane, $viewer) {
                 $pw = $viewer->viewportBounds['width'];
                 $ph = $viewer->viewportBounds['height'];
-                $lw = $this->layout->width;
-                $lh = $this->layout->height;
+                $lw = $this->layout->width * $designPane->zoom;
+                $lh = $this->layout->height * $designPane->zoom;
 
-                if ($pw > $lw || $ph > $lh) {
-                    $designPane->position = [
-                        max(0, ($pw - $lw) / 2),
-                        max(0, ($ph - $lh) / 2)
-                    ];
-                } else {
-                    $designPane->position = [0, 0];
-                }
+                $designPane->position = [
+                    max(0, ($pw - $lw) / 2),
+                    max(0, ($ph - $lh) / 2)
+                ];
             };
 
             $designPane->onResize(function () use ($designPane, $recenterDesignPane) {
@@ -2104,6 +2109,21 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         $this->viewerAndEvents->items->remove($designerCodeEditor);
 
         $actions = $this->makeActionsUi($designPane);
+
+        if ($this->actionsPane) {
+            $actionsPane = $this->actionsPane;
+            $this->layoutViewer->on('scroll', function ($e) use ($actionsPane) {
+                if ($e->controlDown) {
+                    $e->consume();
+
+                    if ($e->deltaY > 0) {
+                        $actionsPane->zoomIn();
+                    } else if ($e->deltaY < 0) {
+                        $actionsPane->zoomOut();
+                    }
+                }
+            });
+        }
 
         if ($actions) {
             $ui = new UXVBox([$actions, $this->viewerAndEvents]);
