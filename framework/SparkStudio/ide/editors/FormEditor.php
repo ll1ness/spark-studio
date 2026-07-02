@@ -1910,6 +1910,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
         });
 
         $designPane = new UXDesignPane();
+        $designPane->borderColor = 'transparent';
 
         $viewer->on('dragOver', $this->makeDesignerDragOverHandler());
         $viewer->on('dragDone', function (UXEvent $e) {
@@ -1933,12 +1934,13 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $this->recenterDesignPane = $recenterDesignPane = function () use ($designPane, $viewer) {
                 $pw = $viewer->viewportBounds['width'];
                 $ph = $viewer->viewportBounds['height'];
-                $lw = $this->layout->width * $designPane->zoom;
-                $lh = $this->layout->height * $designPane->zoom;
+                $bw = $designPane->borderWidth * 2;
+                $lw = ($this->layout->width + $bw) * $designPane->zoom;
+                $lh = ($this->layout->height + $bw) * $designPane->zoom;
 
                 $designPane->position = [
-                    max(0, ($pw - $lw) / 2),
-                    max(0, ($ph - $lh) / 2)
+                    $pw > 0 ? max(32, ($pw - $lw) / 2) : 32,
+                    $ph > 0 ? max(32, ($ph - $lh) / 2) : 32
                 ];
             };
 
