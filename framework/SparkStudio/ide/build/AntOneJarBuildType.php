@@ -334,23 +334,25 @@ class AntOneJarBuildType extends AbstractBuildType
                 }
 
                 // Add IDE runtime directories (classes + php + resources)
-                $ideRoot = Ide::get()->getOwnFile('');
+                $ideRoot = (string) Ide::get()->getOwnFile('');
                 $sourceDirs = ['gui', 'runtime', 'extensions', 'utils', 'framework', 'parser', 'database', 'debug', 'network'];
                 foreach ($sourceDirs as $dir) {
-                    $parent = new File($ideRoot, $dir);
-                    if ($parent->isDirectory()) {
-                        foreach ($parent->findFiles() as $sub) {
-                            if ($sub->isDirectory() && !str::startsWith($sub->getName(), '.')) {
-                                $subPath = fs::abs($sub);
-                                $subName = $sub->getName();
-                                fs::scan($subPath, function ($f) use ($finalJar, $subPath, $subName) {
-                                    if (str::startsWith(fs::name($f), '.')) return;
-                                    $rel = $subName . "/" . FileUtils::relativePath($subPath, $f);
-                                    $finalJar->add($rel, new File($f));
-                                });
-                            }
-                        }
-                    }
+                    $parentPath = "$ideRoot/$dir";
+                    if (!fs::isDir($parentPath)) continue;
+
+                    fs::scan($parentPath, function ($sub) use ($finalJar, $parentPath) {
+                        if (!fs::isDir($sub)) return;
+                        $subName = fs::name($sub);
+                        if (str::startsWith($subName, '.')) return;
+
+                        $subPath = (string) $sub;
+                        fs::scan($subPath, function ($f) use ($finalJar, $subPath, $subName) {
+                            if (fs::isDir($f)) return;
+                            if (str::startsWith(fs::name($f), '.')) return;
+                            $rel = $subName . "/" . FileUtils::relativePath($subPath, $f);
+                            $finalJar->add($rel, new File($f));
+                        });
+                    }, 1);
                 }
 
                 // Add manifest
@@ -367,8 +369,10 @@ class AntOneJarBuildType extends AbstractBuildType
                     $onExitProcess(0);
                 });
 
-            } catch (\Exception $e) {
-                Logger::warn("Build error: {$e->getMessage()}");
+            } catch (\Throwable $e) {
+                $msg = get_class($e) . ": {$e->getMessage()} on line {$e->getLine()} in {$e->getFile()}";
+                Logger::warn("Build error: $msg");
+                $dialog->addConsoleLine("[ERROR] $msg", 'red');
                 $dialog->stopWithError();
             }
         });
