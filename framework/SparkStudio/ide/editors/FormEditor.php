@@ -2153,7 +2153,7 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
 
             $rightContent = new UXVBox();
             $rightContent->spacing = 2;
-            $rightContent->children->addAll($eventListUi, $this->behaviourBox, $propertiesUi);
+            $rightContent->children->addAll([$eventListUi, $this->behaviourBox, $propertiesUi]);
             UXVBox::setVgrow($propertiesUi, 'ALWAYS');
 
             $rightScroll = new UXScrollPane($rightContent);
