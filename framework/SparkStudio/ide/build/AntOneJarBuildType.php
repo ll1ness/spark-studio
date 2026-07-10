@@ -232,19 +232,23 @@ class AntOneJarBuildType extends AbstractBuildType
                 $distDir = $project->getRootDir() . "/build/dist";
                 fs::makeDir("$distDir/lib");
 
+                $rootDir = $project->getRootDir();
+                $srcGenDir = $rootDir . "/" . $project->getSrcGeneratedDirectory();
+                $srcDir = $rootDir . "/" . $project->getSrcDirectory();
+
                 // 1) Create sprk-compiled-module.jar from compiled .phb files
                 $compiledJar = ZipFile::create("$distDir/lib/sprk-compiled-module.jar");
-                fs::scan($project->getSrcGeneratedDirectory(), function ($f) use ($compiledJar) {
+                fs::scan($srcGenDir, function ($f) use ($compiledJar, $srcGenDir) {
                     if (fs::ext($f) == 'phb') {
-                        $rel = FileUtils::relativePath($project->getSrcGeneratedDirectory(), $f);
+                        $rel = FileUtils::relativePath($srcGenDir, $f);
                         $compiledJar->add($rel, new File($f));
                     }
                 });
                 if ($php = PhpProjectBehaviour::get()) {
                     if (!$php->isByteCodeEnabled()) {
-                        fs::scan($project->getSrcDirectory(), function ($f) use ($compiledJar) {
+                        fs::scan($srcDir, function ($f) use ($compiledJar, $srcDir) {
                             if (fs::ext($f) == 'php' || fs::ext($f) == 'phb') {
-                                $rel = FileUtils::relativePath($project->getSrcDirectory(), $f);
+                                $rel = FileUtils::relativePath($srcDir, $f);
                                 $compiledJar->add($rel, new File($f));
                             }
                         });
