@@ -2141,45 +2141,29 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
                 $eventListUi = $this->eventListPane->getUi();
             }
             $eventListUi->minHeight = 100;
+            $eventListUi->maxHeight = 200;
 
             $this->behaviourBox = new UXVBox();
             $this->behaviourBox->fillWidth = true;
             $this->behaviourBox->minHeight = 100;
+            $this->behaviourBox->maxHeight = 200;
 
             $propertiesUi = $this->propertiesPane->makeUi();
             $propertiesUi->minHeight = 100;
 
-            $propertiesScroll = new UXScrollPane($propertiesUi);
-            $propertiesScroll->fitToWidth = true;
-            $propertiesScroll->fitToHeight = true;
-            $propertiesScroll->minHeight = 100;
+            $rightContent = new UXVBox();
+            $rightContent->spacing = 2;
+            $rightContent->children->addAll($eventListUi, $this->behaviourBox, $propertiesUi);
+            UXVBox::setVgrow($propertiesUi, 'ALWAYS');
 
-            $this->rightSplit = new UXSplitPane([$eventListUi, $this->behaviourBox, $propertiesScroll]);
-            $this->rightSplit->orientation = 'VERTICAL';
-
-            UXSplitPane::setResizeWithParent($eventListUi, true);
-            UXSplitPane::setResizeWithParent($this->behaviourBox, true);
-            UXSplitPane::setResizeWithParent($propertiesScroll, true);
-
-            uiLater(function () {
-                $positions = [0.35, 0.7];
-                if ($this->getIdeConfig() && $this->getIdeConfig()->has('rightSplit.dividerPositions')) {
-                    $positions = $this->getIdeConfig()->getArray('rightSplit.dividerPositions', $positions);
-                }
-                $this->rightSplit->dividerPositions = $positions;
-            });
-
-            $rightScroll = new UXScrollPane($this->rightSplit);
+            $rightScroll = new UXScrollPane($rightContent);
             $rightScroll->fitToWidth = true;
-            $rightScroll->fitToHeight = true;
 
             UXAnchorPane::setAnchor($rightScroll, 0);
-            UXSplitPane::setResizeWithParent($rightScroll, false);
 
             $right = new UXAnchorPane();
             $right->prefWidth = 250;
             $right->add($rightScroll);
-            UXSplitPane::setResizeWithParent($right, false);
 
             $split = new UXSplitPane([$ui, $right]);
             $split->orientation = 'HORIZONTAL';
