@@ -333,6 +333,26 @@ class AntOneJarBuildType extends AbstractBuildType
                     }
                 }
 
+                // Add IDE runtime directories (classes + php + resources)
+                $ideRoot = Ide::get()->getOwnFile('');
+                $sourceDirs = ['gui', 'runtime', 'extensions', 'utils', 'framework', 'parser', 'database', 'debug', 'network'];
+                foreach ($sourceDirs as $dir) {
+                    $parent = new File($ideRoot, $dir);
+                    if ($parent->isDirectory()) {
+                        foreach ($parent->findFiles() as $sub) {
+                            if ($sub->isDirectory() && !str::startsWith($sub->getName(), '.')) {
+                                $subPath = fs::abs($sub);
+                                $subName = $sub->getName();
+                                fs::scan($subPath, function ($f) use ($finalJar, $subPath, $subName) {
+                                    if (str::startsWith(fs::name($f), '.')) return;
+                                    $rel = $subName . "/" . FileUtils::relativePath($subPath, $f);
+                                    $finalJar->add($rel, new File($f));
+                                });
+                            }
+                        }
+                    }
+                }
+
                 // Add manifest
                 $manifest = "Manifest-Version: 1.0\r\nMain-Class: org.develnext.jphp.ext.javafx.FXLauncher\r\n\r\n";
                 $finalJar->addFromString('META-INF/MANIFEST.MF', $manifest);
