@@ -333,26 +333,30 @@ class AntOneJarBuildType extends AbstractBuildType
                     }
                 }
 
-                // Add IDE runtime directories (classes + php + resources)
+                // Add IDE runtime libraries (classes + php + resources)
                 $ideRoot = (string) Ide::get()->getOwnFile('');
                 $sourceDirs = ['gui', 'runtime', 'extensions', 'utils', 'framework', 'parser', 'database', 'debug', 'network'];
+                $skipDirs = ['SparkStudio'];
                 foreach ($sourceDirs as $dir) {
                     $parentPath = "$ideRoot/$dir";
                     if (!fs::isDir($parentPath)) continue;
 
-                    fs::scan($parentPath, function ($sub) use ($finalJar, $parentPath) {
-                        if (!fs::isDir($sub)) return;
-                        $subName = fs::name($sub);
-                        if (str::startsWith($subName, '.')) return;
+                    $subs = @scandir($parentPath);
+                    if (!$subs) continue;
+                    foreach ($subs as $subName) {
+                        if ($subName == '.' || $subName == '..' || str::startsWith($subName, '.')) continue;
+                        if (in_array($subName, $skipDirs)) continue;
+                        $subPath = "$parentPath/$subName";
+                        if (!is_dir($subPath)) continue;
 
-                        $subPath = (string) $sub;
-                        fs::scan($subPath, function ($f) use ($finalJar, $subPath, $subName) {
-                            if (fs::isDir($f)) return;
+                        $scanPath = str_replace('\\', '/', $subPath);
+                        fs::scan($scanPath, function ($f) use ($finalJar, $scanPath, $subName) {
+                            if (is_dir($f)) return;
                             if (str::startsWith(fs::name($f), '.')) return;
-                            $rel = $subName . "/" . FileUtils::relativePath($subPath, $f);
-                            $finalJar->add($rel, new File($f));
+                            $rel = $subName . "/" . FileUtils::relativePath($scanPath, str_replace('\\', '/', $f));
+                            $finalJar->add($rel, new File(str_replace('\\', '/', $f)));
                         });
-                    }, 1);
+                    }
                 }
 
                 // Add manifest
