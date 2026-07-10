@@ -5,6 +5,7 @@ use spark\bundle\controlfx\ControlFXBundle;
 use spark\bundle\game2d\Game2DBundle;
 use ide\bundle\std\UIDesktopBundle;
 use ide\editors\FormEditor;
+use ide\Ide;
 use ide\Logger;
 use ide\project\AbstractProjectTemplate;
 use ide\project\behaviours\BackupProjectBehaviour;
@@ -249,6 +250,11 @@ class DefaultGuiProjectTemplate extends AbstractProjectTemplate
             ]);
 
             $gui->setMainForm('MainForm');
+
+            $defaultSkin = Ide::get()->getLibrary()->getResource('skins', 'default');
+            if ($defaultSkin && $defaultSkin->isValid()) {
+                $gui->applySkin($defaultSkin->getSkin());
+            }
 
             FileSystem::open($project->getMainProjectFile());
             FileSystem::open($mainModule);
