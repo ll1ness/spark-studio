@@ -323,6 +323,7 @@ class AntOneJarBuildType extends AbstractBuildType
                         $zf->readAll(function ($stat, Stream $stream) use ($finalJar) {
                             $entry = $stat['name'];
                             if (str::startsWith($entry, 'JPHP-INF/sdk/')) return;
+                            if ($entry == 'META-INF/MANIFEST.MF') return;
                             if (fs::ext($entry) == 'php') return;
                             $finalJar->addFromString($entry, (string)$stream);
                         });
@@ -333,10 +334,7 @@ class AntOneJarBuildType extends AbstractBuildType
                 }
 
                 // Add manifest
-                $manifest = "Manifest-Version: 1.0
-\nMain-Class: org.develnext.jphp.ext.javafx.FXLauncher
-\n
-\n";
+                $manifest = "Manifest-Version: 1.0\r\nMain-Class: org.develnext.jphp.ext.javafx.FXLauncher\r\n\r\n";
                 $finalJar->addFromString('META-INF/MANIFEST.MF', $manifest);
 
                 $finalJar = null;
