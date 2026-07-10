@@ -281,13 +281,13 @@ class IdeTabPane
     public function showPropertiesPane()
     {
         if ($this->propertiesPane) {
-            $this->tab('properties', 'Свойства', $this->propertiesPane->makeUi());
+            $this->tab('properties', 'Свойства', $this->propertiesPane->makeUi(), false);
         }
     }
 
     public function addPropertiesPane(IdePropertiesPane $pane)
     {
-        $this->tab('properties', 'Свойства', $pane->makeUi());
+        $this->tab('properties', 'Свойства', $pane->makeUi(), false);
 
         $this->propertiesPane = $pane;
 

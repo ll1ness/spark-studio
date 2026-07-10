@@ -104,6 +104,12 @@ class IdePropertiesPane
                 $this->trigger('change');
             });
 
+            foreach ($properties->getGroupPanes() as $pane) {
+                $pane->expanded = true;
+                $pane->collapsible = false;
+                $pane->animated = false;
+            }
+
             $this->ui->children->addAll($properties->getGroupPanes());
         }
     }
