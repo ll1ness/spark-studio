@@ -2078,6 +2078,20 @@ class FormEditor extends AbstractModuleEditor implements MarkerTargable
             $this->designer->registerNode($node);
         }
 
+        $this->layout->on('mouseDown', function ($e) {
+            $node = $e->target;
+            while ($node) {
+                if ($this->designer->isRegisteredNode($node)) {
+                    return;
+                }
+                if ($node === $this->layout) {
+                    break;
+                }
+                $node = $node->parent;
+            }
+            $this->selectForm();
+        });
+
         if (!$fullArea) {
             $area->add($designPane);
         }
