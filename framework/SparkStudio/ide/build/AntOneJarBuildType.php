@@ -296,7 +296,9 @@ class AntOneJarBuildType extends AbstractBuildType
                     }
 
                     $jarName = $project->getName() ?: 'app';
-                    $finalJar = ZipFile::create("$distDir/$jarName.jar");
+                    $finalJarPath = "$distDir/$jarName.jar";
+                    fs::delete($finalJarPath);
+                    $finalJar = ZipFile::create($finalJarPath);
 
                     $zf = new ZipFile("$distDir/lib/sprk-compiled-module.jar");
                     $zf->readAll(function ($stat, Stream $stream) use ($finalJar) {
