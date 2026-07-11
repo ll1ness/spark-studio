@@ -1,7 +1,7 @@
 <div align="center">
 <img src="logo.png" width="80" height="80" style="border-radius:50%">
 
-### Spark Studio
+### Spark Studio 17
 **Visual IDE for building PHP desktop applications. Originally DevelNext.**
 
 [![Version](https://img.shields.io/badge/version-16.7.5--autumn-6366f1?style=flat-square)]()
