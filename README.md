@@ -41,10 +41,15 @@ Spark Studio is an IDE for creating cross-platform desktop GUI applications in P
 ## Quick start
 
 ```bash
-./bin/[OS].sh #ex. ./bin/linux.sh
+./bin/windows.bat #windows
 ```
 
-Requires Java 8+ (bundled JRE in `bin/jre/`).
+```bash
+./bin/linux.sh #linux
+```
+
+> [!WARNING]
+> The Linux version was tested on Arch, Endeavour, Ubuntu, and NixOS distributions. If you encounter problems with the tested distributions, create an issue using the template. Requires Java 8+.
 
 ## Project structure
 
