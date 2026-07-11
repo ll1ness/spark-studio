@@ -12,6 +12,8 @@
 
 ## Overview
 
+<img width="1920" height="1031" alt="{B39EE11B-0A9E-452F-B508-D91E97F040CB}" src="https://github.com/user-attachments/assets/d1a0896c-ed6b-4ada-90c5-8bc7c1c33ddc" />
+
 Spark Studio is an IDE for creating cross-platform desktop GUI applications in PHP. It bundles the JPHP runtime — a PHP implementation on the Java Virtual Machine — with a visual form designer, code editor, debugger, plugin system, and build toolchain (Launch4J, InnoSetup, Ant, Gradle).
 
 ## Features
