@@ -191,6 +191,10 @@ class AntOneJarBuildType extends AbstractBuildType
     function onExecute(Project $project, $finished = true)
     {
         FileUtils::deleteDirectory($this->getBuildPath($project));
+        
+        // Pre-load BuildProgressForm class to avoid class loader issues in background thread
+        class_exists('ide\\forms\\BuildProgressForm');
+        
         $dialog = new BuildProgressForm();
         $dialog->show();
 
@@ -227,10 +231,11 @@ class AntOneJarBuildType extends AbstractBuildType
         $dialog->setOnExitProcess($onExitProcess);
 
         ProjectSystem::saveOnlyRequired();
-        ProjectSystem::compileAll(Project::ENV_PROD, $dialog, 'build jar', function ($success) use ($project, $dialog, $onExitProcess) {
+        $buildStartTime = microtime(true);
+        ProjectSystem::compileAll(Project::ENV_PROD, $dialog, 'build jar', function ($success) use ($project, $dialog, $onExitProcess, $buildStartTime) {
             if (!$success) { $dialog->stopWithError(); return; }
 
-            static::$buildThread = new Thread(function () use ($project, $dialog, $onExitProcess) {
+            static::$buildThread = new Thread(function () use ($project, $dialog, $onExitProcess, $buildStartTime) {
                 try {
                     $distDir = $project->getRootDir() . "/build/dist";
                     fs::makeDir("$distDir/lib");
@@ -360,16 +365,22 @@ class AntOneJarBuildType extends AbstractBuildType
 
                     fs::delete("$distDir/lib/sprk-compiled-module.jar");
 
+                    $elapsed = round(microtime(true) - $buildStartTime, 2);
+
                     Logger::info("Build OK -> $distDir/$jarName.jar");
-                    UXApplication::runLater(function () use ($onExitProcess) {
+                    UXApplication::runLater(function () use ($onExitProcess, $dialog, $elapsed) {
+                        $dialog->addConsoleLine("");
+                        $dialog->addConsoleLine("Build time: {$elapsed}s", 'green');
                         $onExitProcess(0);
                     });
 
                 } catch (\Throwable $e) {
+                    $elapsed = round(microtime(true) - $buildStartTime, 2);
                     $msg = get_class($e) . ": {$e->getMessage()} on line {$e->getLine()} in {$e->getFile()}";
                     Logger::warn("Build error: $msg");
-                    UXApplication::runLater(function () use ($dialog, $msg) {
+                    UXApplication::runLater(function () use ($dialog, $msg, $elapsed) {
                         $dialog->addConsoleLine("[ERROR] $msg", 'red');
+                        $dialog->addConsoleLine("Build time: {$elapsed}s", 'gray');
                         $dialog->stopWithError();
                     });
                 } finally {
