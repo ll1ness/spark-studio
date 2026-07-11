@@ -4,6 +4,8 @@
 ### Spark Studio 17
 **Visual IDE for building PHP desktop applications. Originally DevelNext.**
 
+_*Now available on Linux🐧*_
+
 [![Version](https://img.shields.io/badge/version-17.0.1-6366f1?style=flat-square)]()
 [![Runtime](https://img.shields.io/badge/runtime-JPHP%20%2B%20JavaFX-ff6600?style=flat-square)]()
 [![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)]()
