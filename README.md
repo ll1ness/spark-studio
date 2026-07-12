@@ -35,7 +35,7 @@ Spark Studio is an IDE for creating cross-platform desktop GUI applications in P
 - Visual behaviors: animations, effects, game logic
 - Debugger with breakpoints and step-through
 - Plugin system via extensions and bundles
-- Export to JAR/EXE/MSI
+- Export to JAR with .bat executor
 - English and Russian interfaces
 
 ## Quick start
@@ -48,8 +48,27 @@ Spark Studio is an IDE for creating cross-platform desktop GUI applications in P
 ./bin/linux.sh #linux
 ```
 
+> [!NOTE]
+> The Linux version was tested on:
+> 
+> <img width="225" height="227" alt="arch" src="https://github.com/user-attachments/assets/2d6d8e9b-992f-4a22-b4b2-81f8ef19a4eb" /> <img width="242" height="194" alt="cachy" src="https://github.com/user-attachments/assets/169be5bb-9182-44ec-ac98-f07bd851a143" /> <img width="211" height="235" alt="endeavour" src="https://github.com/user-attachments/assets/66e9c7d9-2ed3-42b1-8316-5fb76e6f8d95" /> <img width="243" height="214" alt="nix" src="https://github.com/user-attachments/assets/aeb0e0a8-eca8-4b30-90c7-f79f0ef353a1" />
+
+
+
+
+
+
 > [!WARNING]
-> The Linux version was tested on Arch, Endeavour, Ubuntu, and NixOS distributions. If you encounter problems with the tested distributions, create an issue using the template. Requires Java 8+.
+> Recommend running Spark Studio on Linux with PortProton or Wine, because the project is not natively supported on Linux distributions. If you encounter problems with the tested distributions, create an issue using the template. Requires Java 8+.
+
+> [!NOTE]
+> To run Spark Studio natively on Linux:
+> 1. Download and install Java from the [official website](https://www.java.com/download/).
+> 2. Move the files to the /bin directory and name the folder "__jre__" (The path to java should look like this "__./bin/jre/bin/java__").
+> 3. Launch Spark Studio.
+
+> [!WARNING]
+> If Spark Studio doesn't launched on linux natively, try to download JFX into the jdk directory or launch with PortProton or Wine.
 
 ## Project structure
 
