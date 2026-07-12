@@ -51,7 +51,7 @@ Spark Studio is an IDE for creating cross-platform desktop GUI applications in P
 > [!NOTE]
 > The Linux version was tested on:
 > 
-> <img width="225" height="227" alt="arch" src="https://github.com/user-attachments/assets/2d6d8e9b-992f-4a22-b4b2-81f8ef19a4eb" /> <img width="242" height="194" alt="cachy" src="https://github.com/user-attachments/assets/169be5bb-9182-44ec-ac98-f07bd851a143" /> <img width="211" height="235" alt="endeavour" src="https://github.com/user-attachments/assets/66e9c7d9-2ed3-42b1-8316-5fb76e6f8d95" /> <img width="243" height="214" alt="nix" src="https://github.com/user-attachments/assets/aeb0e0a8-eca8-4b30-90c7-f79f0ef353a1" />
+> <img width="128" height="128" alt="arch" src="https://github.com/user-attachments/assets/2d6d8e9b-992f-4a22-b4b2-81f8ef19a4eb" /> <img width="128" height="128" alt="cachy" src="https://github.com/user-attachments/assets/169be5bb-9182-44ec-ac98-f07bd851a143" /> <img width="128" height="128" alt="endeavour" src="https://github.com/user-attachments/assets/66e9c7d9-2ed3-42b1-8316-5fb76e6f8d95" /> <img width="128" height="128" alt="nix" src="https://github.com/user-attachments/assets/aeb0e0a8-eca8-4b30-90c7-f79f0ef353a1" />
 
 
 
