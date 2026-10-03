@@ -1,9 +1,14 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal
 
 rem ---- resolve SCRIPT_DIR and APP_HOME ----
+rem resolved before delayed expansion is enabled: the install path may contain '!'
 set "SCRIPT_DIR=%~dp0"
 for %%I in ("%SCRIPT_DIR%..") do set "APP_HOME=%%~fI"
+rem no trailing backslash, otherwise it escapes the closing quote below
+if "%APP_HOME:~-1%"=="\" set "APP_HOME=%APP_HOME:~0,-1%"
+
+setlocal enabledelayedexpansion
 
 rem ---- java options ----
 set "JAVA_OPTS=-Xms256M -XX:ReservedCodeCacheSize=150m"
@@ -11,7 +16,9 @@ set "JAVA_OPTS=%JAVA_OPTS% -Dsun.io.useCanonCaches=false"
 set "JAVA_OPTS=%JAVA_OPTS% -Djava.net.preferIPv4Stack=true"
 set "JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding=UTF-8"
 set "JAVA_OPTS=%JAVA_OPTS% -Dspark.launcher=root"
-set "JAVA_OPTS=%JAVA_OPTS% -Dspark.path=%APP_HOME%"
+rem the value is quoted on purpose: APP_HOME may contain spaces, and an unquoted
+rem value would be split by cmd into extra arguments (breaking "main class")
+set "JAVA_OPTS=%JAVA_OPTS% "-Dspark.path=%APP_HOME%""
 set "JAVA_OPTS=%JAVA_OPTS% -Dglass.disableGrab=true"
 
 rem ---- resolve java executable from system ----
@@ -100,4 +107,5 @@ echo.
 echo Process completed successfully.
 pause
 
+endlocal
 endlocal
