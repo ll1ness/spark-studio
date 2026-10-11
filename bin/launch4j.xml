@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Spark Studio — конфиг launch4j (GUI: launch4j.exe → "Build wrapper").
+
+  Как это работает:
+    exe (dontWrapJar) запускает bin/spark-launcher.jar (тонкий Java-лаунчер),
+    он распаковывает бинарный класс-артефакт bin/binary.jar в каталог данных
+    пользователя (AppData / ~/Library/Application Support / ~/.local/share)
+    и запускает IDE оттуда. Всё записываемое идёт в каталог данных, а рядом
+    с exe не лежит ни одной папки исходников.
+
+  В одной папке с SparkStudio.exe должны лежать:
+    spark-launcher.jar  (сборка: python bin/make_launcher.py -s)
+    binary.jar          (сборка: python bin/make_binary_jar.py)
+
+  Проще собрать всё разом: python bin/make_dist.py — он положит готовый
+  самодостаточный дистрибутив (exe + оба jar + ассеты из корня) в build/.
+
+  Пути в этом файле разрешаются относительно расположения самого XML (bin/).
+
+  Иконка: windres (внутри launch4j) не умеет не-ASCII пути, поэтому <icon>
+  здесь не задан. CLI-сборка (python bin/make_launcher.py) сама подставляет
+  иконку безопасным способом.
+-->
+<launch4jConfig>
+    <dontWrapJar>true</dontWrapJar>
+    <headerType>gui</headerType>
+    <jar>spark-launcher.jar</jar>
+    <outfile>SparkStudio.exe</outfile>
+    <errTitle>Spark Studio</errTitle>
+    <chdir>.</chdir>
+    <stayAlive>false</stayAlive>
+    <!--icon-->
+
+    <jre>
+        <minVersion>1.8.0</minVersion>
+        <initialHeapSize>128</initialHeapSize>
+        <maxHeapSize>256</maxHeapSize>
+        <opt>-Dfile.encoding=UTF-8</opt>
+    </jre>
+
+    <versionInfo>
+        <fileVersion>17.0.0.0</fileVersion>
+        <txtFileVersion>17.0.0</txtFileVersion>
+        <fileDescription>Spark Studio - visual IDE for building PHP desktop applications</fileDescription>
+        <productVersion>17.0.0.0</productVersion>
+        <txtProductVersion>17.0.0</txtProductVersion>
+        <productName>Spark Studio</productName>
+        <internalName>SparkStudio</internalName>
+        <originalFilename>SparkStudio.exe</originalFilename>
+        <copyright>Spark Studio</copyright>
+    </versionInfo>
+</launch4jConfig>
