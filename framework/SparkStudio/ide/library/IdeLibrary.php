@@ -5,6 +5,7 @@ namespace ide\library;
 use Files;
 use ide\Ide;
 use ide\Logger;
+use ide\systems\IdeSystem;
 use ide\utils\FileUtils;
 use php\io\File;
 use php\lang\IllegalArgumentException;
@@ -69,9 +70,7 @@ class IdeLibrary
     {
         $this->ide = $ide;
 
-        $home = System::getProperty('user.home');
-
-        $this->defaultDirectory = File::of("$home/SparkLibrary");
+        $this->defaultDirectory = IdeSystem::getFile('library');
         $this->directories[] = $ide->getOwnFile("library");
 
         if ($ide->isDevelopment()) {

@@ -19,7 +19,7 @@ call_user_func(function () {
         }
         rmdir($path);
     };
-    foreach ([System::getProperty('user.home') . '/.Spark/cache/bytecode_v1', System::getProperty('spark.path') . '/bin/cache/bytecode_v1'] as $cacheDir) {
+    foreach ([System::getProperty('user.home') . '/.Spark/cache/bytecode_v1', (string) IdeSystem::getFile('cache/bytecode_v1')] as $cacheDir) {
         if ($cacheDir && is_dir($cacheDir)) $rmDir($cacheDir);
     }
 });

@@ -224,7 +224,7 @@ class Ide extends Application
 
                     Logger::exception($e->getMessage(), $e);
 
-                    Stream::putContents(System::getProperty('spark.path') . '/bin/logs/crash.log',
+                    Stream::putContents(IdeSystem::getFile('log/crash.log'),
                         "[" . Time::now()->toString('YYYY-MM-dd HH:mm:ss') . "] " . get_class($e) . ": " . $e->getMessage()
                         . "\n\tin " . $e->getFile() . ":" . $e->getLine()
                         . "\n\n" . $e->getTraceAsString()
@@ -1481,7 +1481,7 @@ class Ide extends Application
         $ideConfig = $this->getUserConfig('ide');
 
         if (!fs::isDir($ideConfig->get('projectDirectory'))) {
-            $ideConfig->set('projectDirectory', File::of(System::getProperty('user.home') . '/SparkProjects/'));
+            $ideConfig->set('projectDirectory', IdeSystem::getFile('projects'));
         }
 
 

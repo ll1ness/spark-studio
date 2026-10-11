@@ -89,18 +89,54 @@ class IdeSystem
     }
 
     /**
-     * @param $path
+     * Каталог данных пользователя (spark.data) — всё записываемое хранится
+     * здесь, а не рядом с программой и не в каталоге установки.
+     *
+     * Приоритет:
+     *  1. системное свойство spark.data (задаётся лаунчером),
+     *  2. Windows: %APPDATA%/SparkStudio,
+     *  3. macOS:   ~/Library/Application Support/SparkStudio,
+     *  4. Linux:   $XDG_DATA_HOME/spark-studio или ~/.local/share/spark-studio.
+     *
      * @return File
      */
-    static function getFile($path)
+    static function getDataDirectory()
     {
+        static $dataDir = null;
+
+        if ($dataDir) {
+            return $dataDir;
+        }
+
         $home = System::getProperty('user.home');
 
-        $ideHome = File::of("$home/.Spark");
+        if ($value = System::getProperty('spark.data')) {
+            $dataDir = File::of($value);
+        } else {
+            $os = self::getOs();
+            $env = System::getEnv();
 
-        if (!$ideHome->isDirectory()) {
-            $ideHome->mkdirs();
+            if (str::contains($os, 'win')) {
+                $base = $env['APPDATA'] ? $env['APPDATA'] : "$home/.SparkStudio";
+                $dataDir = File::of("$base/SparkStudio");
+            } else if (str::contains($os, 'mac')) {
+                $dataDir = File::of("$home/Library/Application Support/SparkStudio");
+            } else {
+                $base = $env['XDG_DATA_HOME'] ? $env['XDG_DATA_HOME'] : "$home/.local/share";
+                $dataDir = File::of("$base/spark-studio");
+            }
         }
+
+        if (!$dataDir->isDirectory()) {
+            $dataDir->mkdirs();
+        }
+
+        return $dataDir = File::of($dataDir->getCanonicalPath());
+    }
+
+    static function getFile($path)
+    {
+        $ideHome = self::getDataDirectory();
 
         return File::of("$ideHome/$path");
     }
