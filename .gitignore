@@ -4,15 +4,17 @@ bin/jre/
 .DS_Store
 Thumbs.db
 *.log
+
+# Артефакты сборки дистрибутива
+build/
+bin/binary.jar
+bin/spark-launcher.jar
 bin/SparkStudio.exe
-bin/launcher.res
-dist/
-build/jre/
-build/SparkStudio.exe
-build/spark-studio.jar
-build/languages/
-build/php-sdk/
-build/projectExtension.ico
-__pycache__/
 bin/sparkstudio.exe
+bin/.launcher-classes/
+bin/launcher.res
+bin/app-*/
+
+dist/
+__pycache__/
 .kilo/
