@@ -4,7 +4,7 @@
 
 Этапы:
   1. компилирует bin/src/SparkLauncher.java (javac --release 8) — тонкий
-     лаунчер: распаковка binary.jar в каталог данных и запуск IDE,
+     лаунчер: распаковка binary.jar рядом с exe и запуск IDE в этом же JVM,
   2. пакует bin/spark-launcher.jar (Main-Class: SparkLauncher),
   3. вызывает launch4jc (bin/launch4j.xml) и получает bin/SparkStudio.exe.
 
@@ -12,7 +12,8 @@
 в JAVA_HOME / Program Files, их можно указать явно: --javac <path> --launch4j <path>.
 
 Рядом с SparkStudio.exe должны лежать spark-launcher.jar и binary.jar
-(распакованный программой каталог находится в каталоге данных пользователя).
+(лаунчер распаковывает binary.jar в app-<hash> рядом с exe; данные
+пользователя пишутся в каталог данных приложения).
 
 Использование:
     python bin/make_launcher.py                 # собрать jar + exe
@@ -21,6 +22,7 @@
 
 import argparse
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -38,7 +40,11 @@ LAUNCH4J_CONFIG = BIN_DIR / "launch4j.xml"
 BUILD_CONFIG = BIN_DIR / ".launch4j-build.xml"
 EXE = BIN_DIR / "SparkStudio.exe"
 
-ICON_SOURCES = [BIN_DIR / "spark-studio.ico", PROJECT_ROOT / "projectExtension.ico"]
+# Ресурсы, которые launch4j встраивает в exe через windres. windres не понимает
+# не-ASCII пути, поэтому при CLI-сборке они при необходимости копируются в
+# ASCII-каталог (%TEMP%) и путь подставляется в конфиг.
+ICON = BIN_DIR / "favicon.ico"
+SPLASH = BIN_DIR / "spark_studio_splash17.bmp"
 
 MAIN_CLASS = "SparkLauncher"
 
@@ -133,24 +139,22 @@ def pack_launcher(classes: list) -> None:
     log(f"готово: {LAUNCHER_JAR} ({len(classes)} class, Main-Class: {MAIN_CLASS})")
 
 
-def resolve_icon() -> str:
-    """Возвращает путь к .ico, доступный windres (только ASCII)."""
-    for src in ICON_SOURCES:
-        if not src.is_file():
-            continue
+def ascii_asset(src: Path, tmp_name: str) -> str:
+    """Путь к ассету, пригодный для windres: копирует в ASCII-каталог при необходимости."""
+    if not src.is_file():
+        return ""
+    try:
+        str(src).encode("ascii")
+        return str(src)
+    except UnicodeEncodeError:
+        # windres внутри launch4j не переваривает не-ASCII пути —
+        # кладём копию в ASCII-каталог (%TEMP%, ~/.cache и т.п.)
+        dst = Path(tempfile.gettempdir()) / tmp_name
         try:
-            str(src).encode("ascii")
-            return str(src)
-        except UnicodeEncodeError:
-            # windres внутри launch4j не переваривает не-ASCII пути —
-            # копируем иконку в ASCII-каталог (%TEMP%, ~/.cache и т.п.)
-            dst = Path(tempfile.gettempdir()) / "spark-studio-icon.ico"
-            try:
-                shutil.copyfile(src, dst)
-                return str(dst)
-            except OSError:
-                return ""
-    return ""
+            shutil.copyfile(src, dst)
+            return str(dst)
+        except OSError:
+            return ""
 
 
 def build_exe(launch4jc: str) -> None:
@@ -158,12 +162,22 @@ def build_exe(launch4jc: str) -> None:
     if EXE.exists():
         EXE.unlink()
 
-    # подставляем иконку в конфиг (в самом XML стоит плейсхолдер <!--icon-->)
+    # подставляем ASCII-пути иконки и сплэша (сам XML задаёт относительные пути)
     text = LAUNCH4J_CONFIG.read_text(encoding="utf-8")
-    icon = resolve_icon()
-    if "<!--icon-->" in text:
-        text = text.replace("<!--icon-->", f"<icon>{icon}</icon>" if icon else "")
-        log(f"icon: {icon or '(по умолчанию launch4j)'}")
+
+    icon = ascii_asset(ICON, "spark-studio-icon.ico")
+    if icon:
+        text = re.sub(r"<icon>.*?</icon>", lambda m: f"<icon>{icon}</icon>", text, count=1)
+        log(f"icon: {icon}")
+    else:
+        log("icon: не найден (используется по умолчанию launch4j)")
+
+    splash = ascii_asset(SPLASH, "spark-studio-splash.bmp")
+    if splash:
+        text = re.sub(r"(<splash>\s*<file>).*?(</file>)",
+                      lambda m: m.group(1) + splash + m.group(2), text, count=1)
+        log(f"splash: {splash}")
+
     BUILD_CONFIG.write_text(text, encoding="utf-8")
 
     try:
