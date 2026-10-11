@@ -40,13 +40,14 @@ Spark Studio is an IDE for creating cross-platform desktop GUI applications in P
 
 ## Quick start
 
-```bash
-./bin/windows.bat #windows
-```
+Run the IDE straight from the project tree — no build required:
 
 ```bash
-./bin/linux.sh #linux
+./bin/windows.bat   # Windows
+./bin/linux.sh      # Linux
 ```
+
+To produce a standalone Windows build, see [Building](#building).
 
 > [!NOTE]
 > The Linux version was tested on:
@@ -70,6 +71,78 @@ Spark Studio is an IDE for creating cross-platform desktop GUI applications in P
 > [!WARNING]
 > If Spark Studio doesn't launched on linux natively, try to download JFX into the jdk directory or launch with PortProton or Wine.
 
+## Requirements
+
+| | |
+|---|---|
+| **Runtime** | Java 8 or newer (with JavaFX — see the Linux note above about `./bin/jre`). |
+| **Build** | Python 3, a JDK (`javac`) and [Launch4j](https://launch4j.sourceforge.net/) (`launch4jc`) for the Windows executable. |
+
+The build scripts locate `javac` and `launch4jc` automatically (through `JAVA_HOME`, `PATH` and `Program Files`); explicit paths can be passed with `--javac <path>` and `--launch4j <path>`.
+
+## Building
+
+Everything is driven by `bin/make_dist.py`:
+
+```bash
+python bin/make_dist.py                 # full build: binary.jar + launcher + SparkStudio.exe + build/
+python bin/make_dist.py --no-rebuild    # reuse the existing bin/binary.jar
+python bin/make_dist.py --skip-exe      # everything except the .exe (Launch4j not needed)
+python bin/make_dist.py --javac <path> --launch4j <path>
+```
+
+Individual stages can also be run on their own:
+
+```bash
+python bin/make_binary_jar.py           # -> bin/binary.jar          (classpath + root resources)
+python bin/make_launcher.py             # -> bin/spark-launcher.jar + bin/SparkStudio.exe
+```
+
+`make_launcher.py` accepts `--check` to print the detected tool paths and exit, and `--skip-exe` for the jar only. `make_binary_jar.py` has `--out <file>` and `--safe` (pack only the pure Java libraries).
+
+**What each stage does:**
+
+1. `make_binary_jar.py` packs the entire project classpath (`runtime/`, `gui/`, `framework/`, `languages/`, `php-sdk/`, …) together with the root runtime assets (`logo.png`) into `bin/binary.jar`. The directory layout is preserved, so once unpacked it *is* the working root of the IDE.
+2. `make_launcher.py` compiles `bin/src/SparkLauncher.java` (the thin launcher), packs `bin/spark-launcher.jar`, and runs `launch4jc` with `bin/launch4j.xml` to produce `bin/SparkStudio.exe`.
+3. `make_dist.py` assembles the self-contained `build/` directory.
+
+## Distribution layout
+
+`build/` is the ready-to-ship directory — hand out the whole folder:
+
+```
+build/
+├─ SparkStudio.exe        # Windows launcher (Launch4j)
+├─ spark-launcher.jar     # thin Java launcher (unpack + start)
+├─ binary.jar             # the IDE itself (classpath + assets)
+├─ logo.png               # portable asset, overrides the copy inside binary.jar
+├─ projectExtension.ico
+├─ LICENSE
+└─ README.md
+```
+
+> [!IMPORTANT]
+> `SparkStudio.exe` needs `spark-launcher.jar` and `binary.jar` beside it. Keep the folder together.
+
+### How the launcher works
+
+1. `SparkStudio.exe` starts `spark-launcher.jar`.
+2. The launcher unpacks `binary.jar` next to itself into `app-<hash>/`, where `<hash>` is a prefix of the SHA-256 of `binary.jar`. It keeps at most **3** versions and deletes the older ones.
+3. It then starts the IDE from that directory (`cwd` and classpath), loading `./…` resources and `res://…` images.
+4. All **user data** goes to the OS data directory, never next to the `.exe`.
+
+If the installation folder is not writable (for example `C:\Program Files`), the unpack automatically falls back to the data directory.
+
+## Where the app stores data
+
+| OS | Data directory |
+|---|---|
+| Windows | `%APPDATA%\SparkStudio` |
+| macOS | `~/Library/Application Support/SparkStudio` |
+| Linux | `$XDG_DATA_HOME/spark-studio` or `~/.local/share/spark-studio` |
+
+It contains `config/`, `log/`, `library/`, `cache/`, `projects/`, and the unpacked `app-<hash>/` runtime. Override it with `-Dspark.data=<dir>` or the `SPARK_DATA` environment variable.
+
 ## Project structure
 
 | Directory | Contents |
@@ -82,7 +155,8 @@ Spark Studio is an IDE for creating cross-platform desktop GUI applications in P
 | `extensions/` | JSON, XML, ZIP, Zend compat extensions |
 | `ide/` | Documentation, platform support, plugin store |
 | `languages/` | en / ru language packs |
-| `bin/` | Launcher script, JRE, Wayland/X11 grab fix |
+| `bin/` | Launchers (`windows.bat`, `linux.sh`), build scripts, launcher source, JRE, Wayland/X11 grab fix |
+| `build/` | Assembled distribution, produced by `bin/make_dist.py` |
 
 ## Authors
 
