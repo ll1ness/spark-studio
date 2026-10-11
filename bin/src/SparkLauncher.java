@@ -4,7 +4,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,9 +40,11 @@ import java.util.zip.ZipFile;
  *      Program Files), распаковка уходит в <data>/app-<hash12>,
  *   4) хранит не более MAX_VERSIONS распакованных версий: лишние app-*
  *      удаляются, чтобы кэш не разрастался,
- *   5) запускает настоящую IDE отдельным JVM:
- *        java -Dspark.path=<app> -Dspark.data=<data> -cp <appDir-каталоги>
- *             org.develnext.jphp.ext.javafx.FXLauncher
+ *   5) запускает настоящую IDE в этом же JVM: каталоги приложения кладутся
+ *      в URLClassLoader, а org.develnext.jphp.ext.javafx.FXLauncher вызывается
+ *      рефлексией. Окно IDE принадлежит процессу, запущенному launch4j, —
+ *      благодаря этому сплэш launch4j закрывается, как только оно появится
+ *      (launch4j видит окна только своего процесса).
  *
  * Данные пользователя (config, log, cache, library, projects) всегда пишутся
  * в spark.data, а не рядом с exe.
@@ -172,33 +178,16 @@ public class SparkLauncher {
                 return;
             }
 
-            String classpath = buildClasspath(appDir);
+            // IDE грузится в этом же процессе: тогда её окно принадлежит
+            // процессу, запущенному launch4j, и сплэш закрывается, как только
+            // окно появится.
+            System.setProperty("spark.launcher", "root");
+            System.setProperty("spark.path", appDir.toString());
+            System.setProperty("spark.data", dataDir.toString());
+            System.setProperty("glass.disableGrab", "true");
 
-            List<String> cmd = new ArrayList<String>();
-            cmd.add(javaBin());
-            cmd.add("-Xms256M");
-            cmd.add("-Dfile.encoding=UTF-8");
-            cmd.add("-Dspark.launcher=root");
-            cmd.add("-Dspark.path=" + appDir);
-            cmd.add("-Dspark.data=" + dataDir);
-            cmd.add("-Dglass.disableGrab=true");
-            cmd.add("-cp");
-            cmd.add(classpath);
-            cmd.add(MAIN_CLASS);
-            cmd.addAll(appArgs);
-
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            pb.directory(appDir.toFile());
-            pb.inheritIO();
-
-            try {
-                Process p = pb.start();
-                System.exit(p.waitFor());
-            } catch (IOException e) {
-                fatal("Не удалось запустить java: " + e.getMessage()
-                        + "\n\nИсполняемый файл: " + javaBin() + "\nclasspath: " + classpath);
-            }
-        } catch (Exception e) {
+            launchInProcess(appDir, appArgs);
+        } catch (Throwable e) {
             fatal("Ошибка лаунчера Spark Studio:\n" + e);
         }
     }
@@ -431,19 +420,39 @@ public class SparkLauncher {
         }
     }
 
-    static String buildClasspath(Path appDir) {
-        List<String> parts = new ArrayList<String>();
+    /**
+     * Запускает настоящую IDE в текущем JVM. Каталоги приложения кладутся в
+     * отдельный {@link URLClassLoader} (аналог {@code java -cp <appDir-каталоги>}),
+     * главный класс вызывается рефлексией. Благодаря этому окно IDE принадлежит
+     * процессу, запущенному launch4j, и его сплэш закрывается при появлении окна.
+     */
+    static void launchInProcess(Path appDir, List<String> appArgs) throws Exception {
+        List<URL> urls = new ArrayList<URL>();
         for (String rel : ALL_DIRS) {
             Path d = appDir.resolve(rel);
             if (Files.isDirectory(d)) {
-                parts.add(d.toString());
+                urls.add(d.toUri().toURL());
             }
         }
-        String cp = join(parts, File.pathSeparator);
-        if (cp.isEmpty()) {
+        if (urls.isEmpty()) {
             throw new IllegalStateException("Пусто после распаковки: " + appDir);
         }
-        return cp;
+
+        ClassLoader parent = SparkLauncher.class.getClassLoader();
+        URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[0]), parent);
+        Thread.currentThread().setContextClassLoader(loader);
+
+        Class<?> mainClass = Class.forName(MAIN_CLASS, true, loader);
+        Method main = mainClass.getMethod("main", String[].class);
+        try {
+            main.invoke(null, (Object) appArgs.toArray(new String[0]));
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof Error) {
+                throw (Error) cause;
+            }
+            throw (cause instanceof Exception) ? (Exception) cause : new RuntimeException(cause);
+        }
     }
 
     static String javaBin() {
